@@ -13,33 +13,27 @@ public class TemplateModel {
     var textBlocks: [TextBlock]
     var imageBlocks: [ImageBlock]
     
-    // 선택된 블록 ID
     var selectedBlockID: BlockID? = nil
     
-    public init(layer: Layer, textBlocks: [TextBlock], imageBlocks: [ImageBlock]) {
+    public init(
+        layer: Layer,
+        textBlocks: [TextBlock],
+        imageBlocks: [ImageBlock]
+    ) {
         self.layer = layer
         self.textBlocks = textBlocks
         self.imageBlocks = imageBlocks
     }
     
-    // MARK: - 블록 선택 관리
-    func selectBlock(_ blockID: BlockID) {
+    func selectBlock(blockID: BlockID?) {
         selectedBlockID = blockID
-        print("🎯 블록 선택: \(blockID)")
-    }
-    
-    func deselectBlock() {
-        selectedBlockID = nil
-        print("🎯 블록 선택 해제")
     }
     
     func isSelected(_ blockID: BlockID) -> Bool {
         return selectedBlockID == blockID
     }
     
-    // MARK: - 바인딩 헬퍼
     func getBinding(for blockID: BlockID) -> Binding<CGRect> {
-        // 텍스트 블록 확인
         if let index = textBlocks.firstIndex(where: { $0.id == blockID }) {
             return Binding(
                 get: { self.textBlocks[index].rect },
@@ -47,20 +41,16 @@ public class TemplateModel {
             )
         }
         
-        // 이미지 블록 확인
         if let index = imageBlocks.firstIndex(where: { $0.id == blockID }) {
             return Binding(
                 get: { self.imageBlocks[index].rect },
                 set: { self.imageBlocks[index].rect = $0 }
             )
         }
-        
-        // 기본값 (이런 일은 없어야 함)
         return .constant(CGRect.zero)
     }
     
     func getRotationBinding(for blockID: BlockID) -> Binding<Double> {
-        // 텍스트 블록 확인
         if let index = textBlocks.firstIndex(where: { $0.id == blockID }) {
             return Binding(
                 get: { self.textBlocks[index].rotation },
@@ -68,7 +58,6 @@ public class TemplateModel {
             )
         }
         
-        // 이미지 블록 확인  
         if let index = imageBlocks.firstIndex(where: { $0.id == blockID }) {
             return Binding(
                 get: { self.imageBlocks[index].rotation },
@@ -76,7 +65,6 @@ public class TemplateModel {
             )
         }
         
-        // 기본값
         return .constant(0)
     }
 }
@@ -86,52 +74,49 @@ public struct TemplateEditor: View {
     
     public var body: some View {
         GeometryReader { geometry in
-            ZStack {
-                Rectangle()
-                    .fill(model.layer.color)
-                    .border(.gray, width: 1)
-                    .onTapGesture {
-                        model.deselectBlock()
-                    }
-                
-                // 이미지 블록들
-                ForEach(model.imageBlocks) { block in
-                    DraggableContainerView(
-                        parentSize: model.layer.size,
-                        rect: model.getBinding(for: block.id),
-                        rotation: model.getRotationBinding(for: block.id),
-                        isSelected: model.isSelected(block.id),
-                        onTapped: { model.selectBlock(block.id) }
-                    ) {
-                        Rectangle()
-                            .fill(.gray.opacity(0.5))
-                            .overlay(
-                                Image(systemName: "photo")
-                                    .font(.title)
+            Rectangle()
+                .fill(model.layer.color)
+                .border(.gray, width: 1)
+                .onTapGesture {
+                    model.selectBlock(blockID: nil)
+                }
+                .overlay(alignment: .topLeading) {
+                    GeometryReader { overlayGeometry in
+                        ForEach(model.imageBlocks) { block in
+                            DraggableContainerView(
+                                parentSize: model.layer.size,
+                                rect: model.getBinding(for: block.id),
+                                isSelected: model.isSelected(block.id),
+                                onTapped: { model.selectBlock(blockID: block.id) }
+                            ) {
+                                Rectangle()
+                                    .fill(.gray.opacity(0.5))
+                                    .overlay(
+                                        Image(systemName: "photo")
+                                            .font(.title)
+                                            .foregroundColor(.white)
+                                    )
+                            }
+                        }
+                        
+                        ForEach(model.textBlocks) { block in
+                            DraggableContainerView(
+                                parentSize: model.layer.size,
+                                rect: model.getBinding(for: block.id),
+                                isSelected: model.isSelected(block.id),
+                                onTapped: { model.selectBlock(blockID: block.id) }
+                            ) {
+                                Text(block.text)
+                                    .font(.system(size: 16, weight: .medium))
                                     .foregroundColor(.white)
-                            )
+                                    .multilineTextAlignment(.center)
+                                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                                    .background(.blue.opacity(0.3))
+                            }
+                        }
                     }
                 }
-                
-                // 텍스트 블록들  
-                ForEach(model.textBlocks) { block in
-                    DraggableContainerView(
-                        parentSize: model.layer.size,
-                        rect: model.getBinding(for: block.id),
-                        rotation: model.getRotationBinding(for: block.id),
-                        isSelected: model.isSelected(block.id),
-                        onTapped: { model.selectBlock(block.id) }
-                    ) {
-                        Text(block.text)
-                            .font(.system(size: 16, weight: .medium))
-                            .foregroundColor(.white)
-                            .multilineTextAlignment(.center)
-                            .frame(maxWidth: .infinity, maxHeight: .infinity)
-                            .background(.blue.opacity(0.3))
-                    }
-                }
-            }
-            .frame(width: model.layer.size.width, height: model.layer.size.height)
+                .frame(width: model.layer.size.width, height: model.layer.size.height)
         }
     }
 }

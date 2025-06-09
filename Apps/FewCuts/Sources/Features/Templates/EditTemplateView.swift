@@ -85,7 +85,7 @@ public struct TemplateEditor: View {
                         ForEach(model.imageBlocks) { block in
                             DraggableContainerView(
                                 parentSize: model.layer.size,
-                                rect: model.getBinding(for: block.id),
+                                rect: .init(get: { block.rect }, set: { block.rect = $0 }),
                                 isSelected: model.isSelected(block.id),
                                 onTapped: { model.selectBlock(blockID: block.id) }
                             ) {
@@ -102,7 +102,7 @@ public struct TemplateEditor: View {
                         ForEach(model.textBlocks) { block in
                             DraggableContainerView(
                                 parentSize: model.layer.size,
-                                rect: model.getBinding(for: block.id),
+                                rect: .init(get: { block.rect }, set: { block.rect = $0 }),
                                 isSelected: model.isSelected(block.id),
                                 onTapped: { model.selectBlock(blockID: block.id) }
                             ) {

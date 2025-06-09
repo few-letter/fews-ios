@@ -6,6 +6,10 @@
 
 import SwiftUI
 
+enum RectCorner {
+    case topLeft, topRight, bottomLeft, bottomRight
+}
+
 public struct DraggableContainerView<Content: View>: View {
     public let parentSize: CGSize
     @Binding public var rect: CGRect
@@ -14,6 +18,7 @@ public struct DraggableContainerView<Content: View>: View {
     public let content: Content
 
     @State private var initialRect: CGRect?
+    @State private var draggedCorner: RectCorner?
 
     public init(
         parentSize: CGSize,
@@ -50,7 +55,7 @@ public struct DraggableContainerView<Content: View>: View {
     }
 
     private var dragGesture: some Gesture {
-        DragGesture(minimumDistance: 0)
+        DragGesture(minimumDistance: 10)
             .onChanged { value in
                 onTapped()
                 if initialRect == nil {
@@ -77,33 +82,72 @@ public struct DraggableContainerView<Content: View>: View {
     }
 
     private var cornerDragGesture: some Gesture {
-        DragGesture(minimumDistance: 0)
+        DragGesture()
             .onChanged { value in
                 if initialRect == nil {
                     initialRect = rect
+                    draggedCorner = .bottomRight // 코너 핸들은 항상 bottomRight
                 }
-                let deltaX = value.translation.width
-                let deltaY = value.translation.height
-
-                // 새 크기 계산 (최소 50)
-                let newW = max(50, initialRect!.width  + deltaX)
-                let newH = max(50, initialRect!.height + deltaY)
-
-                // 부모 경계를 넘지 않도록
-                let maxW = parentSize.width  - initialRect!.origin.x
-                let maxH = parentSize.height - initialRect!.origin.y
-
-                rect.size = CGSize(
-                    width: min(newW, maxW),
-                    height: min(newH, maxH)
-                )
+                
+                if let draggedCorner {
+                    rect = dragResize(
+                        initialRect: initialRect!,
+                        draggedCorner: draggedCorner,
+                        frameSize: parentSize,
+                        translation: value.translation
+                    )
+                }
             }
-            .onEnded { _ in initialRect = nil }
+            .onEnded { _ in 
+                initialRect = nil
+                draggedCorner = nil
+            }
     }
 
     private func clamp(_ origin: CGPoint, size: CGSize) -> CGPoint {
         let x = min(max(0, origin.x), parentSize.width  - size.width)
         let y = min(max(0, origin.y), parentSize.height - size.height)
         return CGPoint(x: x, y: y)
+    }
+    
+    private func dragResize(initialRect: CGRect, draggedCorner: RectCorner, frameSize: CGSize, translation: CGSize) -> CGRect {
+        let minSize = CGSize(width: 50, height: 50)
+        var offX = 1.0
+        var offY = 1.0
+
+        switch draggedCorner {
+        case .topLeft:      offX = -1;  offY = -1
+        case .topRight:                 offY = -1
+        case .bottomLeft:   offX = -1
+        case .bottomRight: break
+        }
+
+        let idealWidth = initialRect.size.width + offX * translation.width
+        var newWidth = max(idealWidth, minSize.width)
+
+        let maxHeight = frameSize.height - initialRect.minY
+        let idealHeight = initialRect.size.height + offY * translation.height
+        var newHeight = max(idealHeight, minSize.height)
+
+        var newX = initialRect.minX
+        var newY = initialRect.minY
+
+        if offX < 0 {
+            let widthChange = newWidth - initialRect.width
+            newX = max(newX - widthChange, 0)
+            newWidth = min(newWidth, initialRect.maxX)
+        } else {
+            newWidth = min(newWidth, frameSize.width - initialRect.minX)
+        }
+
+        if offY < 0 {
+            let heightChange = newHeight - initialRect.height
+            newY = max(newY - heightChange, 0)
+            newHeight = min(initialRect.maxY, newHeight)
+        } else {
+            newHeight = min(newHeight, maxHeight)
+        }
+
+        return .init(origin: .init(x: newX, y: newY), size: .init(width: newWidth, height: newHeight))
     }
 }

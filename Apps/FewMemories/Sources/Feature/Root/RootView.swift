@@ -1,0 +1,25 @@
+//
+//  RootView.swift
+//  plotfolio
+//
+//  Created by 송영모 on 2023/05/21.
+//
+
+import SwiftUI
+import SwiftData
+import ComposableArchitecture
+
+struct RootView: View {
+    public let store: StoreOf<RootStore>
+    @Environment(\.modelContext) private var modelContext
+    
+    public var body: some View {
+        HomeView(store: self.store.scope(state: \.home, action: \.home)) 
+    }
+}
+
+#Preview {
+    RootView(store: Store(initialState: RootStore.State()) {
+        RootStore()
+    })
+}

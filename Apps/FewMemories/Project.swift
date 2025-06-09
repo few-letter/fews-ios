@@ -1,24 +1,24 @@
 import ProjectDescription
 
 let project = Project(
-    name: "FewCuts",
+    name: "FewMemories",
     packages: [
         .package(url: "https://github.com/firebase/firebase-ios-sdk.git", .upToNextMajor(from: "10.0.0")),
         .package(url: "https://github.com/pointfreeco/swift-composable-architecture", .upToNextMajor(from: "1.20.0"))
     ],
     targets: [
         .target(
-            name: "FewCuts",
+            name: "FewMemories",
             destinations: .iOS,
             product: .app,
-            bundleId: "com.annapo.fewcuts",
+            bundleId: "com.annapo.plotfolio",
             infoPlist: .extendingDefault(
                 with: [
                     "UILaunchScreen": [
                         "UIColorName": "",
                         "UIImageName": "",
                     ],
-                    "CFBundleDisplayName": "Cuts",
+                    "CFBundleDisplayName": "Memories",
                     "NSAppTransportSecurity": [
                         "NSAllowsArbitraryLoads": true
                     ],
@@ -31,22 +31,12 @@ let project = Project(
                 .glob(pattern: "Resources/Assets.xcassets/**"),
                 .glob(pattern: "Resources/GoogleService-Info.plist")
             ],
-            entitlements: "Resources/fewcuts.entitlements",
+            entitlements: "Resources/FewMemories.entitlements",
             dependencies: [
                 .project(target: "DS", path: "../../Modules/DS"),
                 .package(product: "FirebaseAnalytics"),
                 .package(product: "ComposableArchitecture")
             ]
-        ),
-        .target(
-            name: "FewCutsTests",
-            destinations: .iOS,
-            product: .unitTests,
-            bundleId: "io.tuist.FewCutsTests",
-            infoPlist: .default,
-            sources: ["Tests/**"],
-            resources: [],
-            dependencies: [.target(name: "FewCuts")]
         ),
     ]
 ) 

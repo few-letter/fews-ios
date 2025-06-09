@@ -14,14 +14,14 @@ public final class Plot {
     public var date: Date?
     public var point: Double?
     public var title: String?
-    public var type: Int16?
+    public var type: Int?
     
     public init(
         content: String? = nil,
         date: Date? = Date(),
         point: Double = 0.0,
         title: String? = nil,
-        type: Int16 = 0
+        type: Int = 0
     ) {
         self.content = content
         self.date = date
@@ -29,4 +29,4 @@ public final class Plot {
         self.title = title
         self.type = type
     }
-} 
+}

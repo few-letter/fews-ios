@@ -10,18 +10,26 @@ import SwiftData
 import ComposableArchitecture
 
 @main
-struct mainApp: App {
-    @Environment(\.modelContext) private var modelContext
+struct FewMemoriesApp: App {
+    let container: ModelContainer
+    
+    init() {
+        do {
+            container = try ModelContainer(for: Plot.self)
+        } catch {
+            fatalError("Failed to create ModelContainer: \(error)")
+        }
+    }
     
     var body: some Scene {
         WindowGroup {
             RootView(store: Store(initialState: RootStore.State()) {
                 RootStore()
             } withDependencies: { dependency in
-                let client = PlotClientLive(modelContext: modelContext)
-                dependency.plotClient = client
+                let plotClient = PlotClientLive(modelContext: container.mainContext)
+                dependency.plotClient = plotClient
             })
+            .environment(\.modelContext, container.mainContext)
         }
-        .modelContainer(for: Plot.self)
     }
 }

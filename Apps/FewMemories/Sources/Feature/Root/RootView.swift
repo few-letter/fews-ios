@@ -11,10 +11,9 @@ import ComposableArchitecture
 
 struct RootView: View {
     public let store: StoreOf<RootStore>
-    @Environment(\.modelContext) private var modelContext
     
     public var body: some View {
-        HomeView(store: self.store.scope(state: \.home, action: \.home)) 
+        HomeView(store: self.store.scope(state: \.home, action: \.home))
     }
 }
 

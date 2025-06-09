@@ -56,7 +56,7 @@ struct PlotListCellView: View {
                     .fontWeight(.light)
                     .font(.caption2)
                 
-                Text(PlotType.toDomain(int16: store.plot.type ?? 0).rawValue)
+                Text(PlotType.init(rawValue: store.plot.type ?? 0)?.title ?? "")
                     .font(.caption2)
             }
         }

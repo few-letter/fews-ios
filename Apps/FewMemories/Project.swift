@@ -33,7 +33,6 @@ let project = Project(
             ],
             entitlements: "Resources/FewMemories.entitlements",
             dependencies: [
-                .project(target: "DS", path: "../../Modules/DS"),
                 .package(product: "FirebaseAnalytics"),
                 .package(product: "ComposableArchitecture")
             ]

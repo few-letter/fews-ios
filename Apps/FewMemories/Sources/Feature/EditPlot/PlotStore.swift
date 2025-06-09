@@ -9,16 +9,16 @@ import Foundation
 import ComposableArchitecture
 
 @Reducer
-struct EditPlotStore {
+public struct PlotStore {
     @ObservableState
-    struct State: Equatable {
+    public struct State: Equatable {
         var plot: Plot
         
         var point: Double
         var date: Date
-        var type: Int16
+        var type: Int
         
-        init(plot: Plot) {
+        public init(plot: Plot) {
             self.plot = plot
             self.point = plot.point ?? .init()
             self.date = plot.date ?? .init()
@@ -26,23 +26,21 @@ struct EditPlotStore {
         }
     }
     
-    enum Action: BindableAction, Equatable {
+    public enum Action: BindableAction, Equatable {
         case binding(BindingAction<State>)
         
         case titleChanged(String)
         case contentChanged(String)
         case dateChanged(Date)
-        case typeChanged(Int16)
+        case typeChanged(Int)
         case pointChanged(Double)
         
         case saveRequest
-        
-        case plotListCell(id: PlotListCellStore.State.ID, action: PlotListCellStore.Action)
     }
     
     @Dependency(\.plotClient) var plotClient
     
-    var body: some ReducerOf<Self> {
+    public var body: some ReducerOf<Self> {
         BindingReducer()
         
         Reduce<State, Action> { state, action in
@@ -77,9 +75,6 @@ struct EditPlotStore {
                 if state.plot.title?.isEmpty == false || state.plot.content?.isEmpty == false {
                     plotClient.update(plot: state.plot)
                 }
-                return .none
-                
-            case .plotListCell:
                 return .none
             }
         }

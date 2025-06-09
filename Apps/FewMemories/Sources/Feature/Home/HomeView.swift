@@ -60,9 +60,9 @@ struct HomeView: View {
             }
             .navigationDestination(for: HomeScene.self) { scene in
                 switch scene {
-                case .editPlot:
-                    if let store = store.scope(state: \.editPlot, action: \.editPlot.presented) {
-                        EditPlotView(store: store)
+                case .plot:
+                    if let store = store.scope(state: \.plot, action: \.plot.presented) {
+                        PlotView(store: store)
                     }
                     
                 case .setting:

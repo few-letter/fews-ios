@@ -14,6 +14,7 @@ public protocol PlotClient {
     func fetches() -> [Plot]
     func update(plot: Plot) -> Void
     func delete(plot: Plot) -> Void
+    func save(_ plot: Plot) -> Void
 }
 
 public class PlotClientLive: PlotClient {
@@ -29,16 +30,20 @@ public class PlotClientLive: PlotClient {
     }
     
     public func createPlot() -> Plot {
-        print("Successfully create plot")
+        let plot = Plot()
+        save(plot)
+        print("Successfully create and save plot")
         
-        return Plot()
+        return plot
     }
     
     public func fetches() -> [Plot] {
         guard let context = modelContext else { return [] }
         
         do {
-            let descriptor = FetchDescriptor<Plot>()
+            let descriptor = FetchDescriptor<Plot>(
+                sortBy: [.init(\.date)]
+            )
             let result = try context.fetch(descriptor)
             print("Successfully fetched plots | result:\(result)")
             return result
@@ -71,11 +76,15 @@ public class PlotClientLive: PlotClient {
     }
     
     public func save(_ plot: Plot) {
-        guard let context = modelContext else { return }
+        guard let context = modelContext else { 
+            print("ModelContext is nil, cannot save plot")
+            return 
+        }
         
         do {
             context.insert(plot)
             try context.save()
+            print("Successfully saved plot with title: \(plot.title ?? "No title")")
         } catch {
             print("Failed to save plot: \(error)")
         }

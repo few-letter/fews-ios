@@ -10,7 +10,7 @@ import Foundation
 
 enum HomeScene: Hashable {
     case home
-    case editPlot
+    case plot
     case setting
 }
 
@@ -24,7 +24,7 @@ struct HomeStore {
         
         var plotListCells: IdentifiedArrayOf<PlotListCellStore.State> = []
         var filteredPlotListCells: IdentifiedArrayOf<PlotListCellStore.State> = []
-        @Presents var editPlot: EditPlotStore.State?
+        @Presents var plot: PlotStore.State?
         @Presents var setting: SettingStore.State?
     }
     
@@ -39,7 +39,7 @@ struct HomeStore {
         case delete(IndexSet)
         
         case plotListCell(IdentifiedActionOf<PlotListCellStore>)
-        case editPlot(PresentationAction<EditPlotStore.Action>)
+        case plot(PresentationAction<PlotStore.Action>)
         case setting(PresentationAction<SettingStore.Action>)
     }
     
@@ -57,8 +57,8 @@ struct HomeStore {
                 return .send(.fetchResponse(plotClient.fetches()))
                 
             case .addButtonTapped:
-                state.editPlot = EditPlotStore.State(plot: plotClient.createPlot())
-                state.path.append(.editPlot)
+                state.plot = PlotStore.State(plot: plotClient.createPlot())
+                state.path.append(.plot)
                 return .none
                 
             case .settingButtonTapped:
@@ -97,23 +97,23 @@ struct HomeStore {
                 
             case let .plotListCell(.element(id: id, action: .tapped)):
                 if let plot = state.plotListCells.first(where: { $0.id == id })?.plot {
-                    state.editPlot = EditPlotStore.State(plot: plot)
-                    state.path.append(.editPlot)
+                    state.plot = PlotStore.State(plot: plot)
+                    state.path.append(.plot)
                 }
                 return .none
                 
             case .plotListCell:
                 return .none
                 
-            case .editPlot, .setting:
+            case .plot, .setting:
                 return .none
             }
         }
         .forEach(\.plotListCells, action: \.plotListCell) {
             PlotListCellStore()
         }
-        .ifLet(\.$editPlot, action: \.editPlot) {
-            EditPlotStore()
+        .ifLet(\.$plot, action: \.plot) {
+            PlotStore()
         }
         .ifLet(\.$setting, action: \.setting) {
             SettingStore()

@@ -7,7 +7,7 @@
 
 import Foundation
 
-enum PlotType: String, CaseIterable {
+enum PlotType: Int, CaseIterable {
     case movie
     case book
     case exhibition
@@ -16,14 +16,19 @@ enum PlotType: String, CaseIterable {
     case food
     case place
     case media
-    case etc = "etc."
+    case etc
     
-    var int16: Int16 {
-        return Int16(PlotType.allCases.firstIndex(of: self) ?? 0)
-    }
-    
-    static func toDomain(int16: Int16) -> PlotType {
-        guard Int(int16) < PlotType.allCases.count else { return .movie }
-        return PlotType.allCases[Int(int16)]
+    var title: String {
+        switch self {
+        case .movie: return "movie"
+        case .book: return "book"
+        case .exhibition: return "exhibition"
+        case .concert: return "concert"
+        case .music: return "music"
+        case .food: return "food"
+        case .place: return "place"
+        case .media: return "media"
+        case .etc: return "etc"
+        }
     }
 }

@@ -22,9 +22,21 @@ struct SettingView: View {
                             .font(.subheadline)
                     }
                     
-                    DisclosureGroup("Update Note") {
-                        Text("다음 업데이트 예정 사항입니다. 폴더 기능 추가, 정렬 기능 추가")
-                            .font(.subheadline)
+                    DisclosureGroup("Update Notes") {
+                        DisclosureGroup("Next Update") {
+                            Text("• Folder Functionality: Organize your plots into customizable folders for better management.")
+                                .font(.subheadline)
+                            Text("• Sorting Functionality: Sort your plots by creation date, last modified date, or alphabetically by title.")
+                                .font(.subheadline)
+                        }
+                        DisclosureGroup("Future Updates") {
+                            Text("• WatchOS Support: Access and manage your plots directly from your Apple Watch.")
+                                .font(.subheadline)
+                            Text("• MacOS Support: Enjoy a full-featured Plotfolio experience on your Mac.")
+                                .font(.subheadline)
+                            Text("• Export Options: Export your plots to PDF, TXT, or other formats for sharing or backup.")
+                                .font(.subheadline)
+                        }
                     }
                 }
             }

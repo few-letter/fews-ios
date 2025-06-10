@@ -15,7 +15,7 @@ struct FewMemoriesApp: App {
     
     init() {
         do {
-            container = try ModelContainer(for: Plot.self)
+            container = try ModelContainer(for: Plot.self, Folder.self)
         } catch {
             fatalError("Failed to create ModelContainer: \(error)")
         }
@@ -26,8 +26,10 @@ struct FewMemoriesApp: App {
             RootView(store: Store(initialState: RootStore.State()) {
                 RootStore()
             } withDependencies: { dependency in
-                let plotClient = PlotClientLive(modelContext: container.mainContext)
+                let plotClient = PlotClientLive(context: container.mainContext)
+                let folderClient = FolderClientLive(context: container.mainContext)
                 dependency.plotClient = plotClient
+                dependency.folderClient = folderClient
             })
             .environment(\.modelContext, container.mainContext)
         }

@@ -8,83 +8,162 @@
 import SwiftUI
 import ComposableArchitecture
 
-struct HomeView: View {
+public struct HomeView: View {
     @Bindable var store: StoreOf<HomeStore>
     
-    @Environment(\.isSearching) private var isSearching
-    
     public var body: some View {
-        NavigationStack(path: $store.path) {
-            VStack(spacing: .zero) {
-                List {
-                    ForEach(store.scope(state: \.filteredPlotListCells, action: \.plotListCell)) { store in
-                        PlotListCellView(store: store)
-                    }
-                    .onDelete { store.send(.delete($0)) }
-                }
-                .refreshable {
-                    store.send(.refresh)
-                }
-                
-                Spacer()
-                
-                HStack {
-                    Spacer()
-                    
-                    Button(action:{
-                        store.send(.addButtonTapped)
-                    }) {
-                        Image(systemName: "square.and.pencil")
-                            .imageScale(.large)
-                    }
-                    .padding(.horizontal)
-                }
-            }
-            .onAppear {
-                store.send(.refresh)
-            }
-            .navigationTitle("Plotfolio")
-            .toolbar {
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    HStack(spacing: 10) {
-                        EditButton()
-                        
-                        Button(action:{
+        NavigationStack(
+            path: $store.scope(state: \.path, action: \.path)
+        ) {
+            mainView
+                .navigationTitle("Folder")
+                .toolbar {
+                    ToolbarItem(placement: .navigationBarTrailing) {
+                        Button(action: {
                             store.send(.settingButtonTapped)
                         }) {
                             Image(systemName: "gearshape")
                                 .imageScale(.medium)
                         }
                     }
+                    ToolbarItem(placement: .bottomBar) {
+                        HStack {
+                            Button(action: {
+                                store.send(.addFolderButtonTapped)
+                            }) {
+                                Image(systemName: "folder.badge.plus")
+                                    .imageScale(.large)
+                            }
+                            
+                            Spacer()
+                        }
+                    }
+                }
+                .onAppear {
+                    store.send(.onAppear)
+                }
+            
+            //           mainView
+            //                .onAppear {
+            //                    store.send(.onAppear)
+            //            }
+            //            .navigationTitle(store.navigationTitle)
+            //            .toolbar {
+            //                ToolbarItem(placement: .navigationBarTrailing) {
+            //                    Button(action: {
+            //                        store.send(.setting)
+            //                    }) {
+            //                        Image(systemName: "gearshape")
+            //                            .imageScale(.medium)
+            //                    }
+            //                }
+            //
+            //                ToolbarItem(placement: .bottomBar) {
+            //                    HStack {
+            //                        if store.isShowingFolderList {
+            //                            Button(action: {
+            //                                store.send(.addFolderButtonTapped)
+            //                            }) {
+            //                                Image(systemName: "folder.badge.plus")
+            //                                    .imageScale(.large)
+            //                            }
+            //                        }
+            //
+            //                        Spacer()
+            //                    }
+            //                }
+            //            }
+        } destination: { store in
+            switch store.case {
+            case .plotList(let store):
+                PlotListView(store: store)
+            case .setting(let store):
+                SettingView(store: store)
+            }
+        }
+        //        .sheet(isPresented: $store.folder) {
+        //            newFolderSheet
+        //        }
+        //        .alert("폴더 삭제", isPresented: $store.isShowingDeleteAlert) {
+        //            Button("취소", role: .cancel) {
+        //                store.send(.dismissDeleteAlert)
+        //            }
+        //            Button("삭제", role: .destructive) {
+        //                store.send(.deleteFolderConfirmed)
+        //            }
+        //        } message: {
+        //            Text(store.deleteAlertMessage)
+        //        }
+    }
+}
+
+extension HomeView {
+    private var mainView: some View {
+        List {
+            ForEach(store.scope(state: \.folderListCells, action: \.folderListCell)) { store in
+                FolderListCellView(store: store)
+            }
+        }
+        .sheet(
+            isPresented: .init(
+                get: { store.addFolder != nil },
+                set: { _ in store.send(.dismiss) }
+            )) {
+                if let store = store.scope(state: \.addFolder, action: \.addFolder) {
+                    AddFolderView(store: store)
                 }
             }
-            .navigationDestination(for: HomeScene.self) { scene in
-                switch scene {
-                case .plot:
-                    if let store = store.scope(state: \.plot, action: \.plot.presented) {
-                        PlotView(store: store)
-                    }
-                    
-                case .setting:
-                    if let store = store.scope(state: \.setting, action: \.setting.presented) {
-                        SettingView(store: store)
-                    }
-                    
-                default:
-                    EmptyView()
-                }
-            }
-            .searchable(
-                text: Binding(
-                    get: { store.searchQuery },
-                    set: { store.send(.search($0)) }
-                ),
-                placement: .toolbar,
-                prompt: "Search"
-            )
+        
+    }
+    
+    private var addFolderSheet: some View {
+        VStack {
+            
         }
     }
 }
+
+//extension HomeView {
+//    private var mainView: some View {
+//        List {
+//            ForEach(store.scope(state: \.folders, action: \.folderListCell)) { store in
+//                FolderListCellView(store: store)
+//            }
+//        }
+//        .refreshable {
+//            store.send(.refreshFolders)
+//        }
+//    }
+//
+//    private var newFolderSheet: some View {
+//        NavigationView {
+//            VStack(spacing: 20) {
+//                TextField("New Folder", text: $store.newFolderName)
+//                    .textFieldStyle(RoundedBorderTextFieldStyle())
+//                    .padding(.horizontal)
+//
+//                Spacer()
+//            }
+//            .padding(.top)
+//            .navigationTitle("New Folder")
+//            .navigationBarTitleDisplayMode(.inline)
+//            .toolbar {
+//                ToolbarItem(placement: .navigationBarLeading) {
+//                    Button("취소") {
+//                        store.send(.newFolderSheetDismissed)
+//                    }
+//                }
+//
+//                ToolbarItem(placement: .navigationBarTrailing) {
+//                    Button("완료") {
+//                        store.send(.createNewFolder)
+//                    }
+//                    .disabled(store.newFolderName.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
+//                }
+//            }
+//        }
+//    }
+//}
 
 #Preview {
     HomeView(store: Store(initialState: HomeStore.State()) {

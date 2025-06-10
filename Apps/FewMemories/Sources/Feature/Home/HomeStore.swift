@@ -7,45 +7,52 @@
 
 import ComposableArchitecture
 import Foundation
-
-enum HomeScene: Hashable {
-    case home
-    case plot
-    case setting
-}
+import SwiftData
 
 @Reducer
-struct HomeStore {
-    @ObservableState
-    struct State: Equatable {
-        var path: [HomeScene] = []
-        
-        var searchQuery: String = ""
-        
-        var plotListCells: IdentifiedArrayOf<PlotListCellStore.State> = []
-        var filteredPlotListCells: IdentifiedArrayOf<PlotListCellStore.State> = []
-        @Presents var plot: PlotStore.State?
-        @Presents var setting: SettingStore.State?
+public struct HomeStore {
+    @Reducer
+    public enum Path {
+        case plotList(PlotListStore)
+        case setting(SettingStore)
     }
     
-    enum Action: BindableAction, Equatable {
+    @ObservableState
+    public struct State {
+        public var path = StackState<Path.State>()
+        
+        var folderToDelete: Folder?
+        var isShowingDeleteAlert = false
+        var deleteAlertMessage = ""
+        
+        public var folderListCells: IdentifiedArrayOf<FolderListCellStore.State> = []
+        public var folderDeleteAlert: Folder?
+        
+        public var addFolder: AddFolderStore.State?
+        @Shared(.appStorage("currentFolderID")) var currentFolderID: String? = nil
+        
+        public init() {}
+    }
+    
+    public enum Action: BindableAction {
         case binding(BindingAction<State>)
         
-        case refresh
-        case addButtonTapped
+        case onAppear
+        case dismiss
+        case deleteFolder(Folder)
         case settingButtonTapped
-        case fetchResponse([Plot])
-        case search(String)
-        case delete(IndexSet)
+        case addFolderButtonTapped
         
-        case plotListCell(IdentifiedActionOf<PlotListCellStore>)
-        case plot(PresentationAction<PlotStore.Action>)
-        case setting(PresentationAction<SettingStore.Action>)
+        case path(StackActionOf<Path>)
+        case addFolder(AddFolderStore.Action)
+        case folderListCell(IdentifiedActionOf<FolderListCellStore>)
     }
     
+    @Dependency(\.dismiss) var dismiss
     @Dependency(\.plotClient) var plotClient
+    @Dependency(\.folderClient) var folderClient
     
-    var body: some ReducerOf<Self> {
+    public var body: some ReducerOf<Self> {
         BindingReducer()
         
         Reduce<State, Action> { state, action in
@@ -53,70 +60,60 @@ struct HomeStore {
             case .binding:
                 return .none
                 
-            case .refresh:
-                return .send(.fetchResponse(plotClient.fetches()))
+            case .onAppear:
+                return .none
                 
-            case .addButtonTapped:
-                state.plot = PlotStore.State(plot: plotClient.createPlot())
-                state.path.append(.plot)
+            case .deleteFolder(let folder):
+                self.folderClient.delete(folder: folder)
                 return .none
                 
             case .settingButtonTapped:
-                state.setting = SettingStore.State()
-                state.path.append(.setting)
+                state.path.append(.setting(.init()))
                 return .none
                 
-            case let .search(searchQuery):
-                state.searchQuery = searchQuery
-                guard searchQuery.isEmpty == false else {
-                    state.filteredPlotListCells = state.plotListCells
+            case .addFolderButtonTapped:
+                state.addFolder = .init(name: "")
+                return .none
+                
+            case .addFolder(.delegate(let action)):
+                switch action {
+                case .confirm(let name):
+                    let folder = folderClient.create(name: name)
+                    state.folderListCells.append(.init(folder: folder))
+                    return .none
+                    
+                case .dismiss:
+                    state.addFolder = nil
                     return .none
                 }
                 
-                state.filteredPlotListCells = state.plotListCells.filter({
-                    $0.plot.title?.lowercased().contains(searchQuery.lowercased()) == true ||
-                    $0.plot.content?.lowercased().contains(searchQuery.lowercased()) == true
-                })
-                
+            case .dismiss:
+                state.addFolder = nil
                 return .none
                 
-            case let .fetchResponse(plots):
-                state.plotListCells = []
-                plots.forEach({ plot in
-                    state.plotListCells.append(PlotListCellStore.State(id: UUID(), plot: plot))
-                })
-                state.filteredPlotListCells = state.plotListCells
-                return .none
+            case .folderListCell(.element(id: let id, action: .delegate(let action))):
+                guard let folder = state.folderListCells[id: id]?.folder else { return .none }
                 
-            case let .delete(indexSet):
-                for index in indexSet {
-                    let plot = state.plotListCells[index].plot
-                    plotClient.delete(plot: plot)
+                switch action {
+                case .tapped:
+                    state.path.append(.plotList(.init(folder: folder)))
+                    return .none
+                    
+                case .delete:
+                    state.folderDeleteAlert = folder
+                    return .none
                 }
-                return .send(.refresh)
                 
-            case let .plotListCell(.element(id: id, action: .tapped)):
-                if let plot = state.plotListCells.first(where: { $0.id == id })?.plot {
-                    state.plot = PlotStore.State(plot: plot)
-                    state.path.append(.plot)
-                }
-                return .none
-                
-            case .plotListCell:
-                return .none
-                
-            case .plot, .setting:
+            case .folderListCell, .path, .addFolder:
                 return .none
             }
         }
-        .forEach(\.plotListCells, action: \.plotListCell) {
-            PlotListCellStore()
+        .ifLet(\.addFolder, action: \.addFolder) {
+            AddFolderStore()
         }
-        .ifLet(\.$plot, action: \.plot) {
-            PlotStore()
+        .forEach(\.folderListCells, action: \.folderListCell) {
+            FolderListCellStore()
         }
-        .ifLet(\.$setting, action: \.setting) {
-            SettingStore()
-        }
+        .forEach(\.path, action: \.path)
     }
 }

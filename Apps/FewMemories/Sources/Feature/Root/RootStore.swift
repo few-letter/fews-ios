@@ -7,33 +7,26 @@
 
 import ComposableArchitecture
 
-enum RootScene: Hashable {
+public enum RootScene: Hashable {
     case home
 }
 
 @Reducer
-struct RootStore {
+public struct RootStore {
     @ObservableState
-    struct State: Equatable {
+    public struct State {
         var path: [RootScene] = []
         
         var home: HomeStore.State = .init()
     }
     
-    enum Action: BindableAction, Equatable {
-        case binding(BindingAction<State>)
-        
+    public enum Action {
         case home(HomeStore.Action)
     }
     
-    var body: some ReducerOf<Self> {
-        BindingReducer()
-        
+    public var body: some ReducerOf<Self> {
         Reduce<State, Action> { state, action in
             switch action {
-            case .binding:
-                return .none
-                
             case .home:
                 return .none
             }

@@ -9,24 +9,22 @@ import Foundation
 import ComposableArchitecture
 
 @Reducer
-struct SettingStore {
+public struct SettingStore {
     @ObservableState
-    struct State: Equatable {
+    public struct State: Equatable {
         init() { }
     }
     
-    enum Action: BindableAction, Equatable {
-        case binding(BindingAction<State>)
+    public enum Action: Equatable {
+        case onAppear
     }
     
     @Dependency(\.plotClient) var plotClient
     
-    var body: some ReducerOf<Self> {
-        BindingReducer()
-        
+    public var body: some ReducerOf<Self> {
         Reduce<State, Action> { state, action in
             switch action {
-            case .binding:
+            case .onAppear:
                 return .none
             }
         }

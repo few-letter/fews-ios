@@ -9,7 +9,7 @@ import SwiftUI
 import SwiftData
 import ComposableArchitecture
 
-struct RootView: View {
+public struct RootView: View {
     public let store: StoreOf<RootStore>
     
     public var body: some View {

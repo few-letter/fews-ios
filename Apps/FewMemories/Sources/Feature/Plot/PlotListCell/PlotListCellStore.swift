@@ -9,18 +9,18 @@ import Foundation
 import ComposableArchitecture
 
 @Reducer
-struct PlotListCellStore {
+public struct PlotListCellStore {
     @ObservableState
-    struct State: Equatable, Identifiable {
-        let id: UUID
-        let plot: Plot
+    public struct State: Equatable, Identifiable {
+        public let id: UUID
+        public let plot: Plot
     }
     
-    enum Action: Equatable {
+    public enum Action: Equatable {
         case tapped
     }
     
-    var body: some ReducerOf<Self> {
+    public var body: some ReducerOf<Self> {
         Reduce { state, action in
             switch action {
             case .tapped:

@@ -11,8 +11,7 @@ import SwiftData
 
 public protocol PlotClient {
     func create(folder: Folder?) -> Plot
-    func fetches() -> [Plot]
-    func fetches(folder: Folder) -> [Plot]
+    func fetches(folder: Folder?) -> [Plot]
     func update(plot: Plot) -> Void
     func delete(plot: Plot) -> Void
 }
@@ -27,5 +26,3 @@ extension DependencyValues {
         set { self[PlotClientKey.self] = newValue }
     }
 }
-
-

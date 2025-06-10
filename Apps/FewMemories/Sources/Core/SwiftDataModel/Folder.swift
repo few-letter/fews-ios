@@ -28,3 +28,5 @@ public final class Folder: Equatable {
         self.createdDate = createdDate
     }
 }
+
+public typealias FolderID = UUID

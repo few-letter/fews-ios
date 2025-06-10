@@ -21,27 +21,21 @@ public class PlotClientLive: PlotClient {
         return plot
     }
     
-    public func fetches() -> [Plot] {
+    public func fetches(folder: Folder?) -> [Plot] {
         do {
-            let descriptor = FetchDescriptor<Plot>(
-                sortBy: [.init(\.date)]
-            )
-            let result = try context.fetch(descriptor)
-            return result
-        } catch {
-            return []
-        }
-    }
-    
-    public func fetches(folder: Folder) -> [Plot] {
-        do {
-            let folderId: PersistentIdentifier = folder.id
-            let descriptor = FetchDescriptor<Plot>(
-                predicate: #Predicate { plot in
-                    plot.folder?.id == folderId
-                },
-                sortBy: [.init(\.date)]
-            )
+            var descriptor: FetchDescriptor<Plot>
+            if let folderID = folder?.id {
+                descriptor = FetchDescriptor<Plot>(
+                    predicate: #Predicate { plot in
+                        plot.folder?.id == folderID
+                    },
+                    sortBy: [.init(\.date)]
+                )
+            } else {
+                descriptor = FetchDescriptor<Plot>(
+                    sortBy: [.init(\.date)]
+                )
+            }
             let result = try context.fetch(descriptor)
             return result
         } catch {
@@ -79,11 +73,7 @@ public class PlotClientTest: PlotClient {
         fatalError()
     }
     
-    public func fetches() -> [Plot] {
-        fatalError()
-    }
-    
-    public func fetches(folder: Folder) -> [Plot] {
+    public func fetches(folder: Folder?) -> [Plot] {
         fatalError()
     }
     

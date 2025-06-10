@@ -8,8 +8,8 @@
 import SwiftUI
 import ComposableArchitecture
 
-struct FolderListCellView: View {
-    @Bindable var store: StoreOf<FolderListCellStore>
+struct FolderTypeListCellView: View {
+    @Bindable var store: StoreOf<FolderTypeListCellStore>
     
     var body: some View {
         Button(action: {
@@ -21,11 +21,11 @@ struct FolderListCellView: View {
                     .font(.title2)
                 
                 VStack(alignment: .leading, spacing: 2) {
-                    Text(store.folder.name ?? "Unknown")
+                    Text(store.folderType.name)
                         .font(.headline)
                         .foregroundColor(.primary)
                     
-                    Text("\(store.plotCount) memos")
+                    Text("\(store.folderType.count) memos")
                         .font(.caption)
                         .foregroundColor(.secondary)
                 }

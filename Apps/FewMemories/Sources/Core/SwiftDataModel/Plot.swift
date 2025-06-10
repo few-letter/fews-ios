@@ -34,3 +34,5 @@ public final class Plot {
         self.folder = folder
     }
 }
+
+public typealias PlotID = PersistentIdentifier

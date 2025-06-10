@@ -13,8 +13,8 @@ struct PlotListView: View {
     
     var body: some View {
         List {
-            ForEach(store.scope(state: \.filteredPlotListCells, action: \.plotListCell)) { cellStore in
-                PlotListCellView(store: cellStore)
+            ForEach(store.scope(state: \.plotListCells, action: \.plotListCell)) { store in
+                PlotListCellView(store: store)
             }
             .onDelete { store.send(.delete($0)) }
         }
@@ -24,7 +24,7 @@ struct PlotListView: View {
         .onAppear {
             store.send(.onAppear)
         }
-        .navigationTitle(store.folder.name ?? "Memories")
+        .navigationTitle(store.folderType.name)
         .toolbar {
             ToolbarItem(placement: .navigationBarTrailing) {
                 EditButton()
@@ -43,13 +43,5 @@ struct PlotListView: View {
                 }
             }
         }
-        .searchable(
-            text: Binding(
-                get: { store.searchQuery },
-                set: { store.send(.search($0)) }
-            ),
-            placement: .toolbar,
-            prompt: "Search"
-        )
     }
 } 

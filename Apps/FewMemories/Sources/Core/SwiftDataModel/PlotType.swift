@@ -7,7 +7,7 @@
 
 import Foundation
 
-enum PlotType: Int, CaseIterable {
+public enum PlotType: Int, CaseIterable {
     case movie
     case book
     case exhibition

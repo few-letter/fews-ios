@@ -100,8 +100,8 @@ public struct HomeView: View {
 extension HomeView {
     private var mainView: some View {
         List {
-            ForEach(store.scope(state: \.folderListCells, action: \.folderListCell)) { store in
-                FolderListCellView(store: store)
+            ForEach(store.scope(state: \.folderTypeListCells, action: \.folderTypeListCell)) { store in
+                FolderTypeListCellView(store: store)
             }
         }
         .sheet(

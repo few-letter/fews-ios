@@ -1,41 +1,48 @@
 //
-//  EditPlotStore.swift
-//  plotfolio
+//  PlotListStore.swift
+//  FewMemories
 //
-//  Created by 송영모 on 2023/05/21.
+//  Created by Extension on 2024.
 //
 
-import Foundation
 import ComposableArchitecture
+import Foundation
 
 @Reducer
 public struct PlotStore {
     @ObservableState
     public struct State: Equatable {
-        var plot: Plot
+        public let folderType: FolderType
         
-        var point: Double
-        var date: Date
-        var type: Int
+        public var plotListCells: IdentifiedArrayOf<PlotListCellStore.State>
         
-        public init(plot: Plot) {
-            self.plot = plot
-            self.point = plot.point ?? .init()
-            self.date = plot.date ?? .init()
-            self.type = plot.type ?? .init()
+        public init(folderType: FolderType) {
+            self.folderType = folderType
+            self.plotListCells = .init(uniqueElements: folderType.plots.map { plot in
+                return .init(plot: plot)
+            })
         }
     }
     
     public enum Action: BindableAction, Equatable {
         case binding(BindingAction<State>)
         
-        case titleChanged(String)
-        case contentChanged(String)
-        case dateChanged(Date)
-        case typeChanged(Int)
-        case pointChanged(Double)
+        case onAppear
         
-        case saveRequest
+        case addButtonTapped
+        case delete(IndexSet)
+        case refresh
+        
+        case fetch
+        case fetched([Plot])
+        
+        case plotListCell(IdentifiedActionOf<PlotListCellStore>)
+        
+        case delegate(Delegate)
+        
+        public enum Delegate: Equatable {
+            case requestAddPlot(Plot)
+        }
     }
     
     @Dependency(\.plotClient) var plotClient
@@ -48,35 +55,48 @@ public struct PlotStore {
             case .binding:
                 return .none
                 
-            case let .titleChanged(title):
-                state.plot.title = title
-                return .send(.saveRequest)
+            case .onAppear:
+                return .none
                 
-            case let .contentChanged(content):
-                state.plot.content = content
-                return .send(.saveRequest)
+            case .addButtonTapped:
+                let plot = plotClient.create(folder: state.folderType.folder)
+                return .send(.delegate(.requestAddPlot(plot)))
                 
-            case let .dateChanged(date):
-                state.plot.date = date
-                state.date = date
-                return .send(.saveRequest)
-                
-            case let .typeChanged(type):
-                state.plot.type = type
-                state.type = type
-                return .send(.saveRequest)
-                
-            case let .pointChanged(point):
-                state.plot.point = point
-                state.point = point
-                return .send(.saveRequest)
-                
-            case .saveRequest:
-                if state.plot.title?.isEmpty == false || state.plot.content?.isEmpty == false {
-                    plotClient.update(plot: state.plot)
+            case let .delete(indexSet):
+                for index in indexSet {
+                    let cell = state.plotListCells.remove(at: index)
+                    plotClient.delete(plot: cell.plot)
                 }
+                return .send(.refresh)
+                
+            case .refresh:
+                return .send(.fetch)
+                
+            case .fetch:
+                let plots = plotClient.fetches(folder: state.folderType.folder)
+                return .send(.fetched(plots))
+                
+            case .fetched(let plots):
+                state.plotListCells = .init(uniqueElements: plots.map { plot in
+                    return .init(plot: plot)
+                })
+                return .none
+                
+            case .plotListCell(.element(id: let id, action: .delegate(let action))):
+                switch action {
+                case .tapped:
+                    if let plot = state.plotListCells[id: id]?.plot {
+                        return .send(.delegate(.requestAddPlot(plot)))
+                    }
+                }
+                return .none
+                
+            case .plotListCell, .delegate:
                 return .none
             }
         }
+        .forEach(\.plotListCells, action: \.plotListCell) {
+            PlotListCellStore()
+        }
     }
-}
+} 

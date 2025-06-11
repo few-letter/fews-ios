@@ -16,67 +16,15 @@ public struct HomeView: View {
             path: $store.scope(state: \.path, action: \.path)
         ) {
             mainView
-                .navigationTitle("Folder")
-                .toolbar {
-                    ToolbarItem(placement: .navigationBarTrailing) {
-                        Button(action: {
-                            store.send(.settingButtonTapped)
-                        }) {
-                            Image(systemName: "gearshape")
-                                .imageScale(.medium)
-                        }
-                    }
-                    ToolbarItem(placement: .bottomBar) {
-                        HStack {
-                            Button(action: {
-                                store.send(.addFolderButtonTapped)
-                            }) {
-                                Image(systemName: "folder.badge.plus")
-                                    .imageScale(.large)
-                            }
-                            
-                            Spacer()
-                        }
-                    }
-                }
                 .onAppear {
                     store.send(.onAppear)
                 }
-            
-            //           mainView
-            //                .onAppear {
-            //                    store.send(.onAppear)
-            //            }
-            //            .navigationTitle(store.navigationTitle)
-            //            .toolbar {
-            //                ToolbarItem(placement: .navigationBarTrailing) {
-            //                    Button(action: {
-            //                        store.send(.setting)
-            //                    }) {
-            //                        Image(systemName: "gearshape")
-            //                            .imageScale(.medium)
-            //                    }
-            //                }
-            //
-            //                ToolbarItem(placement: .bottomBar) {
-            //                    HStack {
-            //                        if store.isShowingFolderList {
-            //                            Button(action: {
-            //                                store.send(.addFolderButtonTapped)
-            //                            }) {
-            //                                Image(systemName: "folder.badge.plus")
-            //                                    .imageScale(.large)
-            //                            }
-            //                        }
-            //
-            //                        Spacer()
-            //                    }
-            //                }
-            //            }
         } destination: { store in
             switch store.case {
-            case .plotList(let store):
-                PlotListView(store: store)
+            case .plot(let store):
+                PlotView(store: store)
+            case .addPlot(let store):
+                AddPlotView(store: store)
             case .setting(let store):
                 SettingView(store: store)
             }
@@ -99,27 +47,17 @@ public struct HomeView: View {
 
 extension HomeView {
     private var mainView: some View {
-        List {
-            ForEach(store.scope(state: \.folderTypeListCells, action: \.folderTypeListCell)) { store in
-                FolderTypeListCellView(store: store)
-            }
-        }
-        .sheet(
-            isPresented: .init(
-                get: { store.addFolder != nil },
-                set: { _ in store.send(.dismiss) }
-            )) {
-                if let store = store.scope(state: \.addFolder, action: \.addFolder) {
-                    AddFolderView(store: store)
+        FolderView(store: store.scope(state: \.folder, action: \.folder))
+            .sheet(
+                isPresented: .init(
+                    get: { store.addFolder != nil },
+                    set: { _ in store.send(.dismiss) }
+                )) {
+                    if let store = store.scope(state: \.addFolder, action: \.addFolder) {
+                        AddFolderView(store: store)
+                    }
                 }
-            }
         
-    }
-    
-    private var addFolderSheet: some View {
-        VStack {
-            
-        }
     }
 }
 
@@ -164,10 +102,3 @@ extension HomeView {
 //        }
 //    }
 //}
-
-#Preview {
-    HomeView(store: Store(initialState: HomeStore.State()) {
-        HomeStore()
-    })
-}
-

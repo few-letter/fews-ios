@@ -40,10 +40,12 @@ struct FolderTypeListCellView: View {
         }
         .buttonStyle(PlainButtonStyle())
         .contextMenu {
-            Button(role: .destructive, action: {
-                store.send(.deleteButtonTapped)
-            }) {
-                Label("Delete Folder", systemImage: "trash")
+            if let id = store.folderType.id {
+                Button(role: .destructive, action: {
+                    store.send(.deleteButtonTapped(id))
+                }) {
+                    Label("Delete Folder", systemImage: "trash")
+                }
             }
         }
     }

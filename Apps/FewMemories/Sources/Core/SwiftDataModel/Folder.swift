@@ -10,7 +10,7 @@ import SwiftData
 
 @Model
 public final class Folder: Equatable {
-    public var id: UUID?
+    public var id: String?
     public var name: String?
     public var createdDate: Date?
     
@@ -18,7 +18,7 @@ public final class Folder: Equatable {
     public var plots: [Plot]? = []
     
     public init(
-        id: UUID = UUID(),
+        id: String = UUID().uuidString,
         name: String,
         createdDate: Date = Date(),
         isDefault: Bool = false
@@ -29,4 +29,4 @@ public final class Folder: Equatable {
     }
 }
 
-public typealias FolderID = UUID
+public typealias FolderID = String

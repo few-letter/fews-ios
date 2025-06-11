@@ -21,27 +21,14 @@ public struct HomeView: View {
                 }
         } destination: { store in
             switch store.case {
-            case .folderDetail(let store):
-                FolderDetailView(store: store)
+            case .folderTree(let store):
+                FolderTreeView(store: store)
             case .addPlot(let store):
                 AddPlotView(store: store)
             case .setting(let store):
                 SettingView(store: store)
             }
         }
-        //        .sheet(isPresented: $store.folder) {
-        //            newFolderSheet
-        //        }
-        //        .alert("폴더 삭제", isPresented: $store.isShowingDeleteAlert) {
-        //            Button("취소", role: .cancel) {
-        //                store.send(.dismissDeleteAlert)
-        //            }
-        //            Button("삭제", role: .destructive) {
-        //                store.send(.deleteFolderConfirmed)
-        //            }
-        //        } message: {
-        //            Text(store.deleteAlertMessage)
-        //        }
     }
 }
 
@@ -60,45 +47,3 @@ extension HomeView {
         
     }
 }
-
-//extension HomeView {
-//    private var mainView: some View {
-//        List {
-//            ForEach(store.scope(state: \.folders, action: \.folderListCell)) { store in
-//                FolderListCellView(store: store)
-//            }
-//        }
-//        .refreshable {
-//            store.send(.refreshFolders)
-//        }
-//    }
-//
-//    private var newFolderSheet: some View {
-//        NavigationView {
-//            VStack(spacing: 20) {
-//                TextField("New Folder", text: $store.newFolderName)
-//                    .textFieldStyle(RoundedBorderTextFieldStyle())
-//                    .padding(.horizontal)
-//
-//                Spacer()
-//            }
-//            .padding(.top)
-//            .navigationTitle("New Folder")
-//            .navigationBarTitleDisplayMode(.inline)
-//            .toolbar {
-//                ToolbarItem(placement: .navigationBarLeading) {
-//                    Button("취소") {
-//                        store.send(.newFolderSheetDismissed)
-//                    }
-//                }
-//
-//                ToolbarItem(placement: .navigationBarTrailing) {
-//                    Button("완료") {
-//                        store.send(.createNewFolder)
-//                    }
-//                    .disabled(store.newFolderName.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
-//                }
-//            }
-//        }
-//    }
-//}

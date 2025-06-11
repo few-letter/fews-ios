@@ -8,8 +8,8 @@
 import SwiftUI
 import ComposableArchitecture
 
-public struct FolderDetailView: View {
-    @Bindable var store: StoreOf<FolderDetailStore>
+public struct FolderTreeView: View {
+    @Bindable var store: StoreOf<FolderTreeStore>
     
     public var body: some View {
         mainView
@@ -19,7 +19,7 @@ public struct FolderDetailView: View {
     }
 }
 
-extension FolderDetailView {
+extension FolderTreeView {
     private var mainView: some View {
         list
             .navigationTitle(store.folderType.name)
@@ -48,21 +48,26 @@ extension FolderDetailView {
                     }
                 }
             }
+            .alert($store.scope(state: \.alert, action: \.alert))
     }
     
     private var list: some View {
         List {
-            Section("title1") {
-                ForEach(store.scope(state: \.folderTypeListCells, action: \.folderTypeListCell)) { store in
-                    FolderTypeListCellView(store: store)
+            if !store.folderTypeListCells.isEmpty {
+                Section("Folders") {
+                    ForEach(store.scope(state: \.folderTypeListCells, action: \.folderTypeListCell)) { store in
+                        FolderTypeListCellView(store: store)
+                    }
                 }
             }
             
-            Section("title2") {
-                ForEach(store.scope(state: \.plotListCells, action: \.plotListCell)) { store in
-                    PlotListCellView(store: store)
+            if !store.plotListCells.isEmpty {
+                Section("Memos") {
+                    ForEach(store.scope(state: \.plotListCells, action: \.plotListCell)) { store in
+                        PlotListCellView(store: store)
+                    }
+                    .onDelete { store.send(.delete($0)) }
                 }
-                .onDelete { store.send(.delete($0)) }
             }
         }
         .refreshable {

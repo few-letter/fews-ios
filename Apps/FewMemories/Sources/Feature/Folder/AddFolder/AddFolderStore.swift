@@ -12,9 +12,11 @@ import ComposableArchitecture
 public struct AddFolderStore {
     @ObservableState
     public struct State: Equatable {
+        public var parentFolder: Folder?
         public var name: String
         
-        public init(name: String) {
+        public init(parentFolder: Folder?, name: String) {
+            self.parentFolder = parentFolder
             self.name = name
         }
     }
@@ -29,7 +31,7 @@ public struct AddFolderStore {
         case delegate(Delegate)
         
         public enum Delegate: Equatable {
-            case confirm(String)
+            case confirm(Folder?, String)
             case dismiss
         }
     }
@@ -43,7 +45,7 @@ public struct AddFolderStore {
                 return .none
                 
             case .confirm:
-                return .send(.delegate(.confirm(state.name)))
+                return .send(.delegate(.confirm(state.parentFolder, state.name)))
                 
             case .cancel:
                 return .send(.delegate(.dismiss))

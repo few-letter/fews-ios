@@ -13,6 +13,7 @@ public struct FolderStore {
     @ObservableState
     public struct State: Equatable {
         public var folderTypeListCells: IdentifiedArrayOf<FolderTypeListCellStore.State>
+        
         @Presents var alert: AlertState<Action.Alert>?
         
         public init(
@@ -82,7 +83,7 @@ public struct FolderStore {
                 return .send(.fetch)
                 
             case .fetch:
-                let folders: [Folder] = folderClient.fetches()
+                let folders: [Folder] = folderClient.fetches(parentFolder: nil)
                 let plots: [Plot] = plotClient.fetches(folder: nil)
                 return .send(.fetched(folders, plots))
                 

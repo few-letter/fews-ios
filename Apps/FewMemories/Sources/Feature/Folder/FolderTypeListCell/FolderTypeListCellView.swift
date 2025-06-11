@@ -8,33 +8,30 @@
 import SwiftUI
 import ComposableArchitecture
 
-struct FolderTypeListCellView: View {
+public struct FolderTypeListCellView: View {
     @Bindable var store: StoreOf<FolderTypeListCellStore>
     
-    var body: some View {
+    public var body: some View {
         Button(action: {
             store.send(.tapped)
         }) {
             HStack {
-                Image(systemName: "folder.fill")
+                Image(systemName: "folder")
                     .foregroundColor(.blue)
-                    .font(.title2)
                 
-                VStack(alignment: .leading, spacing: 2) {
-                    Text(store.folderType.name)
-                        .font(.headline)
-                        .foregroundColor(.primary)
-                    
-                    Text("\(store.folderType.count) memos")
-                        .font(.caption)
-                        .foregroundColor(.secondary)
-                }
+                Text(store.folderType.name)
+                    .foregroundColor(.primary)
                 
                 Spacer()
+                
+                Text("\(store.folderType.count)")
+                    .foregroundColor(.secondary)
+                    .font(.callout)
                 
                 Image(systemName: "chevron.right")
                     .foregroundColor(.secondary)
                     .font(.caption)
+                    .fontWeight(.semibold)
             }
             .padding(.vertical, 4)
         }

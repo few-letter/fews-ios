@@ -17,11 +17,16 @@ public final class Folder: Equatable {
     @Relationship(deleteRule: .cascade, inverse: \Plot.folder)
     public var plots: [Plot]? = []
     
+    @Relationship(deleteRule: .cascade, inverse: \Folder.parentFolder)
+    public var folders: [Folder]? = []
+    
+    @Relationship
+    public var parentFolder: Folder?
+    
     public init(
         id: String = UUID().uuidString,
         name: String,
         createdDate: Date = Date(),
-        isDefault: Bool = false
     ) {
         self.id = id
         self.name = name

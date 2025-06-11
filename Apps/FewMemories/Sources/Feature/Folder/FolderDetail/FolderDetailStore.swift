@@ -9,15 +9,26 @@ import ComposableArchitecture
 import Foundation
 
 @Reducer
-public struct PlotStore {
+public struct FolderDetailStore {
     @ObservableState
     public struct State: Equatable {
         public let folderType: FolderType
         
+        public var folderTypeListCells: IdentifiedArrayOf<FolderTypeListCellStore.State>
         public var plotListCells: IdentifiedArrayOf<PlotListCellStore.State>
         
-        public init(folderType: FolderType) {
+        public init(
+            folderType: FolderType
+        ) {
             self.folderType = folderType
+            
+            if let folders = folderType.folder?.folders  {
+                self.folderTypeListCells = .init(uniqueElements: folders.map { folder in
+                    return .init(folderType: .folder(folder))
+                })
+            } else {
+                self.folderTypeListCells = []
+            }
             self.plotListCells = .init(uniqueElements: folderType.plots.map { plot in
                 return .init(plot: plot)
             })
@@ -29,23 +40,27 @@ public struct PlotStore {
         
         case onAppear
         
-        case addButtonTapped
+        case addFolderButtonTapped(Folder)
+        case addPlotButtonTapped
         case delete(IndexSet)
         case refresh
         
         case fetch
         case fetched([Plot])
         
+        case folderTypeListCell(IdentifiedActionOf<FolderTypeListCellStore>)
         case plotListCell(IdentifiedActionOf<PlotListCellStore>)
         
         case delegate(Delegate)
         
         public enum Delegate: Equatable {
             case requestAddPlot(Plot)
+            case requestAddFolder(Folder)
         }
     }
     
     @Dependency(\.plotClient) var plotClient
+    @Dependency(\.folderClient) var folderClient
     
     public var body: some ReducerOf<Self> {
         BindingReducer()
@@ -58,7 +73,10 @@ public struct PlotStore {
             case .onAppear:
                 return .none
                 
-            case .addButtonTapped:
+            case .addFolderButtonTapped(let folder):
+                return .send(.delegate(.requestAddFolder(folder)))
+                
+            case .addPlotButtonTapped:
                 let plot = plotClient.create(folder: state.folderType.folder)
                 return .send(.delegate(.requestAddPlot(plot)))
                 
@@ -91,12 +109,15 @@ public struct PlotStore {
                 }
                 return .none
                 
-            case .plotListCell, .delegate:
+            case .plotListCell, .delegate, .folderTypeListCell:
                 return .none
             }
         }
         .forEach(\.plotListCells, action: \.plotListCell) {
             PlotListCellStore()
         }
+        .forEach(\.folderTypeListCells, action: \.folderTypeListCell) {
+            FolderTypeListCellStore()
+        }
     }
-} 
+}

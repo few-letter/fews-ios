@@ -5,6 +5,7 @@
 //  Created by 송영모 on 6/10/25.
 //
 
+import Foundation
 import SwiftData
 
 public class FolderClientLive: FolderClient {
@@ -14,19 +15,34 @@ public class FolderClientLive: FolderClient {
         self.context = context
     }
     
-    public func create(name: String) -> Folder {
+    public func create(parentFolder: Folder?, name: String) -> Folder {
         let folder = Folder(name: name)
+        folder.parentFolder = parentFolder
+        if let parentFolder = parentFolder {
+            parentFolder.folders?.append(folder)
+        }
         self.save(folder)
         return folder
     }
     
-    public func fetches() -> [Folder] {
+    public func fetches(parentFolder: Folder?) -> [Folder] {
         do {
-            let descriptor = FetchDescriptor<Folder>(
-                sortBy: [.init(\.createdDate)]
-            )
-            let result = try context.fetch(descriptor)
-            return result
+            if let parentFolderID = parentFolder?.id {
+                let descriptor: FetchDescriptor<Folder> = .init(
+                    predicate: #Predicate { folder in
+                        folder.parentFolder?.id == parentFolderID
+                    },
+                    sortBy: [.init(\.createdDate)]
+                )
+                let result = try context.fetch(descriptor)
+                return result
+            } else {
+                let descriptor: FetchDescriptor<Folder> = .init(
+                    sortBy: [.init(\.createdDate)]
+                )
+                let result = try context.fetch(descriptor)
+                return result.filter { $0.parentFolder == nil }
+            }
         } catch {
             return []
         }
@@ -59,11 +75,11 @@ public class FolderClientLive: FolderClient {
 }
 
 public class FolderClientTest: FolderClient {
-    public func create(name: String) -> Folder {
+    public func create(parentFolder: Folder?, name: String) -> Folder {
         fatalError()
     }
     
-    public func fetches() -> [Folder] {
+    public func fetches(parentFolder: Folder?) -> [Folder] {
         fatalError()
     }
     

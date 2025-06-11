@@ -21,8 +21,8 @@ public struct HomeView: View {
                 }
         } destination: { store in
             switch store.case {
-            case .plot(let store):
-                PlotView(store: store)
+            case .folderDetail(let store):
+                FolderDetailView(store: store)
             case .addPlot(let store):
                 AddPlotView(store: store)
             case .setting(let store):

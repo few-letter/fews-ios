@@ -13,7 +13,7 @@ import SwiftData
 public struct HomeStore {
     @Reducer
     public enum Path {
-        case plot(PlotStore)
+        case folderDetail(FolderDetailStore)
         case addPlot(AddPlotStore)
         case setting(SettingStore)
     }
@@ -68,24 +68,34 @@ public struct HomeStore {
                 state.addFolder = nil
                 return .none
                 
+            case .path(.element(id: let id, action: .folderDetail(.delegate(let action)))):
+                switch action {
+                case .requestAddPlot(let plot):
+                    state.path.append(.addPlot(.init(plot: plot)))
+                    return .none
+                case .requestAddFolder(let folder):
+                    state.addFolder = .init(parentFolder: folder, name: "")
+                    return .none
+                }
+                
             case .folder(.delegate(let action)):
                 switch action {
                 case .requestSetting:
                     state.path.append(.setting(.init()))
                 case .requestPlot(let folderType):
-                    state.path.append(.plot(.init(folderType: folderType)))
+                    state.path.append(.folderDetail(.init(folderType: folderType)))
                 case .requestAddPlot:
                     let plot = plotClient.create(folder: nil)
                     state.path.append(.addPlot(.init(plot: plot)))
                 case .requestAddFolder:
-                    state.addFolder = .init(name: "")
+                    state.addFolder = .init(parentFolder: nil, name: "")
                 }
                 return .none
                 
             case .addFolder(.delegate(let action)):
                 switch action {
-                case .confirm(let name):
-                    let _ = folderClient.create(name: name)
+                case .confirm(let parentFolder, let name):
+                    let _ = folderClient.create(parentFolder: parentFolder, name: name)
                     return .none
                 case .dismiss:
                     break

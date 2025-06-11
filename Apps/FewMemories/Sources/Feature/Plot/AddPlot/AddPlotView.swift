@@ -128,7 +128,7 @@ public struct AddPlotView: View {
                                 .foregroundColor(Color(.label))
                         }
                     )
-                    Text("\(type.rawValue)")
+                    Text("\(type.title)")
                         .font(.footnote)
                         .fontWeight(.medium)
                 }

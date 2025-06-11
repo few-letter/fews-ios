@@ -10,8 +10,8 @@ import ComposableArchitecture
 import SwiftData
 
 public protocol FolderClient {
-    func create(name: String) -> Folder
-    func fetches() -> [Folder]
+    func create(parentFolder: Folder?, name: String) -> Folder
+    func fetches(parentFolder: Folder?) -> [Folder]
     func update(folder: Folder) -> Void
     func delete(folder: Folder) -> Void
 }

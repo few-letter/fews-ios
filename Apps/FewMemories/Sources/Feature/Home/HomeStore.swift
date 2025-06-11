@@ -23,18 +23,15 @@ public struct HomeStore {
         public var path: StackState<Path.State>
         
         public var folder: FolderStore.State
-        public var addFolder: AddFolderStore.State?
         
         @Shared(.appStorage("currentFolderID")) var currentFolderID: String? = nil
         
         public init(
             path: StackState<Path.State> = .init(),
             folder: FolderStore.State = .init(),
-            addFolder: AddFolderStore.State? = nil,
         ) {
             self.path = path
             self.folder = folder
-            self.addFolder = addFolder
         }
     }
     
@@ -43,11 +40,8 @@ public struct HomeStore {
         
         case onAppear
         
-        case dismiss
-        
         case path(StackActionOf<Path>)
         case folder(FolderStore.Action)
-        case addFolder(AddFolderStore.Action)
     }
     
     @Dependency(\.plotClient) var plotClient
@@ -64,17 +58,10 @@ public struct HomeStore {
             case .onAppear:
                 return .none
                 
-            case .dismiss:
-                state.addFolder = nil
-                return .none
-                
-            case .path(.element(id: let id, action: .folderTree(.delegate(let action)))):
+            case .path(.element(id: _, action: .folderTree(.delegate(let action)))):
                 switch action {
                 case .requestAddPlot(let plot):
                     state.path.append(.addPlot(.init(plot: plot)))
-                    return .none
-                case .requestAddFolder(let folder):
-                    state.addFolder = .init(parentFolder: folder, name: "")
                     return .none
                 case .requestFolderTree(let folderType):
                     state.path.append(.folderTree(.init(folderType: folderType)))
@@ -90,31 +77,15 @@ public struct HomeStore {
                 case .requestAddPlot:
                     let plot = plotClient.create(folder: nil)
                     state.path.append(.addPlot(.init(plot: plot)))
-                case .requestAddFolder:
-                    state.addFolder = .init(parentFolder: nil, name: "")
                 }
                 return .none
                 
-            case .addFolder(.delegate(let action)):
-                switch action {
-                case .confirm(let parentFolder, let name):
-                    let _ = folderClient.create(parentFolder: parentFolder, name: name)
-                    return .none
-                case .dismiss:
-                    break
-                }
-                state.addFolder = nil
-                return .none
-                
-            case .path, .folder, .addFolder:
+            case .path, .folder:
                 return .none
             }
         }
         Scope(state: \.folder, action: \.folder) {
             FolderStore()
-        }
-        .ifLet(\.addFolder, action: \.addFolder) {
-            AddFolderStore()
         }
         .forEach(\.path, action: \.path)
     }

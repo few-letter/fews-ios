@@ -25,24 +25,36 @@ public class FolderClientLive: FolderClient {
         return folder
     }
     
-    public func fetches(parentFolder: Folder?) -> [Folder] {
+    public func fetchRoots() -> [Folder] {
         do {
-            if let parentFolderID = parentFolder?.id {
-                let descriptor: FetchDescriptor<Folder> = .init(
+            let descriptor: FetchDescriptor<Folder> = .init(
+                sortBy: [.init(\.createdDate)]
+            )
+            let result = try context.fetch(descriptor)
+            return result.filter { $0.parentFolder == nil }
+        } catch {
+            return []
+        }
+    }
+    
+    public func fetches(parentFolder: Folder) -> [Folder] {
+        do {
+            var descriptor: FetchDescriptor<Folder>
+            
+            if let parentFolderID = parentFolder.id {
+                descriptor = .init(
                     predicate: #Predicate { folder in
                         folder.parentFolder?.id == parentFolderID
                     },
                     sortBy: [.init(\.createdDate)]
                 )
-                let result = try context.fetch(descriptor)
-                return result
             } else {
-                let descriptor: FetchDescriptor<Folder> = .init(
+                descriptor = .init(
                     sortBy: [.init(\.createdDate)]
                 )
-                let result = try context.fetch(descriptor)
-                return result.filter { $0.parentFolder == nil }
             }
+            let result = try context.fetch(descriptor)
+            return result
         } catch {
             return []
         }
@@ -79,7 +91,11 @@ public class FolderClientTest: FolderClient {
         fatalError()
     }
     
-    public func fetches(parentFolder: Folder?) -> [Folder] {
+    public func fetchRoots() -> [Folder] {
+        fatalError()
+    }
+    
+    public func fetches(parentFolder: Folder) -> [Folder] {
         fatalError()
     }
     

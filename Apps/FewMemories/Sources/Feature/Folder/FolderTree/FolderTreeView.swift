@@ -28,7 +28,7 @@ extension FolderTreeView {
                     EditButton()
                 }
                 
-                ToolbarItem(placement: .bottomBar) {
+                ToolbarItemGroup(placement: .bottomBar) {
                     HStack {
                         if let folder = store.folderType.folder {
                             Button(action: {
@@ -47,6 +47,9 @@ extension FolderTreeView {
                         }
                     }
                 }
+            }
+            .sheet(item: $store.scope(state: \.addFolder, action: \.addFolder)) { store in
+                AddFolderView(store: store)
             }
             .alert($store.scope(state: \.alert, action: \.alert))
     }

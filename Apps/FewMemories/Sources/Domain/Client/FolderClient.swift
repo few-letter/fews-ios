@@ -11,7 +11,8 @@ import SwiftData
 
 public protocol FolderClient {
     func create(parentFolder: Folder?, name: String) -> Folder
-    func fetches(parentFolder: Folder?) -> [Folder]
+    func fetchRoots() -> [Folder]
+    func fetches(parentFolder: Folder) -> [Folder]
     func update(folder: Folder) -> Void
     func delete(folder: Folder) -> Void
 }
@@ -25,4 +26,4 @@ extension DependencyValues {
         get { self[FolderClientKey.self] }
         set { self[FolderClientKey.self] = newValue }
     }
-} 
+}

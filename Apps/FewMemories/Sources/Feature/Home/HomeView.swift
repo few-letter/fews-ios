@@ -35,15 +35,5 @@ public struct HomeView: View {
 extension HomeView {
     private var mainView: some View {
         FolderView(store: store.scope(state: \.folder, action: \.folder))
-            .sheet(
-                isPresented: .init(
-                    get: { store.addFolder != nil },
-                    set: { _ in store.send(.dismiss) }
-                )) {
-                    if let store = store.scope(state: \.addFolder, action: \.addFolder) {
-                        AddFolderView(store: store)
-                    }
-                }
-        
     }
 }

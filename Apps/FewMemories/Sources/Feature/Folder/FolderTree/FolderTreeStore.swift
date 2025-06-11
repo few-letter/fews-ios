@@ -16,6 +16,7 @@ public struct FolderTreeStore {
         
         public var folderTypeListCells: IdentifiedArrayOf<FolderTypeListCellStore.State>
         public var plotListCells: IdentifiedArrayOf<PlotListCellStore.State>
+        @Presents public var addFolder: AddFolderStore.State?
         @Presents public var alert: AlertState<Action.Alert>?
         
         public init(
@@ -51,13 +52,13 @@ public struct FolderTreeStore {
         
         case folderTypeListCell(IdentifiedActionOf<FolderTypeListCellStore>)
         case plotListCell(IdentifiedActionOf<PlotListCellStore>)
+        case addFolder(PresentationAction<AddFolderStore.Action>)
         case alert(PresentationAction<Alert>)
         
         case delegate(Delegate)
         
         public enum Delegate: Equatable {
             case requestAddPlot(Plot)
-            case requestAddFolder(Folder)
             case requestFolderTree(FolderType)
         }
         
@@ -82,7 +83,8 @@ public struct FolderTreeStore {
                 return .send(.fetch)
                 
             case .addFolderButtonTapped(let folder):
-                return .send(.delegate(.requestAddFolder(folder)))
+                state.addFolder = .init(parentFolder: folder, name: "")
+                return .none
                 
             case .addPlotButtonTapped:
                 let plot = plotClient.create(folder: state.folderType.folder)
@@ -99,8 +101,11 @@ public struct FolderTreeStore {
                 return .send(.fetch)
                 
             case .fetch:
-                let plots = plotClient.fetches(folder: state.folderType.folder)
-                let folders = folderClient.fetches(parentFolder: state.folderType.folder)
+                let plots: [Plot] = plotClient.fetches(folder: state.folderType.folder)
+                var folders: [Folder] = []
+                if let folder = state.folderType.folder {
+                    folders = folderClient.fetches(parentFolder: folder)
+                }
                 return .send(.fetched(folders, plots))
                 
             case .fetched(let folders, let plots):
@@ -123,11 +128,9 @@ public struct FolderTreeStore {
                     return .send(.delegate(.requestFolderTree(folderType)))
                     
                 case .requestDelete(let folderID):
-                    let title = "Delete Folder"
-                    let message = "The \(folderType.name) folder and \(folderType.count) memos will be deleted."
                     state.alert = AlertState(
                         title: {
-                            TextState(title)
+                            TextState("Delete Folder")
                         },
                         actions: {
                             ButtonState(role: .cancel) {
@@ -137,7 +140,7 @@ public struct FolderTreeStore {
                                 TextState("Confirm")
                             }
                         },
-                        message: { TextState(message) }
+                        message: { TextState(folderType.deleteMessage) }
                     )
                     return .none
                 }
@@ -151,6 +154,17 @@ public struct FolderTreeStore {
                 }
                 return .none
                 
+            case .addFolder(.presented(.delegate(let action))):
+                switch action {
+                case .confirm(let folder, let name):
+                    let _ = folderClient.create(parentFolder: folder, name: name)
+                    state.addFolder = nil
+                    return .send(.fetch)
+                case .dismiss:
+                    state.addFolder = nil
+                    return .none
+                }
+                
             case .alert(.presented(let action)):
                 switch action {
                 case .requestDelete(let folderID):
@@ -161,9 +175,13 @@ public struct FolderTreeStore {
                     return .none
                 }
                 
-            case .plotListCell, .delegate, .folderTypeListCell, .alert:
+            case .plotListCell, .delegate, .folderTypeListCell, .alert, .addFolder:
                 return .none
             }
+        }
+        
+        .ifLet(\.$addFolder, action: \.addFolder) {
+            AddFolderStore()
         }
         .ifLet(\.$alert, action: \.alert)
         .forEach(\.plotListCells, action: \.plotListCell) {

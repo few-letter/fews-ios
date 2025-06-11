@@ -32,25 +32,24 @@ extension FolderView {
                             .imageScale(.medium)
                     }
                 }
-                ToolbarItem(placement: .bottomBar) {
-                    HStack {
-                        Button(action: {
-                            store.send(.addFolderButtonTapped)
-                        }) {
-                            Image(systemName: "folder.badge.plus")
-                                .imageScale(.large)
-                        }
-                        
-                        Spacer()
-                        
-                        Button(action: {
-                            store.send(.addPlotButtonTapped)
-                        }) {
-                            Image(systemName: "square.and.pencil")
-                                .imageScale(.large)
-                        }
+                ToolbarItemGroup(placement: .bottomBar) {
+                    Button(action: {
+                        store.send(.addFolderButtonTapped)
+                    }) {
+                        Image(systemName: "folder.badge.plus")
+                            .imageScale(.large)
+                    }
+                    Spacer()
+                    Button(action: {
+                        store.send(.addPlotButtonTapped)
+                    }) {
+                        Image(systemName: "square.and.pencil")
+                            .imageScale(.large)
                     }
                 }
+            }
+            .sheet(item: $store.scope(state: \.addFolder, action: \.addFolder)) { store in
+                AddFolderView(store: store)
             }
             .alert($store.scope(state: \.alert, action: \.alert))
     }

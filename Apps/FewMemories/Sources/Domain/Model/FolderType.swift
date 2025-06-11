@@ -41,3 +41,59 @@ public enum FolderType: Equatable {
         self.plots.count
     }
 }
+
+extension FolderType {
+    public var deleteMessage: String {
+        switch self {
+        case .temporary:
+            return "Can't delete this folder"
+        case .folder:
+            let folderName = self.name
+            let subfoldersCount = self.childCount
+            let memosCount = self.totalPlotsCount
+            
+            var items: [String] = ["the '\(folderName)' folder"]
+            
+            if subfoldersCount > 0 {
+                let subfolderText = subfoldersCount == 1 ? "subfolder" : "subfolders"
+                items.append("its \(subfoldersCount) \(subfolderText)")
+            }
+            
+            if memosCount > 0 {
+                let memoText = memosCount == 1 ? "memo" : "memos"
+                items.append("\(memosCount) \(memoText)")
+            }
+            
+            if items.count == 1 {
+                return items[0] + " will be deleted."
+            } else if items.count == 2 {
+                return items[0] + " and " + items[1] + " will be deleted."
+            } else {
+                let firstPart = items.dropLast().joined(separator: ", ")
+                let lastPart = items.last!
+                return firstPart + ", and " + lastPart + " will be deleted."
+            }
+        }
+    }
+    
+    private var childCount: Int {
+        switch self {
+        case .temporary:
+            return 0
+        case .folder(let folder):
+            let subfolders = folder.folders ?? []
+            return subfolders.count + subfolders.map { FolderType.folder($0).childCount }.reduce(0, +)
+        }
+    }
+    
+    private var totalPlotsCount: Int {
+        switch self {
+        case .temporary(_, let plots):
+            return plots.count
+        case .folder(let folder):
+            let subfolders = folder.folders ?? []
+            let subfoldersPlots = subfolders.map { FolderType.folder($0).totalPlotsCount }.reduce(0, +)
+            return (folder.plots?.count ?? 0) + subfoldersPlots
+        }
+    }
+}

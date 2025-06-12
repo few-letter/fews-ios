@@ -160,7 +160,10 @@ private extension DragManager {
         rect.origin.y += dY
         rect.origin.x = max(0, min(rect.origin.x, view.bounds.width - rect.width))
         rect.origin.y = max(0, min(rect.origin.y, view.bounds.height - rect.height))
-        items[idx].rect = rect
+        
+        // 사이즈 변경 인터셉터 호출
+        let interceptedRect = items[idx].interceptSizeChange(newRect: rect)
+        items[idx].rect = interceptedRect
         
         applyGridEffect(on: idx, in: view)
     }
@@ -240,9 +243,19 @@ private extension DragManager {
         origin.x = max(0, min(origin.x, view.bounds.width - newW))
         origin.y = max(0, min(origin.y, view.bounds.height - newH))
         
-        items[idx].rect = CGRect(origin: origin, size: CGSize(width: newW, height: newH))
-        items[idx].originalRotation = newRotationRad
-        items[idx].rotation = .radians(newRotationRad)
+        // 사이즈 변경 인터셉터 호출
+        let newRect = CGRect(origin: origin, size: CGSize(width: newW, height: newH))
+        let interceptedRect = items[idx].interceptSizeChange(newRect: newRect)
+        
+        // 회전 변경 인터셉터 호출
+        let interceptedRotation = items[idx].interceptRotationChange(
+            newRotation: .radians(newRotationRad),
+            newOriginalRotation: newRotationRad
+        )
+        
+        items[idx].rect = interceptedRect
+        items[idx].originalRotation = interceptedRotation.1
+        items[idx].rotation = interceptedRotation.0
         
         applyGridEffect(on: idx, in: view)
     }
@@ -301,7 +314,10 @@ private extension DragManager {
         // 경계 보정
         rect.origin.x = max(0, min(rect.origin.x, view.bounds.width - rect.width))
         rect.origin.y = max(0, min(rect.origin.y, view.bounds.height - rect.height))
-        items[idx].rect = rect
+        
+        // 사이즈 변경 인터셉터 호출 (그리드 스냅 후에도)
+        let interceptedRect = items[idx].interceptSizeChange(newRect: rect)
+        items[idx].rect = interceptedRect
     }
     
 

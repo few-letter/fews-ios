@@ -39,4 +39,20 @@ public struct ImageDraggable: Draggable {
             .position(x: rect.midX, y: rect.midY)
             .allowsHitTesting(false)
     }
+    
+    // 이미지 사이즈 인터셉터 - 정사각형 비율 유지 (옵션)
+    public func interceptSizeChange(newRect: CGRect) -> CGRect {
+        // 이미지의 경우 사용자가 설정한 크기 그대로 사용
+        // 원한다면 정사각형 비율 강제할 수도 있음
+        return newRect
+        
+        // 정사각형 비율 강제 예시:
+        // let size = min(newRect.width, newRect.height)
+        // return CGRect(origin: newRect.origin, size: CGSize(width: size, height: size))
+    }
+    
+    // 회전 인터셉터 - 기본 동작 유지
+    public func interceptRotationChange(newRotation: Angle, newOriginalRotation: CGFloat) -> (Angle, CGFloat) {
+        return (newRotation, newOriginalRotation)
+    }
 }

@@ -18,6 +18,10 @@ public protocol Draggable: Identifiable {
     
     @ViewBuilder
     func createView(index: Int, color: Color) -> Content
+    
+    // 사이즈/회전 변경 인터셉터 - 각 타입이 자신만의 로직으로 처리 가능
+    func interceptSizeChange(newRect: CGRect) -> CGRect
+    func interceptRotationChange(newRotation: Angle, newOriginalRotation: CGFloat) -> (Angle, CGFloat)
 }
 
 public struct DraggableID: Hashable, Identifiable {

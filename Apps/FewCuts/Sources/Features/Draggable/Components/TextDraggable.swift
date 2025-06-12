@@ -28,4 +28,22 @@ public struct TextDraggable: Draggable {
         self.originalRotation = originalRotation
         self.text = text
     }
+    
+    private var fontSize: CGFloat {
+        let baseSize = min(rect.width, rect.height)
+        return max(12, baseSize * 0.3)
+    }
+    
+    @ViewBuilder
+    public func createView(index: Int, color: Color) -> some View {
+        Text(text)
+            .font(.system(size: fontSize, weight: .bold, design: .default))
+            .foregroundColor(color)
+            .multilineTextAlignment(.center)
+            .lineLimit(nil)
+            .frame(width: rect.width, height: rect.height)
+            .rotationEffect(rotation)
+            .position(x: rect.midX, y: rect.midY)
+            .allowsHitTesting(false)
+    }
 }

@@ -28,4 +28,15 @@ public struct ImageDraggable: Draggable {
         self.originalRotation = originalRotation
         self.systemImageName = systemImageName
     }
+    
+    @ViewBuilder
+    public func createView(index: Int, color: Color) -> some View {
+        Image(systemName: systemImageName)
+            .font(.system(size: min(rect.width, rect.height) * 0.8))
+            .foregroundColor(color)
+            .frame(width: rect.width, height: rect.height)
+            .rotationEffect(rotation)
+            .position(x: rect.midX, y: rect.midY)
+            .allowsHitTesting(false)
+    }
 }

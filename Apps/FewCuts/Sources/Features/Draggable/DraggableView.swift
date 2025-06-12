@@ -304,6 +304,8 @@ private extension DragManager {
         items[idx].rect = rect
     }
     
+
+    
     // ────── 터치 정리 ──────
     func cleanupTouches(_ touches: Set<UITouch>) {
         // 기본 정리
@@ -393,16 +395,13 @@ public struct DraggableView: View {
             
             // 드래그 가능한 아이템들
             ForEach(Array(dragManager.items.enumerated()), id: \.element.id.id) { index, item in
-                DraggableItemView(item: item, index: index, color: itemColor(index))
+                AnyView(item.createView(index: index, color: itemColor(index)))
             }
             
             // 그리드 오버레이
             GridOverlay(lines: dragManager.gridLines, activeLineIDs: dragManager.activeLineIDs)
             
-            // 상태 정보 (옵션)
-            if showInfo {
-                statusOverlay
-            }
+
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
@@ -411,150 +410,6 @@ public struct DraggableView: View {
         itemColors[index % itemColors.count]
     }
     
-    private var statusOverlay: some View {
-        VStack {
-            HStack(spacing: 12) {
-                if dragManager.isDraggingActive {
-                    statusBadge("🖐️ 드래그 중", .blue)
-                }
-                if dragManager.isResizingActive {
-                    statusBadge("↕️ 크기·회전 중", .orange)
-                }
-                if dragManager.isGridActive {
-                    statusBadge("📐 그리드", .green)
-                }
-            }
-            .padding(.top, 50)
-            Spacer()
-        }
-    }
-    
-    private func statusBadge(_ text: String, _ color: Color) -> some View {
-        Text(text)
-            .font(.caption)
-            .foregroundColor(color)
-            .padding(.horizontal, 12)
-            .padding(.vertical, 6)
-            .background(color.opacity(0.2))
-            .cornerRadius(20)
-    }
-}
 
-// MARK: - 개별 드래그 가능한 아이템 뷰
-
-@ViewBuilder
-public func DraggableItemView(item: any Draggable, index: Int, color: Color) -> some View {
-    if let textItem = item as? TextDraggable {
-        TextDraggableView(item: textItem, index: index, color: color)
-    } else if let imageItem = item as? ImageDraggable {
-        ImageDraggableView(item: imageItem, index: index, color: color)
-    } else {
-        // 기본 뷰 (fallback)
-        DefaultDraggableView(item: item, index: index, color: color)
-    }
-}
-
-// MARK: - 텍스트 드래그 뷰
-
-public struct TextDraggableView: View {
-    let item: TextDraggable
-    let index: Int
-    let color: Color
-    
-    public var body: some View {
-        RoundedRectangle(cornerRadius: 12)
-            .fill(color.gradient)
-            .frame(width: item.rect.width, height: item.rect.height)
-            .rotationEffect(item.rotation)
-            .position(x: item.rect.midX, y: item.rect.midY)
-            .allowsHitTesting(false)
-            .overlay(
-                VStack(spacing: 4) {
-                    Image(systemName: "textformat")
-                        .font(.title2)
-                        .foregroundColor(.white)
-                    Text(item.text)
-                        .font(.headline)
-                        .fontWeight(.bold)
-                        .foregroundColor(.white)
-                        .lineLimit(2)
-                        .multilineTextAlignment(.center)
-                    Text("\(Int(item.rect.width))×\(Int(item.rect.height))")
-                        .font(.caption2)
-                        .foregroundColor(.white.opacity(0.8))
-                    Text("\(Int(item.rotation.degrees))°")
-                        .font(.caption2)
-                        .foregroundColor(.yellow.opacity(0.8))
-                }
-                .padding(8)
-                .rotationEffect(-item.rotation)
-            )
-    }
-}
-
-// MARK: - 이미지 드래그 뷰
-
-public struct ImageDraggableView: View {
-    let item: ImageDraggable
-    let index: Int
-    let color: Color
-    
-    public var body: some View {
-        RoundedRectangle(cornerRadius: 12)
-            .fill(color.gradient)
-            .frame(width: item.rect.width, height: item.rect.height)
-            .rotationEffect(item.rotation)
-            .position(x: item.rect.midX, y: item.rect.midY)
-            .allowsHitTesting(false)
-            .overlay(
-                VStack(spacing: 4) {
-                    Image(systemName: item.systemImageName)
-                        .font(.system(size: min(item.rect.width, item.rect.height) * 0.4))
-                        .foregroundColor(.white)
-                    Text("IMAGE")
-                        .font(.caption)
-                        .fontWeight(.bold)
-                        .foregroundColor(.white.opacity(0.9))
-                    Text("\(Int(item.rect.width))×\(Int(item.rect.height))")
-                        .font(.caption2)
-                        .foregroundColor(.white.opacity(0.8))
-                    Text("\(Int(item.rotation.degrees))°")
-                        .font(.caption2)
-                        .foregroundColor(.yellow.opacity(0.8))
-                }
-                .rotationEffect(-item.rotation)
-            )
-    }
-}
-
-// MARK: - 기본 드래그 뷰 (Fallback)
-
-public struct DefaultDraggableView: View {
-    let item: any Draggable
-    let index: Int
-    let color: Color
-    
-    public var body: some View {
-        RoundedRectangle(cornerRadius: 12)
-            .fill(color)
-            .frame(width: item.rect.width, height: item.rect.height)
-            .rotationEffect(item.rotation)
-            .position(x: item.rect.midX, y: item.rect.midY)
-            .allowsHitTesting(false)
-            .overlay(
-                VStack(spacing: 4) {
-                    Text("\(index + 1)")
-                        .bold()
-                        .foregroundColor(.white)
-                    Text("\(Int(item.rect.width))×\(Int(item.rect.height))")
-                        .font(.caption2)
-                        .foregroundColor(.white.opacity(0.8))
-                    Text("\(Int(item.rotation.degrees))°")
-                        .font(.caption2)
-                        .foregroundColor(.yellow.opacity(0.8))
-                }
-                .rotationEffect(-item.rotation)
-            )
-    }
 }
 

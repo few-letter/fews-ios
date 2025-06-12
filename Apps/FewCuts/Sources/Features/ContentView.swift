@@ -19,10 +19,12 @@ public struct ContentView: View {
                        // 드래그 가능한 뷰
             DraggableView(
                 items: [
-                    TextDraggable(rect: .init(x: 50, y: 100, width: 120, height: 80), text: "안녕하세요"),
+                    TextDraggable(rect: .init(x: 50, y: 100, width: 120, height: 80), text: "안녕하세요\n반갑습니다"),
                     ImageDraggable(rect: .init(x: 200, y: 250, width: 100, height: 100), systemImageName: "heart.fill"),
                     TextDraggable(rect: .init(x: 100, y: 400, width: 140, height: 60), text: "SwiftUI"),
-                    ImageDraggable(rect: .init(x: 300, y: 150, width: 90, height: 90), systemImageName: "star.fill")
+                    ImageDraggable(rect: .init(x: 300, y: 150, width: 90, height: 90), systemImageName: "star.fill"),
+                    TextDraggable(rect: .init(x: 60, y: 300, width: 100, height: 50), text: "드래그"),
+                    ImageDraggable(rect: .init(x: 250, y: 400, width: 70, height: 70), systemImageName: "moon.fill")
                 ],
                gridLines: [
                    // 수직

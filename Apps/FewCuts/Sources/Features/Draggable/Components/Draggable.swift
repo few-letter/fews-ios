@@ -9,10 +9,15 @@ import Foundation
 import SwiftUI
 
 public protocol Draggable: Identifiable {
+    associatedtype Content: View
+    
     var id: DraggableID { get }
     var rect: CGRect { get set }
     var rotation: Angle { get set }
     var originalRotation: CGFloat { get set }
+    
+    @ViewBuilder
+    func createView(index: Int, color: Color) -> Content
 }
 
 public struct DraggableID: Hashable, Identifiable {

@@ -12,20 +12,7 @@ let project = Project(
             destinations: .iOS,
             product: .app,
             bundleId: "com.annapo.kpt",
-            infoPlist: .extendingDefault(
-                with: [
-                    "UILaunchScreen": [
-                        "UIColorName": "",
-                        "UIImageName": "",
-                    ],
-                    "CFBundleDisplayName": "FewRetros",
-                    "NSAppTransportSecurity": [
-                        "NSAllowsArbitraryLoads": true
-                    ],
-                    "NSUserTrackingUsageDescription": "이 앱은 더 나은 사용자 경험을 제공하기 위해 사용자 데이터를 추적합니다.",
-                    "UIBackgroundModes": ["remote-notification"]
-                ]
-            ),
+            infoPlist: .file(path: "Resources/Info.plist"),
             sources: ["Sources/**"],
             resources: [
                 .glob(pattern: "Resources/Assets.xcassets/**"),

@@ -1,0 +1,12 @@
+git_url("https://github.com/few-letter/fews-ios-certificates")
+
+storage_mode("git")
+
+# type은 lane에서 동적으로 설정됩니다 (development 또는 appstore)
+
+app_identifier([
+  "com.annapo.plotfolio",    # Plots
+  "com.annapo.fewcuts",      # FewCuts  
+  "com.annapo.kpt"           # FewRetros
+  # "io.tuist.Toff"            # Toff - Bundle ID가 Developer Portal에 없음
+])

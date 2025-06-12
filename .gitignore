@@ -123,3 +123,4 @@ master.key
 *.xcconfig
 *.p8
 *.env
+fastlane/api_key.json

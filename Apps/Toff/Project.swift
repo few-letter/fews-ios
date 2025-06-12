@@ -8,15 +8,7 @@ let project = Project(
             destinations: .iOS,
             product: .app,
             bundleId: "io.tuist.Toff",
-            infoPlist: .extendingDefault(
-                with: [
-                    "UILaunchScreen": [
-                        "UIColorName": "",
-                        "UIImageName": "",
-                    ],
-                    "CFBundleDisplayName": "Toff"
-                ]
-            ),
+            infoPlist: .file(path: "Resources/Info.plist"),
             sources: ["Sources/**"],
             resources: ["Resources/**"],
             dependencies: [

@@ -9,20 +9,8 @@ import SwiftUI
 import UIKit
 import Observation
 
-// MARK: - 드래그 가능한 아이템 모델
-
-public struct DraggableItem: Identifiable {
-    public let id = UUID()
-    public var rect: CGRect
-    public var rotation: Angle = .zero
-    public var originalRotation: CGFloat = 0 // 원본 기준 누적 회전각도 (라디안)
-    
-    public init(rect: CGRect, rotation: Angle = .zero, originalRotation: CGFloat = 0) {
-        self.rect = rect
-        self.rotation = rotation
-        self.originalRotation = originalRotation
-    }
-}
+// MARK: - 기존 Draggable 프로토콜 사용
+// Draggable 프로토콜과 관련 타입들은 Components 폴더에서 import됨
 
 // MARK: - 그리드 모델
 
@@ -62,7 +50,7 @@ public final class DragManager: MultiTouchDelegate {
     private let rotationSnapAngles: [CGFloat] = [0, 90, 180, 270, 360]
     
     // ────── 외부 노출 상태 ──────
-    public var items: [DraggableItem]
+    public var items: [any Draggable]
     public let gridLines: [GridLine]
     public var activeLineIDs: Set<UUID> = []
     
@@ -71,11 +59,11 @@ public final class DragManager: MultiTouchDelegate {
     public var isGridActive: Bool { !activeLineIDs.isEmpty }
     
     // 드래그
-    private var draggingItems: [UITouch: DraggableItem] = [:]
+    private var draggingItems: [UITouch: any Draggable] = [:]
     private var initialPositions: [UITouch: CGPoint] = [:]
     
     // 리사이즈 - 회전
-    private var resizingItems: [UITouch: DraggableItem] = [:]
+    private var resizingItems: [UITouch: any Draggable] = [:]
     private var initialSizes: [UITouch: CGSize] = [:]
     private var initialRotations: [UITouch: CGFloat] = [:]
     private var anchorTouches: [UITouch: UITouch] = [:] // second → first
@@ -86,7 +74,7 @@ public final class DragManager: MultiTouchDelegate {
     private var touchModes: [UITouch: TouchMode] = [:]
     
     // ────────────────
-    public init(items: [DraggableItem] = [], gridLines: [GridLine] = []) {
+    public init(items: [any Draggable] = [], gridLines: [GridLine] = []) {
         self.items = items
         self.gridLines = gridLines
     }
@@ -106,7 +94,7 @@ extension DragManager {
                 resizingItems[touch] = anchorItem
                 touchModes[touch] = .resizing
                 
-                if let idx = items.firstIndex(where: { $0.id == anchorItem.id }) {
+                if let idx = items.firstIndex(where: { $0.id.id == anchorItem.id.id }) {
                     initialSizes[touch] = items[idx].rect.size
                     initialRotations[touch] = items[idx].originalRotation
                     
@@ -159,7 +147,7 @@ private extension DragManager {
     // ────── 한 손 드래그 ──────
     func handleDragMove(_ touch: UITouch, in view: UIView) {
         guard let item = draggingItems[touch],
-              let idx = items.firstIndex(where: { $0.id == item.id })
+              let idx = items.firstIndex(where: { $0.id.id == item.id.id })
         else { return }
         
         let loc = touch.location(in: view)
@@ -186,7 +174,7 @@ private extension DragManager {
               let ratio = anchorRatios[touch],
               let initDist = initialAnchorDistances[touch],
               let startAngle = startAngles[touch],
-              let idx = items.firstIndex(where: { $0.id == item.id })
+              let idx = items.firstIndex(where: { $0.id.id == item.id.id })
         else { return }
         
         let anchorPt = anchor.location(in: view)
@@ -388,7 +376,7 @@ public struct DraggableView: View {
     public let showInfo: Bool
     
     public init(
-        items: [DraggableItem] = [],
+        items: [any Draggable] = [],
         gridLines: [GridLine] = [],
         itemColors: [Color] = [.red, .green, .blue, .orange, .purple],
         showInfo: Bool = true
@@ -404,27 +392,8 @@ public struct DraggableView: View {
             MultiTouchView(delegate: dragManager)
             
             // 드래그 가능한 아이템들
-            ForEach(Array(dragManager.items.enumerated()), id: \.element.id) { index, item in
-                RoundedRectangle(cornerRadius: 12)
-                    .fill(itemColor(index))
-                    .frame(width: item.rect.width, height: item.rect.height)
-                    .rotationEffect(item.rotation)
-                    .position(x: item.rect.midX, y: item.rect.midY)
-                    .allowsHitTesting(false)
-                    .overlay(
-                        VStack(spacing: 4) {
-                            Text("\(index + 1)")
-                                .bold()
-                                .foregroundColor(.white)
-                            Text("\(Int(item.rect.width))×\(Int(item.rect.height))")
-                                .font(.caption2)
-                                .foregroundColor(.white.opacity(0.8))
-                            Text("\(Int(item.rotation.degrees))°")
-                                .font(.caption2)
-                                .foregroundColor(.yellow.opacity(0.8))
-                        }
-                        .rotationEffect(-item.rotation)
-                    )
+            ForEach(Array(dragManager.items.enumerated()), id: \.element.id.id) { index, item in
+                DraggableItemView(item: item, index: index, color: itemColor(index))
             }
             
             // 그리드 오버레이
@@ -468,6 +437,124 @@ public struct DraggableView: View {
             .padding(.vertical, 6)
             .background(color.opacity(0.2))
             .cornerRadius(20)
+    }
+}
+
+// MARK: - 개별 드래그 가능한 아이템 뷰
+
+@ViewBuilder
+public func DraggableItemView(item: any Draggable, index: Int, color: Color) -> some View {
+    if let textItem = item as? TextDraggable {
+        TextDraggableView(item: textItem, index: index, color: color)
+    } else if let imageItem = item as? ImageDraggable {
+        ImageDraggableView(item: imageItem, index: index, color: color)
+    } else {
+        // 기본 뷰 (fallback)
+        DefaultDraggableView(item: item, index: index, color: color)
+    }
+}
+
+// MARK: - 텍스트 드래그 뷰
+
+public struct TextDraggableView: View {
+    let item: TextDraggable
+    let index: Int
+    let color: Color
+    
+    public var body: some View {
+        RoundedRectangle(cornerRadius: 12)
+            .fill(color.gradient)
+            .frame(width: item.rect.width, height: item.rect.height)
+            .rotationEffect(item.rotation)
+            .position(x: item.rect.midX, y: item.rect.midY)
+            .allowsHitTesting(false)
+            .overlay(
+                VStack(spacing: 4) {
+                    Image(systemName: "textformat")
+                        .font(.title2)
+                        .foregroundColor(.white)
+                    Text(item.text)
+                        .font(.headline)
+                        .fontWeight(.bold)
+                        .foregroundColor(.white)
+                        .lineLimit(2)
+                        .multilineTextAlignment(.center)
+                    Text("\(Int(item.rect.width))×\(Int(item.rect.height))")
+                        .font(.caption2)
+                        .foregroundColor(.white.opacity(0.8))
+                    Text("\(Int(item.rotation.degrees))°")
+                        .font(.caption2)
+                        .foregroundColor(.yellow.opacity(0.8))
+                }
+                .padding(8)
+                .rotationEffect(-item.rotation)
+            )
+    }
+}
+
+// MARK: - 이미지 드래그 뷰
+
+public struct ImageDraggableView: View {
+    let item: ImageDraggable
+    let index: Int
+    let color: Color
+    
+    public var body: some View {
+        RoundedRectangle(cornerRadius: 12)
+            .fill(color.gradient)
+            .frame(width: item.rect.width, height: item.rect.height)
+            .rotationEffect(item.rotation)
+            .position(x: item.rect.midX, y: item.rect.midY)
+            .allowsHitTesting(false)
+            .overlay(
+                VStack(spacing: 4) {
+                    Image(systemName: item.systemImageName)
+                        .font(.system(size: min(item.rect.width, item.rect.height) * 0.4))
+                        .foregroundColor(.white)
+                    Text("IMAGE")
+                        .font(.caption)
+                        .fontWeight(.bold)
+                        .foregroundColor(.white.opacity(0.9))
+                    Text("\(Int(item.rect.width))×\(Int(item.rect.height))")
+                        .font(.caption2)
+                        .foregroundColor(.white.opacity(0.8))
+                    Text("\(Int(item.rotation.degrees))°")
+                        .font(.caption2)
+                        .foregroundColor(.yellow.opacity(0.8))
+                }
+                .rotationEffect(-item.rotation)
+            )
+    }
+}
+
+// MARK: - 기본 드래그 뷰 (Fallback)
+
+public struct DefaultDraggableView: View {
+    let item: any Draggable
+    let index: Int
+    let color: Color
+    
+    public var body: some View {
+        RoundedRectangle(cornerRadius: 12)
+            .fill(color)
+            .frame(width: item.rect.width, height: item.rect.height)
+            .rotationEffect(item.rotation)
+            .position(x: item.rect.midX, y: item.rect.midY)
+            .allowsHitTesting(false)
+            .overlay(
+                VStack(spacing: 4) {
+                    Text("\(index + 1)")
+                        .bold()
+                        .foregroundColor(.white)
+                    Text("\(Int(item.rect.width))×\(Int(item.rect.height))")
+                        .font(.caption2)
+                        .foregroundColor(.white.opacity(0.8))
+                    Text("\(Int(item.rotation.degrees))°")
+                        .font(.caption2)
+                        .foregroundColor(.yellow.opacity(0.8))
+                }
+                .rotationEffect(-item.rotation)
+            )
     }
 }
 

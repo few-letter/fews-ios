@@ -1,0 +1,168 @@
+default_platform(:ios)
+
+# 앱 선택 함수
+def select_app
+  # Apps 디렉토리에서 앱 목록 가져오기
+  apps_dir = File.expand_path("../Apps", __dir__)
+  apps = Dir.entries(apps_dir)
+             .select { |entry| File.directory?(File.join(apps_dir, entry)) }
+             .reject { |entry| entry.start_with?('.') || entry == 'Derived' || entry == 'Tuist' || entry == 'Apps' || entry.include?('.xc') }
+             .select { |entry| File.exist?(File.join(apps_dir, entry, "#{entry}.xcodeproj")) }
+             .sort
+  
+  if apps.empty?
+    UI.error("Apps 디렉토리에서 앱을 찾을 수 없습니다.")
+    return nil
+  end
+  
+  # 사용자에게 앱 선택 요청
+  UI.message("사용 가능한 앱들:")
+  apps.each_with_index do |app, index|
+    UI.message("#{index + 1}. #{app}")
+  end
+  
+  choice = UI.input("빌드할 앱을 선택하세요 (1-#{apps.length}): ")
+  
+  begin
+    index = choice.to_i - 1
+    if index >= 0 && index < apps.length
+      selected_app = apps[index]
+      UI.success("선택된 앱: #{selected_app}")
+      return selected_app
+    else
+      UI.error("잘못된 선택입니다.")
+      return nil
+    end
+  rescue
+    UI.error("잘못된 입력입니다.")
+    return nil
+  end
+end
+
+# 앱 정보 가져오기 함수
+def get_app_info(app_name)
+  project_path = "Apps/#{app_name}/#{app_name}.xcodeproj"
+  full_project_path = File.expand_path("../Apps/#{app_name}/#{app_name}.xcodeproj", __dir__)
+  
+  # 프로젝트 파일 존재 여부 확인
+  unless File.exist?(full_project_path)
+    UI.error("프로젝트 파일을 찾을 수 없습니다: #{project_path}")
+    return nil
+  end
+  
+  return {
+    name: app_name,
+    project_path: project_path,
+    scheme: app_name
+  }
+end
+
+platform :ios do
+  desc "Build and upload to TestFlight"
+  lane :beta do
+    # 앱 선택
+    app_name = select_app
+    if app_name.nil?
+      UI.error("앱 선택이 취소되었습니다.")
+      next
+    end
+    
+    app_info = get_app_info(app_name)
+    if app_info.nil?
+      next
+    end
+    
+    UI.message("#{app_info[:name]} 앱을 TestFlight에 업로드합니다...")
+    
+    # 앱 빌드
+    gym(
+      scheme: app_info[:scheme],
+      configuration: "Release",
+      export_method: "app-store",
+      project: app_info[:project_path],
+      export_options: {
+        signingStyle: "automatic"
+      }
+    )
+    
+    # TestFlight에 업로드
+    pilot(
+      skip_waiting_for_build_processing: true
+    )
+    
+    UI.success("#{app_info[:name]} 앱이 성공적으로 TestFlight에 업로드되었습니다! 🎉")
+  end
+  
+  desc "Simple build test"
+  lane :build_test do
+    # 앱 선택
+    app_name = select_app
+    if app_name.nil?
+      UI.error("앱 선택이 취소되었습니다.")
+      next
+    end
+    
+    app_info = get_app_info(app_name)
+    if app_info.nil?
+      next
+    end
+    
+    UI.message("#{app_info[:name]} 앱을 빌드 테스트합니다...")
+    
+    gym(
+      scheme: app_info[:scheme],
+      configuration: "Debug",
+      project: app_info[:project_path],
+      skip_archive: true,
+      skip_codesigning: true
+    )
+    
+    UI.success("#{app_info[:name]} 앱 빌드 테스트가 완료되었습니다! ✅")
+  end
+  
+  desc "Release build (without upload)"
+  lane :build_release do
+    # 앱 선택
+    app_name = select_app
+    if app_name.nil?
+      UI.error("앱 선택이 취소되었습니다.")
+      next
+    end
+    
+    app_info = get_app_info(app_name)
+    if app_info.nil?
+      next
+    end
+    
+    UI.message("#{app_info[:name]} 앱을 Release 빌드합니다...")
+    
+    gym(
+      scheme: app_info[:scheme],
+      configuration: "Release",
+      export_method: "app-store",
+      project: app_info[:project_path],
+      export_options: {
+        signingStyle: "automatic"
+      }
+    )
+    
+    UI.success("#{app_info[:name]} 앱 Release 빌드가 완료되었습니다! 📦")
+  end
+  
+  desc "Show available apps"
+  lane :list_apps do
+    apps_dir = File.expand_path("../Apps", __dir__)
+    apps = Dir.entries(apps_dir)
+               .select { |entry| File.directory?(File.join(apps_dir, entry)) }
+               .reject { |entry| entry.start_with?('.') || entry == 'Derived' || entry == 'Tuist' || entry == 'Apps' || entry.include?('.xc') }
+               .select { |entry| File.exist?(File.join(apps_dir, entry, "#{entry}.xcodeproj")) }
+               .sort
+    
+    UI.message("사용 가능한 앱들:")
+    apps.each_with_index do |app, index|
+      project_path = File.expand_path("../Apps/#{app}/#{app}.xcodeproj", __dir__)
+      status = File.exist?(project_path) ? "✅" : "❌"
+      UI.message("#{index + 1}. #{app} #{status}")
+    end
+  end
+end 

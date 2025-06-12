@@ -121,3 +121,5 @@ Derived/
 *.p12
 master.key
 *.xcconfig
+*.p8
+*.env

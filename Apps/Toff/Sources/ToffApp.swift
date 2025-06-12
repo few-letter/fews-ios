@@ -7,4 +7,4 @@ struct ToffApp: App {
             ContentView()
         }
     }
-} 
+}

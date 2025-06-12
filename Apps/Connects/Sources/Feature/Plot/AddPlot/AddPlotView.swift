@@ -50,7 +50,6 @@ public struct AddPlotView: View {
                     }
                 }
             }
-            .background(Color(UIColor.systemBackground))
             
             // 오버레이 헤더
             VStack {
@@ -64,7 +63,6 @@ public struct AddPlotView: View {
                 Spacer()
             }
         }
-        .navigationBarTitleDisplayMode(.inline)
         .onChange(of: store.date) {
             calendarId = UUID()
         }
@@ -81,7 +79,6 @@ public struct AddPlotView: View {
                 plotTypeSelector
             }
             .padding()
-            .background(Color(UIColor.systemBackground))
             
             Divider()
                 .padding(.horizontal)
@@ -119,7 +116,7 @@ public struct AddPlotView: View {
         }
         .padding(.horizontal)
         .padding(.vertical, 12)
-        .background(Color(UIColor.systemBackground))
+    
         .shadow(color: .black.opacity(0.1), radius: 1, x: 0, y: 1)
     }
     
@@ -160,7 +157,6 @@ public struct AddPlotView: View {
         }, label: {
             Image(systemName: "arrow.counterclockwise")
                 .imageScale(.small)
-                .foregroundColor(Color(.label))
         })
     }
     
@@ -188,7 +184,6 @@ public struct AddPlotView: View {
                             Image(systemName: store.type == type.rawValue ? "circle.fill" : "circle")
                                 .imageScale(.small)
                                 .font(.footnote)
-                                .foregroundColor(Color(.label))
                         }
                     )
                     Text(type.title)

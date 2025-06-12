@@ -7,6 +7,7 @@ let workspace = Workspace(
         "Apps/FewCuts",
         "Apps/Plots",
         "Apps/Toff",
+        "Apps/Connects",
         "Modules/DS"
     ]
 ) 

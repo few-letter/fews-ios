@@ -13,9 +13,9 @@ import SwiftUI
 // MARK: - SwiftUI 화면
 
 public struct ContentView: View {
-   
-   public var body: some View {
-       ZStack {
+    
+    public var body: some View {
+        ZStack {
                        // 드래그 가능한 뷰
             DraggableView(
                 items: [
@@ -47,11 +47,11 @@ public struct ContentView: View {
            }
        }
        .frame(maxWidth: .infinity, maxHeight: .infinity)
-       .background(
+        .background(
            LinearGradient(
                colors: [
-                   .blue.opacity(0.1),
-                   .purple.opacity(0.1),
+                .blue.opacity(0.1),
+                .purple.opacity(0.1),
                    .pink.opacity(0.05)
                ],
                startPoint: .topLeading,
@@ -60,7 +60,7 @@ public struct ContentView: View {
        )
    }
    
-   private var howToBox: some View {
+    private var howToBox: some View {
        VStack(alignment: .leading, spacing: 8) {
            Text("사용법:")
                .font(.headline)
@@ -73,11 +73,11 @@ public struct ContentView: View {
             }
            .font(.caption)
            .foregroundColor(.secondary)
-       }
+        }
        .padding()
        .background(Color.black.opacity(0.05))
        .cornerRadius(12)
-   }
+    }
 }
 
 #if DEBUG

@@ -36,13 +36,19 @@ public struct TextDraggable: Draggable {
     
     @ViewBuilder
     public func createView(index: Int, color: Color) -> some View {
-        Text(text)
-            .border(.black)
-            .font(.system(size: fontSize, weight: .bold, design: .default))
-            .foregroundColor(color)
-            .multilineTextAlignment(.center)
-            .lineLimit(nil)
+        Rectangle()
+            .fill(Color.clear)
             .frame(width: rect.width, height: rect.height)
+            .border(.black, width: 1)
+            .overlay(
+                Text(text)
+                    .font(.system(size: fontSize, weight: .bold, design: .default))
+                    .foregroundColor(color)
+                    .multilineTextAlignment(.center)
+                    .lineLimit(nil)
+                    .frame(maxWidth: rect.width - 4, maxHeight: rect.height - 4) // border 두께 고려
+                    .clipped()
+            )
             .rotationEffect(rotation)
             .position(x: rect.midX, y: rect.midY)
             .allowsHitTesting(false)

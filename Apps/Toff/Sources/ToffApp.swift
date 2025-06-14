@@ -8,6 +8,9 @@ struct ToffApp: App {
                 DemoCalendarItem.sampleItems(for: date)
             }
             .ignoresSafeArea(.all)
+            .sheet(isPresented: .init(get: { true }, set: { _ in })) {
+                TradeEditorView()
+            }
         }
     }
 }

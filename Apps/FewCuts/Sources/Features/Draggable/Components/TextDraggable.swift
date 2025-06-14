@@ -5,6 +5,13 @@
 //  Created by 송영모 on 6/13/25.
 //
 
+//
+//  DraggableText.swift
+//  FewCuts
+//
+//  Created by 송영모 on 6/13/25.
+//
+
 import SwiftUI
 
 public struct TextDraggable: Draggable {
@@ -29,9 +36,54 @@ public struct TextDraggable: Draggable {
         self.text = text
     }
     
+    // 텍스트에 맞는 최적 폰트 크기 계산
+    private func optimalFontSize(for rect: CGRect) -> CGFloat {
+        let padding: CGFloat = 8 // 테두리와의 여백
+        let availableWidth = rect.width - padding
+        let availableHeight = rect.height - padding
+        
+        // 최소/최대 폰트 크기 제한
+        let minFontSize: CGFloat = 8
+        let maxFontSize: CGFloat = 72
+        
+        // 이진 탐색으로 최적 폰트 크기 찾기
+        var low = minFontSize
+        var high = maxFontSize
+        var bestSize = minFontSize
+        
+        while low <= high {
+            let mid = (low + high) / 2
+            let textSize = calculateTextSize(fontSize: mid, maxWidth: availableWidth)
+            
+            if textSize.width <= availableWidth && textSize.height <= availableHeight {
+                bestSize = mid
+                low = mid + 1
+            } else {
+                high = mid - 1
+            }
+        }
+        
+        return bestSize
+    }
+    
+    // 주어진 폰트 크기로 텍스트 크기 계산
+    private func calculateTextSize(fontSize: CGFloat, maxWidth: CGFloat) -> CGSize {
+        let text = self.text as NSString
+        let font = UIFont.systemFont(ofSize: fontSize, weight: .bold)
+        let attributes = [NSAttributedString.Key.font: font]
+        
+        let boundingRect = text.boundingRect(
+            with: CGSize(width: maxWidth, height: .greatestFiniteMagnitude),
+            options: [.usesLineFragmentOrigin, .usesFontLeading],
+            attributes: attributes,
+            context: nil
+        )
+        
+        return boundingRect.size
+    }
+    
     private var fontSize: CGFloat {
-        let baseSize = min(rect.width, rect.height)
-        return max(12, baseSize * 0.3)
+        return optimalFontSize(for: rect)
     }
     
     @ViewBuilder
@@ -46,7 +98,8 @@ public struct TextDraggable: Draggable {
                     .foregroundColor(color)
                     .multilineTextAlignment(.center)
                     .lineLimit(nil)
-                    .frame(maxWidth: rect.width - 4, maxHeight: rect.height - 4) // border 두께 고려
+                    .padding(4) // 테두리와의 여백
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
                     .clipped()
             )
             .rotationEffect(rotation)
@@ -54,32 +107,25 @@ public struct TextDraggable: Draggable {
             .allowsHitTesting(false)
     }
     
-    // 텍스트 전용 사이즈 인터셉터 - 폰트 크기에 맞는 최적 크기로 조정
+    // 텍스트에 맞는 최적 크기로 조정
     public func interceptSizeChange(newRect: CGRect) -> CGRect {
-        let targetFontSize = max(12, min(newRect.width, newRect.height) * 0.3)
+        // 최소 크기 제한
+        let minWidth: CGFloat = 60
+        let minHeight: CGFloat = 40
         
-        // 텍스트 크기 측정
-        let text = self.text as NSString
-        let font = UIFont.systemFont(ofSize: targetFontSize, weight: .bold)
-        let attributes = [NSAttributedString.Key.font: font]
-        
-        // 여러 줄 텍스트를 고려한 크기 계산
-        let maxWidth = newRect.width
-        let boundingRect = text.boundingRect(
-            with: CGSize(width: maxWidth, height: .greatestFiniteMagnitude),
-            options: [.usesLineFragmentOrigin, .usesFontLeading],
-            attributes: attributes,
-            context: nil
-        )
-        
-        // 여백을 고려한 최적 크기 (하지만 사용자가 원하는 크기도 존중)
+        // 텍스트 내용에 따른 권장 크기 계산
         let padding: CGFloat = 16
-        let minWidth = max(boundingRect.width + padding, 60)
-        let minHeight = max(boundingRect.height + padding, 40)
         
-        // 사용자가 설정한 크기와 텍스트 필요 크기 중 더 큰 값 사용
-        let finalWidth = max(newRect.width, minWidth)
-        let finalHeight = max(newRect.height, minHeight)
+        // 여러 폰트 크기로 테스트해서 적절한 크기 찾기
+        let testFontSize: CGFloat = 16 // 기준 폰트 크기
+        let textSize = calculateTextSize(fontSize: testFontSize, maxWidth: max(newRect.width - padding, 100))
+        
+        let recommendedWidth = textSize.width + padding
+        let recommendedHeight = textSize.height + padding
+        
+        // 사용자가 설정한 크기와 권장 크기 중 적절한 값 선택
+        let finalWidth = max(newRect.width, max(minWidth, recommendedWidth))
+        let finalHeight = max(newRect.height, max(minHeight, recommendedHeight))
         
         return CGRect(
             origin: newRect.origin,

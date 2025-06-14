@@ -39,6 +39,14 @@ Delete all certificates and profiles (development + appstore)
 
 Generate certificates and profiles (development + appstore)
 
+### ios clean_all
+
+```sh
+[bundle exec] fastlane ios clean_all
+```
+
+Clean build cache and dependencies
+
 ----
 
 This README.md is auto-generated and will be re-generated every time [_fastlane_](https://fastlane.tools) is run.

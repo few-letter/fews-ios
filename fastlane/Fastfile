@@ -8,6 +8,10 @@ import "common/version_helper.rb"
 platform :ios do
   desc "Upload to TestFlight"
   lane :upload_testflight do
+    # xcodebuild 타임아웃 설정 (초 단위)
+    ENV['FASTLANE_XCODEBUILD_SETTINGS_TIMEOUT'] = '120'  # 2분으로 늘림
+    ENV['FASTLANE_XCODEBUILD_SETTINGS_RETRIES'] = '2'   # 재시도 횟수 줄임
+    
     xcode_select "/Applications/Xcode-16.3.0.app" # Xcode 버전 지정
     setup_api_key
     
@@ -50,12 +54,23 @@ platform :ios do
       path: app_info[:project_path]
     )
     
+    # Swift Package Manager 의존성 미리 해결
+    UI.message("Swift Package 의존성을 미리 해결합니다...")
+    sh("cd .. && xcodebuild -resolvePackageDependencies -scheme #{app_info[:scheme]} -project #{app_info[:project_path]} || true")
+    
+    # 프로젝트 빌드 설정 확인 (디버깅용)
+    UI.message("빌드 설정을 확인합니다...")
+    sh("cd .. && timeout 60 xcodebuild -showBuildSettings -scheme #{app_info[:scheme]} -project #{app_info[:project_path]} -configuration Release | head -20 || echo '빌드 설정 확인 타임아웃'")
+    
     gym(
       scheme: app_info[:scheme],
       project: app_info[:project_path],
       configuration: "Release",
       export_method: "app-store",
-      clean: true
+      clean: true,
+      skip_build_archive: false,
+      skip_package_dependencies_resolution: false,
+      destination: "generic/platform=iOS"
     )
     
     upload_to_testflight(
@@ -123,5 +138,28 @@ platform :ios do
     )
     
     UI.success("모든 인증서와 프로파일이 생성되었습니다! 🔐")
+  end
+  
+  desc "Clean build cache and dependencies"
+  lane :clean_all do
+    UI.message("빌드 캐시와 의존성을 정리합니다...")
+    
+    # DerivedData 정리
+    clear_derived_data
+    
+    # Swift Package 캐시 정리
+    sh("cd .. && rm -rf ~/Library/Caches/org.swift.swiftpm || true")
+    sh("cd .. && rm -rf ~/Library/Developer/Xcode/DerivedData || true")
+    
+    # 각 앱의 패키지 의존성 다시 해결
+    ["Plots", "FewCuts", "FewRetros"].each do |app_name|
+      project_path = "Apps/#{app_name}/#{app_name}.xcodeproj"
+      if File.exist?(File.expand_path("../#{project_path}", __dir__))
+        UI.message("#{app_name} 의존성 해결 중...")
+        sh("cd .. && xcodebuild -resolvePackageDependencies -scheme #{app_name} -project #{project_path} || true")
+      end
+    end
+    
+    UI.success("정리가 완료되었습니다! 🧹")
   end
 end

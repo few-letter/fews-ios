@@ -4,7 +4,10 @@ import SwiftUI
 struct ToffApp: App {
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            CollapsibleCalendarView { date in
+                DemoCalendarItem.sampleItems(for: date)
+            }
+            .ignoresSafeArea(.all)
         }
     }
 }

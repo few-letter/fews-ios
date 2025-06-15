@@ -19,10 +19,6 @@ class AppOpenAdManager: NSObject {
     static let shared = AppOpenAdManager()
     private override init() { super.init() }
     
-    func configure(with adUnitID: String) {
-        self.adUnitID = adUnitID
-    }
-    
     @MainActor
     func showAdIfAvailable() async {
         guard !isShowingAd else { return }

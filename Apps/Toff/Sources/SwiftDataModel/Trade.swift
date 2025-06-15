@@ -10,7 +10,7 @@ import SwiftData
 
 @Model
 public class Trade {
-    public let id: UUID = UUID()
+    public var id: UUID = UUID()
     public var side: TradeSide = TradeSide.buy
     public var price: Double = 0
     public var quantity: Double = 0

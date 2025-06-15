@@ -1,5 +1,5 @@
 //
-//  HomeStore.swift
+//  S.swift
 //  Toff
 //
 //  Created by 송영모 on 6/15/25.
@@ -9,13 +9,13 @@ import Foundation
 import ComposableArchitecture
 
 @Reducer
-public struct HomeStore {
+public struct StatNavigationStore {
     @ObservableState
     public struct State: Equatable {
-        public var name: String
+        public var tickers: IdentifiedArrayOf<Ticker>
         
-        public init(name: String) {
-            self.name = name
+        public init(tickers: IdentifiedArrayOf<Ticker> = []) {
+            self.tickers = tickers
         }
     }
     

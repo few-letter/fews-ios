@@ -46,3 +46,40 @@ public enum Currency: String, Codable, CaseIterable, Equatable {
     case brazilianreal = "BRL"
      */
 }
+
+extension Currency {
+    public var systemImageName: String {
+        switch self {
+        case .dollar:
+            return "dollarsign.circle"
+        case .euro:
+            return "eurosign.circle"
+        case .yen:
+            return "yensign.circle"
+        case .sterling:
+            return "sterlingsign.circle"
+        case .australianDollar:
+            return "australsign.circle"
+        case .canadianDollar:
+            return "dollarsign.circle"
+        case .franc:
+            return "francsign.circle"
+        case .krona:
+            return "banknote"
+        case .peso:
+            return "pesosign.circle"
+        case .newZealandDollar:
+            return "dollarsign.circle"
+        case .singaporeDollar:
+            return "dollarsign.circle"
+        case .hongKongDollar:
+            return "dollarsign.circle"
+        case .krone:
+            return "banknote"
+        case .won:
+            return "wonsign.circle"
+        case .bitcoin:
+            return "bitcoinsign.circle"
+        }
+    }
+}

@@ -13,7 +13,7 @@ public struct AddTradePresentationStore {
     @ObservableState
     public struct State {
         @Presents public var tickerNavigation: TickerNavigationStore.State? = nil
-        @Presents public var addTrade: AddTradeStore.State? = nil
+        @Presents public var tradeNavigation: TradeNavigationStore.State? = nil
         
         public var selectedTicker: Ticker?
         public var selectedDate: Date?
@@ -33,7 +33,7 @@ public struct AddTradePresentationStore {
         case onAppear
         
         case tickerNavigation(PresentationAction<TickerNavigationStore.Action>)
-        case addTrade(PresentationAction<AddTradeStore.Action>)
+        case tradeNavigation(PresentationAction<TradeNavigationStore.Action>)
         
         case delegate(Delegate)
         public enum Delegate {
@@ -58,24 +58,24 @@ public struct AddTradePresentationStore {
             case .tickerNavigation(.presented(.delegate(let action))):
                 switch action {
                 case .requestSelectedTicker(let ticker):
+                    state.tickerNavigation = nil
+                    state.tradeNavigation = .init(ticker: ticker)
                     return .none
                     
                 case .requestDismiss:
+                    state.tickerNavigation = nil
                     return .none
                 }
-
-            case .addTrade(.presented(.delegate(let action))):
-                return .none
                 
-            case .delegate, .tickerNavigation, .addTrade:
+            case .delegate, .tickerNavigation, .tradeNavigation:
                 return .none
             }
         }
         .ifLet(\.$tickerNavigation, action: \.tickerNavigation) {
             TickerNavigationStore()
         }
-        .ifLet(\.$addTrade, action: \.addTrade) {
-            AddTradeStore()
+        .ifLet(\.$tradeNavigation, action: \.tradeNavigation) {
+            TradeNavigationStore()
         }
     }
 }

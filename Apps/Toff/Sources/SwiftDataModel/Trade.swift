@@ -23,14 +23,14 @@ public class Trade {
     
     public init(
         id: UUID = .init(),
-        side: TradeSide,
-        price: Double,
-        quantity: Double,
-        fee: Double,
-        images: [Data],
-        note: String,
-        date: Date,
-        ticker: Ticker?
+        side: TradeSide = .buy,
+        price: Double = 0.0,
+        quantity: Double = 0.0,
+        fee: Double = 0.0,
+        images: [Data] = [],
+        note: String = "",
+        date: Date = .now,
+        ticker: Ticker? = nil
     ) {
         self.id = id
         self.side = side

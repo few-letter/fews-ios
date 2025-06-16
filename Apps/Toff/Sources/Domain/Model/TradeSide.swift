@@ -11,3 +11,19 @@ public enum TradeSide: String, Codable, CaseIterable {
     case buy = "Buy"
     case sell = "Sell"
 }
+
+extension TradeSide {
+    public var displayText: String {
+        switch self {
+        case .buy: return "Buy"
+        case .sell: return "Sell"
+        }
+    }
+    
+    public var systemImageName: String {
+        switch self {
+        case .buy: return "arrow.up.circle"
+        case .sell: return "arrow.down.circle"
+        }
+    }
+}

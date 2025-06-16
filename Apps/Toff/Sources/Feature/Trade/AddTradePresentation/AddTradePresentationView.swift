@@ -25,8 +25,8 @@ extension AddTradePresentationView {
             .sheet(item: $store.scope(state: \.tickerNavigation, action: \.tickerNavigation)) { store in
                 TickerNavigationView(store: store)
             }
-            .sheet(item: $store.scope(state: \.addTrade, action: \.addTrade)) { store in
-                AddTradeView(store: store)
+            .sheet(item: $store.scope(state: \.tradeNavigation, action: \.tradeNavigation)) { store in
+                TradeNavigationView(store: store)
             }
         
     }

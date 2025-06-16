@@ -5,8 +5,6 @@
 //  Created by 송영모 on 6/16/25.
 //
 
-import Foundation
-
 import SwiftUI
 import ComposableArchitecture
 
@@ -27,7 +25,7 @@ public struct TickerNavigationView: View {
                     }
                     
                     ToolbarItem(placement: .navigationBarTrailing) {
-                        Button("Done") {
+                        Button("Add") {
                             store.send(.addButtonTapped)
                         }
                     }

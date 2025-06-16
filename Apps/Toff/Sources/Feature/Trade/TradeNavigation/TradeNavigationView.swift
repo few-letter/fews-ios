@@ -139,15 +139,15 @@ extension TradeNavigationView {
                             get: { store.trade.price == 0 ? nil : store.trade.price },
                             set: { store.trade.price = $0 ?? 0 }
                         ), format: .number)
-                            .keyboardType(.decimalPad)
-                            .frame(maxWidth: .infinity)
+                        .keyboardType(.decimalPad)
+                        .frame(maxWidth: .infinity)
                         
                         TextField("Decimal allowed", value: Binding<Double?>(
                             get: { store.trade.quantity == 0 ? nil : store.trade.quantity },
                             set: { store.trade.quantity = $0 ?? 0 }
                         ), format: .number)
-                            .keyboardType(.decimalPad)
-                            .frame(maxWidth: .infinity)
+                        .keyboardType(.decimalPad)
+                        .frame(maxWidth: .infinity)
                     }
                 }
                 .padding(.vertical, 4)
@@ -161,7 +161,7 @@ extension TradeNavigationView {
                         get: { store.trade.fee == 0 ? nil : store.trade.fee },
                         set: { store.trade.fee = $0 ?? 0 }
                     ), format: .number)
-                        .keyboardType(.decimalPad)
+                    .keyboardType(.decimalPad)
                 }
                 .padding(.vertical, 4)
                 
@@ -178,73 +178,10 @@ extension TradeNavigationView {
             }
             
             Section {
-                previewView
+                TradePreviewView(trade: store.trade, ticker: store.ticker)
             } header: {
                 Text("Preview")
             }
         }
-    }
-    
-    private var previewView: some View {
-        HStack {
-            Image(systemName: store.trade.side.systemImageName)
-                .foregroundColor(.black)
-                .frame(width: 24)
-            
-            VStack(alignment: .leading, spacing: 4) {
-                HStack {
-                    Text(store.trade.side.displayText)
-                        .font(.headline)
-                        .foregroundColor(.primary)
-                    
-                    Spacer()
-                    
-                    Text(store.ticker.name)
-                        .font(.headline)
-                        .foregroundColor(.primary)
-                }
-                
-                HStack {
-                    VStack(alignment: .leading, spacing: 2) {
-                        Text("Price: \(store.trade.price, format: .number)")
-                            .font(.caption)
-                            .foregroundColor(.secondary)
-                        
-                        Text("Qty: \(store.trade.quantity, format: .number)")
-                            .font(.caption)
-                            .foregroundColor(.secondary)
-                        
-                        if store.trade.fee > 0 {
-                            Text("Fee: \(store.trade.fee, format: .number)")
-                                .font(.caption)
-                                .foregroundColor(.secondary)
-                        }
-                    }
-                    
-                    Spacer()
-                    
-                    VStack(alignment: .trailing, spacing: 2) {
-                        Text(store.trade.date, style: .date)
-                            .font(.caption)
-                            .foregroundColor(.secondary)
-                        
-                        Text(store.trade.date, style: .time)
-                            .font(.caption)
-                            .foregroundColor(.secondary)
-                        
-                        if !store.trade.note.isEmpty {
-                            Text(store.trade.note)
-                                .font(.caption)
-                                .foregroundColor(.secondary)
-                                .italic()
-                                .lineLimit(1)
-                        }
-                    }
-                }
-            }
-            
-            Spacer()
-        }
-        .padding(.vertical, 8)
     }
 }

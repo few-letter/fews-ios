@@ -22,7 +22,7 @@ public struct TradePreviewView: View {
                 .foregroundColor(.black)
                 .frame(width: 24)
             
-            VStack(alignment: .leading, spacing: 4) {
+            VStack(alignment: .leading, spacing: 6) {
                 HStack {
                     Text(trade.side.displayText)
                         .font(.headline)
@@ -36,45 +36,43 @@ public struct TradePreviewView: View {
                 }
                 
                 HStack {
-                    VStack(alignment: .leading, spacing: 2) {
-                        Text("Price: \(trade.price, format: .number)")
+                    Text("Price: \(trade.price, format: .number)")
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                    
+                    Text("•")
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                    
+                    Text("Qty: \(trade.quantity, format: .number)")
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                    
+                    if trade.fee > 0 {
+                        Text("•")
                             .font(.caption)
                             .foregroundColor(.secondary)
                         
-                        Text("Qty: \(trade.quantity, format: .number)")
+                        Text("Fee: \(trade.fee, format: .number)")
                             .font(.caption)
                             .foregroundColor(.secondary)
-                        
-                        if trade.fee > 0 {
-                            Text("Fee: \(trade.fee, format: .number)")
-                                .font(.caption)
-                                .foregroundColor(.secondary)
-                        }
                     }
                     
                     Spacer()
                     
-                    VStack(alignment: .trailing, spacing: 2) {
-                        Text(trade.date, style: .date)
-                            .font(.caption)
-                            .foregroundColor(.secondary)
-                        
-                        Text(trade.date, style: .time)
-                            .font(.caption)
-                            .foregroundColor(.secondary)
-                        
-                        if !trade.note.isEmpty {
-                            Text(trade.note)
-                                .font(.caption)
-                                .foregroundColor(.secondary)
-                                .italic()
-                                .lineLimit(1)
-                        }
-                    }
+                    Text("\(trade.date, style: .date) \(trade.date, style: .time)")
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                }
+                
+                if !trade.note.isEmpty {
+                    Text(trade.note)
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                        .italic()
+                        .lineLimit(1)
                 }
             }
-            
-            Spacer()
         }
         .padding(.vertical, 8)
     }

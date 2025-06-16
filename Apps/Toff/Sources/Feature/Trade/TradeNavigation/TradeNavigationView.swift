@@ -77,7 +77,7 @@ extension TradeNavigationView {
                             }
                             .padding(.horizontal, 12)
                             .padding(.vertical, 8)
-                            .background(Color(.systemGray5))
+                            .background(Color(.systemGray6))
                             .cornerRadius(8)
                         }
                     }

@@ -77,9 +77,6 @@ public struct CalendarHomeStore {
                 }
                 return .none
                 
-            case .addTradePresentation(.delegate(let action)):
-                return .none
-                
             case .delegate, .addTradePresentation:
                 return .none
             }

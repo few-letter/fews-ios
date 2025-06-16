@@ -15,8 +15,15 @@ public class TradeClientLive: TradeClient {
         self.context = context
     }
     
-    public func create() -> Trade {
-        return .init(side: .buy, price: 0, quantity: 0, fee: 0, images: [], note: "", date: .now, ticker: nil)
+    public func createOrUpdate(trade: Trade) -> Trade {
+        do {
+            context.insert(trade)
+            try context.save()
+        } catch {
+            
+        }
+        
+        return trade
     }
     
     public func fetches() -> [Trade] {
@@ -26,14 +33,6 @@ public class TradeClientLive: TradeClient {
             return result
         } catch {
             return []
-        }
-    }
-    
-    public func update(trade: Trade) {
-        do {
-            try context.save()
-        } catch {
-            print("Failed to update ticker: \(error)")
         }
     }
     
@@ -48,15 +47,11 @@ public class TradeClientLive: TradeClient {
 }
 
 public class TradeClientTest: TradeClient {
-    public func create() -> Trade {
+    public func createOrUpdate(trade: Trade) -> Trade {
         fatalError()
     }
     
     public func fetches() -> [Trade] {
-        fatalError()
-    }
-    
-    public func update(trade: Trade) {
         fatalError()
     }
     

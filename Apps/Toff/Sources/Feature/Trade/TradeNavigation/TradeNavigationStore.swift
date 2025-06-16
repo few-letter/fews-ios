@@ -16,8 +16,8 @@ public struct TradeNavigationStore {
     @ObservableState
     public struct State {
         public var path: StackState<Path.State>
+        public let ticker: Ticker
         
-        public var ticker: Ticker
         public var trade: Trade
         
         public var isFormValid: Bool {
@@ -35,7 +35,7 @@ public struct TradeNavigationStore {
             if let trade {
                 self.trade = trade
             } else {
-                self.trade = .init()
+                self.trade = .init(ticker: ticker)
             }
         }
     }
@@ -54,14 +54,13 @@ public struct TradeNavigationStore {
         
         public enum Delegate {
             case requestDismiss
-            case requestSelectedTicker(Ticker)
-            case requestSaveTrade(Trade)
+            case requestSaved
         }
     }
     
     public init() {}
     
-    @Dependency(\.tickerClient) private var tickerClient
+    @Dependency(\.tradeClient) private var tradeClient
     
     public var body: some ReducerOf<Self> {
         BindingReducer()
@@ -78,7 +77,8 @@ public struct TradeNavigationStore {
                 return .send(.delegate(.requestDismiss))
                 
             case .saveButtonTapped:
-                return .send(.delegate(.requestSaveTrade(state.trade)))
+                let _ = tradeClient.createOrUpdate(trade: state.trade)
+                return .send(.delegate(.requestSaved))
 
             case .path, .delegate:
                 return .none

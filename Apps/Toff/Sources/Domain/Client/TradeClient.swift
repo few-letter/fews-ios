@@ -10,9 +10,8 @@ import ComposableArchitecture
 import SwiftData
 
 public protocol TradeClient {
-    func create() -> Trade
+    func createOrUpdate(trade: Trade) -> Trade
     func fetches() -> [Trade]
-    func update(trade: Trade) -> Void
     func delete(trade: Trade) -> Void
 }
 

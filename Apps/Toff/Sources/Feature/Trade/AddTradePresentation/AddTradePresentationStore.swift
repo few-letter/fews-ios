@@ -34,10 +34,6 @@ public struct AddTradePresentationStore {
         
         case tickerNavigation(PresentationAction<TickerNavigationStore.Action>)
         case tradeNavigation(PresentationAction<TradeNavigationStore.Action>)
-        
-        case delegate(Delegate)
-        public enum Delegate {
-        }
     }
     
     public init() {}
@@ -67,7 +63,18 @@ public struct AddTradePresentationStore {
                     return .none
                 }
                 
-            case .delegate, .tickerNavigation, .tradeNavigation:
+            case .tradeNavigation(.presented(.delegate(let action))):
+                switch action {
+                case .requestDismiss:
+                    state.tradeNavigation = nil
+                    return .none
+                    
+                case .requestSaved:
+                    state.tradeNavigation = nil
+                    return .none
+                }
+                
+            case .tickerNavigation, .tradeNavigation:
                 return .none
             }
         }

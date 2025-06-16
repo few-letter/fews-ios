@@ -12,29 +12,31 @@ import SwiftData
 @Reducer
 public struct AddTickerStore {
     @ObservableState
-    public struct State: Equatable {
+    public struct State {
         public var ticker: Ticker
+        public var tags: IdentifiedArrayOf<Tag> = []
         
-        public var tags: IdentifiedArrayOf<Tag>
-        
-        public init(
-            ticker: Ticker,
-            tags: IdentifiedArrayOf<Tag> = []
-        ) {
+        public init(ticker: Ticker) {
             self.ticker = ticker
-            self.tags = tags
         }
     }
     
-    public enum Action: BindableAction, Equatable {
+    public enum Action: BindableAction {
         case binding(BindingAction<State>)
         
         case onAppear
         
         case fetch
         case fetched([Tag])
+        
+        case delegate(Delegate)
+        public enum Delegate {
+            case requestCancel
+            case requestUpdated(Ticker)
+        }
     }
     
+    @Dependency(\.tickerClient) private var tickerClient
     @Dependency(\.dismiss) var dismiss
     
     public var body: some ReducerOf<Self> {
@@ -52,6 +54,9 @@ public struct AddTickerStore {
                 return .none
                 
             case .fetched(let tags):
+                return .none
+                
+            case .delegate:
                 return .none
             }
         }

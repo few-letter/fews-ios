@@ -28,7 +28,7 @@ public enum MainTab: String, CaseIterable, Equatable {
 @Reducer
 public struct MainTabStore {
     @ObservableState
-    public struct State: Equatable {
+    public struct State {
         public var selectedTab: MainTab = .calendars
         public var calendars = CalendarNavigationStore.State()
         public var stats = StatNavigationStore.State()

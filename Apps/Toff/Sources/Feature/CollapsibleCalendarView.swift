@@ -1,13 +1,6 @@
-//
-//  CollapsibleCalendarView.swift
-//  Toff
-//
-//  Created by 송영모 on 6/14/25.
-//
-
 import SwiftUI
 
-struct CollapsibleCalendarView<Item: CalendarItem, CellContent: View>: View {
+struct CollapsibleCalendarView<Item: CalendarItem, CellContent: View, HandleContent: View>: View {
     // MARK: - Properties
     @State private var selectedDate: Date = .init()
     @State private var monthIndex: Int = 0
@@ -17,6 +10,8 @@ struct CollapsibleCalendarView<Item: CalendarItem, CellContent: View>: View {
     
     private let itemProvider: (Date) -> [Item]
     private let cellContentBuilder: (Date, [Item], Bool, Bool, Bool, CGFloat) -> CellContent
+    private let handleContentBuilder: () -> HandleContent
+    private let onDateChanged: (Date) -> Void  // 추가된 콜백
     private let calendar = Calendar.current
     
     // MARK: - Constants
@@ -28,6 +23,7 @@ struct CollapsibleCalendarView<Item: CalendarItem, CellContent: View>: View {
     // MARK: - Initializer
     init(
         itemProvider: @escaping (Date) -> [Item],
+        onDateChanged: @escaping (Date) -> Void,  // 필수 매개변수로 변경
         @ViewBuilder cellContent: @escaping (
             _ date: Date,
             _ items: [Item],
@@ -35,34 +31,37 @@ struct CollapsibleCalendarView<Item: CalendarItem, CellContent: View>: View {
             _ isToday: Bool,
             _ isInCurrentMonth: Bool,
             _ height: CGFloat
-        ) -> CellContent
+        ) -> CellContent,
+        @ViewBuilder handleContent: @escaping () -> HandleContent
     ) {
         self.itemProvider = itemProvider
+        self.onDateChanged = onDateChanged
         self.cellContentBuilder = cellContent
+        self.handleContentBuilder = handleContent
     }
     
     // MARK: - Body
     var body: some View {
-        GeometryReader { geo in
-            ZStack(alignment: .top) {
-                Color.black.ignoresSafeArea()
-                
+        VStack {
+            GeometryReader { geo in
                 VStack(spacing: 0) {
                     calendarBody
                         .frame(height: geo.size.height * heightFraction)
                         .background(Color.white)
-                        .cornerRadius(16, corners: [.bottomLeft, .bottomRight])
-                        .ignoresSafeArea(.container, edges: .horizontal)
+                        .cornerRadius(24, corners: [.bottomLeft, .bottomRight])
                         .clipped()
                     
                     splitterHandle(totalHeight: geo.size.height)
                     
                     eventList
                         .background(Color.white)
-                        .cornerRadius(16, corners: [.topLeft, .topRight])
-                        .ignoresSafeArea(.container, edges: .horizontal)
+                        .cornerRadius(24, corners: [.topLeft, .topRight])
                 }
+                .background(.black, ignoresSafeAreaEdges: [])
             }
+        }
+        .onChange(of: selectedDate) { oldValue, newValue in
+            onDateChanged(newValue)  // 날짜 변경 시 콜백 호출
         }
     }
     
@@ -87,16 +86,10 @@ struct CollapsibleCalendarView<Item: CalendarItem, CellContent: View>: View {
         }
     }
     
-    // MARK: - Splitter Handle
     private func splitterHandle(totalHeight: CGFloat) -> some View {
-        Rectangle()
-            .fill(Color.clear)
-            .frame(height: 60)
-            .overlay(
-                RoundedRectangle(cornerRadius: 2)
-                    .fill(Color.white)
-                    .frame(width: 44, height: 4)
-            )
+        handleContentBuilder()
+            .frame(height: 40)
+            .background(.black)
             .gesture(dragGesture(totalHeight: totalHeight))
     }
     
@@ -165,18 +158,64 @@ struct CollapsibleCalendarView<Item: CalendarItem, CellContent: View>: View {
     }
 }
 
-// MARK: - Convenience Initializer for Default Cell
+// MARK: - Convenience Initializer for Default Cell and Default Handle
+extension CollapsibleCalendarView where CellContent == DefaultDateCellContent<Item>, HandleContent == DefaultHandleContent {
+    init(
+        itemProvider: @escaping (Date) -> [Item],
+        onDateChanged: @escaping (Date) -> Void
+    ) {
+        self.init(
+            itemProvider: itemProvider,
+            onDateChanged: onDateChanged,
+            cellContent: { date, items, isSelected, isToday, isInCurrentMonth, height in
+                DefaultDateCellContent(
+                    date: date,
+                    items: items,
+                    isSelected: isSelected,
+                    isToday: isToday,
+                    isInCurrentMonth: isInCurrentMonth,
+                    height: height
+                )
+            },
+            handleContent: {
+                DefaultHandleContent()
+            }
+        )
+    }
+}
+
+// MARK: - Convenience Initializer for Default Cell with Custom Handle
 extension CollapsibleCalendarView where CellContent == DefaultDateCellContent<Item> {
-    init(itemProvider: @escaping (Date) -> [Item]) {
-        self.init(itemProvider: itemProvider) { date, items, isSelected, isToday, isInCurrentMonth, height in
-            DefaultDateCellContent(
-                date: date,
-                items: items,
-                isSelected: isSelected,
-                isToday: isToday,
-                isInCurrentMonth: isInCurrentMonth,
-                height: height
-            )
+    init(
+        itemProvider: @escaping (Date) -> [Item],
+        onDateChanged: @escaping (Date) -> Void,
+        @ViewBuilder handleContent: @escaping () -> HandleContent
+    ) {
+        self.init(
+            itemProvider: itemProvider,
+            onDateChanged: onDateChanged,
+            cellContent: { date, items, isSelected, isToday, isInCurrentMonth, height in
+                DefaultDateCellContent(
+                    date: date,
+                    items: items,
+                    isSelected: isSelected,
+                    isToday: isToday,
+                    isInCurrentMonth: isInCurrentMonth,
+                    height: height
+                )
+            },
+            handleContent: handleContent
+        )
+    }
+}
+
+// MARK: - Default Handle Content
+struct DefaultHandleContent: View {
+    var body: some View {
+        ZStack {
+            RoundedRectangle(cornerRadius: 4)
+                .fill(Color.white)
+                .frame(width: 44, height: 4)
         }
     }
 }
@@ -258,12 +297,4 @@ struct DefaultDateCellContent<Item: CalendarItem>: View {
         if isToday { return .accentColor }
         return isInCurrentMonth ? .primary : .secondary.opacity(0.5)
     }
-}
-
-// MARK: - Preview
-#Preview {
-    CollapsibleCalendarView { date in
-        DemoCalendarItem.sampleItems(for: date)
-    }
-    .preferredColorScheme(.light)
 }

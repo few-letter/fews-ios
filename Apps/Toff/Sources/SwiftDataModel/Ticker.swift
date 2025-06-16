@@ -10,7 +10,7 @@ import SwiftData
 
 @Model
 public class Ticker {
-    public var id: UUID = UUID()
+    public var id: TickerID = TickerID()
     public var type: TickerType = TickerType.stock
     public var currency: Currency = Currency.dollar
     public var name: String = ""
@@ -20,7 +20,7 @@ public class Ticker {
     @Relationship(inverse: \Tag.tickers) public var tags: [Tag]? = []
 
     public init(
-        id: UUID = .init(),
+        id: TickerID = .init(),
         type: TickerType,
         currency: Currency,
         name: String,
@@ -35,3 +35,5 @@ public class Ticker {
         self.createdDate = createDate
     }
 }
+
+public typealias TickerID = UUID

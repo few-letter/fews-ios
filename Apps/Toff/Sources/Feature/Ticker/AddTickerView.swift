@@ -13,7 +13,8 @@ struct AddTickerView: View {
     
     var body: some View {
         NavigationView {
-            
+            mainView
+                .navigationTitle("Add Ticker")
         }
         .onAppear {
             store.send(.onAppear)
@@ -21,3 +22,10 @@ struct AddTickerView: View {
     }
 }
 
+extension AddTickerView {
+    private var mainView: some View {
+        VStack {
+            Text("Add Ticker View")
+        }
+    }
+}

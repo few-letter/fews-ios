@@ -11,9 +11,9 @@ import SwiftData
 import SwiftUI
 
 @Reducer
-struct AddTagStore {
+public struct AddTagStore {
     @ObservableState
-    struct State: Equatable {
+    public struct State {
         var tag: Tag = Tag(
             id: UUID(),
             hex: "#007AFF",
@@ -39,7 +39,7 @@ struct AddTagStore {
         }
     }
     
-    enum Action: BindableAction, Equatable {
+    public enum Action: BindableAction {
         case binding(BindingAction<State>)
         case colorChanged(Color)
         case saveButtonTapped
@@ -49,7 +49,7 @@ struct AddTagStore {
     
     @Dependency(\.dismiss) var dismiss
     
-    var body: some ReducerOf<Self> {
+    public var body: some ReducerOf<Self> {
         BindingReducer()
         
         Reduce { state, action in

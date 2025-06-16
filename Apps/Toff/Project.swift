@@ -19,6 +19,7 @@ let project = Project(
                 .glob(pattern: "Resources/Assets.xcassets/**"),
                 .glob(pattern: "Resources/GoogleService-Info.plist")
             ],
+            entitlements: "Resources/Toff.entitlements",
             dependencies: [
                 .package(product: "FirebaseAnalytics"),
                 .package(product: "ComposableArchitecture"),

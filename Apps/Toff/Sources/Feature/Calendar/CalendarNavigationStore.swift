@@ -10,19 +10,31 @@ import ComposableArchitecture
 
 @Reducer
 public struct CalendarNavigationStore {
+    @Reducer
+    public enum Path { }
+    
     @ObservableState
-    public struct State: Equatable {
-        public var selectedDate = Date()
+    public struct State {
+        public var path: StackState<Path.State>
+        public var calendarHome: CalendarHomeStore.State
         
-        public init(selectedDate: Date = Date()) {
-            self.selectedDate = selectedDate
+        public init(
+            path: StackState<Path.State> = .init(),
+            calendarHome: CalendarHomeStore.State = .init()
+        ) {
+            self.path = path
+            self.calendarHome = calendarHome
         }
     }
     
     public enum Action: BindableAction {
         case binding(BindingAction<State>)
+        
         case onAppear
-        case dateSelected(Date)
+        
+        case path(StackActionOf<Path>)
+        case calendarHome(CalendarHomeStore.Action)
+        
         case delegate(Delegate)
         
         public enum Delegate {
@@ -37,16 +49,23 @@ public struct CalendarNavigationStore {
         
         Reduce<State, Action> { state, action in
             switch action {
+            case .binding:
+                return .none
+                
             case .onAppear:
                 return .none
                 
-            case let .dateSelected(date):
-                state.selectedDate = date
+            case .calendarHome:
                 return .none
                 
-            case .delegate, .binding:
+            case .path, .delegate:
                 return .none
             }
         }
+        
+        Scope(state: \.calendarHome, action: \.calendarHome) {
+            CalendarHomeStore()
+        }
+        .forEach(\.path, action: \.path)
     }
 }

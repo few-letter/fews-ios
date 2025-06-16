@@ -16,15 +16,23 @@ public class TickerClientLive: TickerClient {
     }
     
     public func create() -> Ticker {
-        return .init(id: .init(), type: .stock, currency: .dollar, name: "", tags: [], createDate: .now)
+        let ticker: Ticker = .init(
+            id: .init(),
+            type: .stock,
+            currency: .dollar,
+            name: "1",
+            tags: [],
+            createDate: .now
+        )
+        save(ticker: ticker)
+        return ticker
     }
     
     public func fetches() -> [Ticker] {
         do {
-            let descriptor: FetchDescriptor<Ticker> = .init(
-                sortBy: [.init(\.createdDate)]
-            )
+            let descriptor: FetchDescriptor<Ticker> = .init()
             let result = try context.fetch(descriptor)
+            print(result)
             return result
         } catch {
             return []
@@ -45,6 +53,14 @@ public class TickerClientLive: TickerClient {
             try context.save()
         } catch {
             
+        }
+    }
+    
+    private func save(ticker: Ticker) {
+        do {
+            context.insert(ticker)
+            try context.save()
+        } catch {
         }
     }
 }

@@ -12,26 +12,27 @@ import SwiftData
 @Reducer
 public struct AddTradeStore {
     @ObservableState
-    public struct State: Equatable {
+    public struct State {
         public var trade: Trade
-        public var tickers: IdentifiedArrayOf<Ticker>
+        public var tickers: IdentifiedArrayOf<Ticker> = []
         
-        public init(
-            trade: Trade,
-            tickers: IdentifiedArrayOf<Ticker> = []
-        ) {
+        public init(trade: Trade) {
             self.trade = trade
-            self.tickers = tickers
         }
     }
     
-    public enum Action: BindableAction, Equatable {
+    public enum Action: BindableAction {
         case binding(BindingAction<State>)
         
         case onAppear
         
         case fetch
         case fetched([Ticker])
+        
+        case delegate(Delegate)
+        public enum Delegate {
+            
+        }
     }
     
     public var body: some ReducerOf<Self> {

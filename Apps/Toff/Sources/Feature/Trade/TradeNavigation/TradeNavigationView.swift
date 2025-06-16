@@ -178,7 +178,7 @@ extension TradeNavigationView {
             }
             
             Section {
-                TradePreviewView(trade: store.trade, ticker: store.ticker)
+                TradeCellView(trade: store.trade)
             } header: {
                 Text("Preview")
             }

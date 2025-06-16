@@ -29,6 +29,7 @@ public struct CalendarHomeStore {
         case onAppear
         
         case dateChanged(Date)
+        case delete(IndexSet)
         case plusButtonTapped
         
         case fetch
@@ -56,7 +57,17 @@ public struct CalendarHomeStore {
                 return .none
                 
             case .onAppear:
-                return .none
+                return .send(.fetch)
+                
+            case .delete(let indexSet):
+                guard let date = state.selectedDate else { return .none }
+                
+                for index in indexSet {
+                    if let trade = state.tradesByDate[date]?.remove(at: index) {
+                        tradeClient.delete(trade: trade)
+                    }
+                }
+                return .send(.fetch)
                 
             case .dateChanged(let date):
                 state.selectedDate = date

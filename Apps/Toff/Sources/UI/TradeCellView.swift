@@ -7,13 +7,11 @@
 
 import SwiftUI
 
-public struct TradePreviewView: View {
-    let trade: Trade
-    let ticker: Ticker
+public struct TradeCellView: View {
+    private let trade: Trade
     
-    public init(trade: Trade, ticker: Ticker) {
+    public init(trade: Trade) {
         self.trade = trade
-        self.ticker = ticker
     }
     
     public var body: some View {
@@ -30,7 +28,7 @@ public struct TradePreviewView: View {
                     
                     Spacer()
                     
-                    Text(ticker.name)
+                    Text(trade.ticker?.name ?? "")
                         .font(.headline)
                         .foregroundColor(.primary)
                 }

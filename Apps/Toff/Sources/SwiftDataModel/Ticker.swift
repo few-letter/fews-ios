@@ -21,11 +21,11 @@ public class Ticker {
 
     public init(
         id: TickerID = .init(),
-        type: TickerType,
-        currency: Currency,
-        name: String,
-        tags: [Tag],
-        createDate: Date
+        type: TickerType = .stock,
+        currency: Currency = .dollar,
+        name: String = "",
+        tags: [Tag] = [],
+        createDate: Date = .init(),
     ) {
         self.id = id
         self.type = type

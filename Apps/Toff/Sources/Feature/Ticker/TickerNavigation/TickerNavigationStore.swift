@@ -40,6 +40,7 @@ public struct TickerNavigationStore {
         case cancelButtonTapped
         case addButtonTapped
         case select(Ticker)
+        case delete(IndexSet)
         
         case fetch
         case fetched([Ticker])
@@ -73,7 +74,7 @@ public struct TickerNavigationStore {
                 return .send(.delegate(.requestDismiss))
                 
             case .addButtonTapped:
-                let ticker = tickerClient.create()
+                let ticker: Ticker = .init()
                 state.selectedTickerID = ticker.id
                 state.path.append(.addTicker(.init(ticker: ticker)))
                 return .none
@@ -82,6 +83,13 @@ public struct TickerNavigationStore {
                 state.selectedTickerID = ticker.id
                 return .send(.delegate(.requestSelectedTicker(ticker)))
                 
+            case let .delete(indexSet):
+                for index in indexSet {
+                    let ticker = state.tickers.remove(at: index)
+                    tickerClient.delete(ticker: ticker)
+                }
+                return .send(.fetch)
+                
             case .fetch:
                 let tickers = tickerClient.fetches()
                 return .send(.fetched(tickers))
@@ -89,6 +97,16 @@ public struct TickerNavigationStore {
             case .fetched(let tickers):
                 state.tickers = .init(uniqueElements: tickers)
                 return .none
+                
+            case .path(.element(id: let id, action: .addTicker(.delegate(let action)))):
+                switch action {
+                case .requestSaved(let ticker):
+                    let _ = tickerClient.create(ticker: ticker)
+                    return .concatenate([
+                        .send(.path(.popFrom(id: id))),
+                        .send(.fetch)
+                    ])
+                }
                 
             case .path, .delegate:
                 return .none

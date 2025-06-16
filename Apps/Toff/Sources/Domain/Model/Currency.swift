@@ -24,30 +24,44 @@ public enum Currency: String, Codable, CaseIterable, Equatable {
     case won = "KRW"                // 대한민국: 원
     
     case bitcoin = "BTC"            // 비트코인
-    /*
-    case florin = "AWG"
-    case turkishlira = "TRY"
-    case ruble = "RUB"
-    case dong = "VND"
-    case indianrupee = "INR"
-    case tenge = "KZT"
-    case peseta = "ESP"
-    case kip = "LAK"
-    case hryvnia = "UAH"
-    case naira = "NGN"
-    case guarani = "PYG"
-    case coloncurrency = "CRC"
-    case cedi = "GHS"
-    case tugrik = "MNT"
-    case shekel = "ILS"
-    case manat = "AZN"
-    case baht = "THB"
-    case lari = "GEL"
-    case brazilianreal = "BRL"
-     */
 }
 
 extension Currency {
+    public var displayText: String {
+        switch self {
+        case .dollar:
+            return "USD"
+        case .euro:
+            return "EUR"
+        case .yen:
+            return "JPY"
+        case .sterling:
+            return "GBP"
+        case .australianDollar:
+            return "AUD"
+        case .canadianDollar:
+            return "CAD"
+        case .franc:
+            return "CHF"
+        case .krona:
+            return "SEK"
+        case .peso:
+            return "MXN"
+        case .newZealandDollar:
+            return "NZD"
+        case .singaporeDollar:
+            return "SGD"
+        case .hongKongDollar:
+            return "HKD"
+        case .krone:
+            return "NOK"
+        case .won:
+            return "KRW"
+        case .bitcoin:
+            return "BTC"
+        }
+    }
+    
     public var systemImageName: String {
         switch self {
         case .dollar:

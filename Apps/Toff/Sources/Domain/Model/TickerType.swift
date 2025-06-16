@@ -7,7 +7,7 @@
 
 import Foundation
 
-public enum TickerType: String, Codable, CaseIterable, Equatable {
+public enum TickerType: String, Codable, CaseIterable {
     case stock = "Stock"
     case crypto = "Crypto"
     case gold = "Gold"
@@ -15,7 +15,7 @@ public enum TickerType: String, Codable, CaseIterable, Equatable {
 }
 
 extension TickerType {
-    public var displayName: String {
+    public var displayText: String {
         switch self {
         case .stock:
             return "Stock"
@@ -27,9 +27,7 @@ extension TickerType {
             return "Real Estate"
         }
     }
-}
-
-extension TickerType {
+    
     public var systemImageName: String {
         switch self {
         case .stock:

@@ -26,13 +26,14 @@ public struct AddTickerStore {
         
         case onAppear
         
+        case saveButtonTapped
+        
         case fetch
         case fetched([Tag])
         
         case delegate(Delegate)
         public enum Delegate {
-            case requestCancel
-            case requestUpdated(Ticker)
+            case requestSaved(Ticker)
         }
     }
     
@@ -49,6 +50,8 @@ public struct AddTickerStore {
                 
             case .onAppear:
                 return .none
+            case .saveButtonTapped:
+                return .send(.delegate(.requestSaved(state.ticker)))
                 
             case .fetch:
                 return .none

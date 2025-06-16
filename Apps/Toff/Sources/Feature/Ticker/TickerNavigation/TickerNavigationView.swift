@@ -48,19 +48,50 @@ public struct TickerNavigationView: View {
 
 extension TickerNavigationView {
     private var mainView: some View {
-        VStack {
+        List {
             ForEach(store.tickers) { ticker in
                 tickerItem(ticker: ticker) {
                     store.send(.select(ticker))
                 }
             }
+            .onDelete { store.send(.delete($0)) }
         }
     }
     
     private func tickerItem(ticker: Ticker, isSelected: Bool = false, onTap: @escaping () -> Void) -> some View {
         HStack {
-            Text(ticker.name)
+            Image(systemName: ticker.type.systemImageName)
+                .foregroundColor(.black)
+                .frame(width: 24)
+            
+            VStack(alignment: .leading) {
+                Text(ticker.name)
+                    .font(.headline)
+                    .foregroundColor(.primary)
+                
+                HStack {
+                    Text(ticker.type.displayText)
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                    
+                    Spacer()
+                    
+                    HStack(spacing: 4) {
+                        Image(systemName: ticker.currency.systemImageName)
+                            .font(.caption)
+                        Text(ticker.currency.displayText)
+                            .font(.caption)
+                    }
+                    .foregroundColor(.secondary)
+                }
+            }
+            
             Spacer()
         }
+        .contentShape(Rectangle())
+        .onTapGesture {
+            onTap()
+        }
+        .padding(.vertical, 8)
     }
 }

@@ -15,15 +15,7 @@ public class TickerClientLive: TickerClient {
         self.context = context
     }
     
-    public func create() -> Ticker {
-        let ticker: Ticker = .init(
-            id: .init(),
-            type: .stock,
-            currency: .dollar,
-            name: "1",
-            tags: [],
-            createDate: .now
-        )
+    public func create(ticker: Ticker) -> Ticker {
         save(ticker: ticker)
         return ticker
     }
@@ -32,7 +24,6 @@ public class TickerClientLive: TickerClient {
         do {
             let descriptor: FetchDescriptor<Ticker> = .init()
             let result = try context.fetch(descriptor)
-            print(result)
             return result
         } catch {
             return []
@@ -50,6 +41,7 @@ public class TickerClientLive: TickerClient {
     public func delete(ticker: Ticker) {
         do {
             context.delete(ticker)
+            print("delete")
             try context.save()
         } catch {
             
@@ -66,7 +58,7 @@ public class TickerClientLive: TickerClient {
 }
 
 public class TickerClientTest: TickerClient {
-    public func create() -> Ticker {
+    public func create(ticker: Ticker) -> Ticker {
         fatalError()
     }
     

@@ -10,7 +10,7 @@ import ComposableArchitecture
 import SwiftData
 
 public protocol TickerClient {
-    func create() -> Ticker
+    func create(ticker: Ticker) -> Ticker
     func fetches() -> [Ticker]
     func update(ticker: Ticker) -> Void
     func delete(ticker: Ticker) -> Void

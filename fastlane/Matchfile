@@ -7,6 +7,6 @@ storage_mode("git")
 app_identifier([
   "com.annapo.plotfolio",    # Plots
   "com.annapo.fewcuts",      # FewCuts  
-  "com.annapo.kpt"           # FewRetros
-  # "io.tuist.Toff"            # Toff - Bundle ID가 Developer Portal에 없음
+  "com.annapo.kpt",          # FewRetros
+  "com.tamsadan.toolinder"   # Toff
 ])

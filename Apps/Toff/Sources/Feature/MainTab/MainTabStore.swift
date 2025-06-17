@@ -67,7 +67,7 @@ public struct MainTabStore {
     }
     
     public init() {}
-    
+
     public var body: some ReducerOf<Self> {
         BindingReducer()
         

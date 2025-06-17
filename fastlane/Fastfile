@@ -152,7 +152,7 @@ platform :ios do
     sh("cd .. && rm -rf ~/Library/Developer/Xcode/DerivedData || true")
     
     # 각 앱의 패키지 의존성 다시 해결
-    ["Plots", "FewCuts", "FewRetros"].each do |app_name|
+    ["Plots", "FewCuts", "FewRetros", "Toff"].each do |app_name|
       project_path = "Apps/#{app_name}/#{app_name}.xcodeproj"
       if File.exist?(File.expand_path("../#{project_path}", __dir__))
         UI.message("#{app_name} 의존성 해결 중...")

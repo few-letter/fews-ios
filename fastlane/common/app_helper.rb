@@ -76,6 +76,7 @@ def get_all_bundle_ids
   [
     ENV['BUNDLE_ID_PLOTS'],
     ENV['BUNDLE_ID_FEWCUTS'],
-    ENV['BUNDLE_ID_FEWRETROS']
+    ENV['BUNDLE_ID_FEWRETROS'],
+    ENV['BUNDLE_ID_TOFF'],
   ].compact
 end 

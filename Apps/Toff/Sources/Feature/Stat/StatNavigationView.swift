@@ -20,7 +20,7 @@ public struct StatNavigationView: View {
     }
     
     public var body: some View {
-        NavigationView {
+        NavigationStack {
             ScrollView {
                 LazyVStack(spacing: 20) {
                     controlsView

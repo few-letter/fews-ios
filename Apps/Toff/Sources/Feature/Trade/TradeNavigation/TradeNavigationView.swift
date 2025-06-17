@@ -46,7 +46,7 @@ extension TradeNavigationView {
     // MARK: - Validation Computed Properties
     
     private var validationError: String? {
-        return store.temporaryTrade.validateBalance(in: store.trades)
+        return store.trade.validateBalance(in: store.trades)
     }
     
     private var isTradeValid: Bool {
@@ -55,7 +55,7 @@ extension TradeNavigationView {
     
     // Price - 단순히 값이 있는지만 체크
     private var priceCheckmarkColor: Color {
-        if store.temporaryTrade.price == 0 {
+        if store.trade.price == 0 {
             return .gray
         } else {
             return .green
@@ -68,9 +68,9 @@ extension TradeNavigationView {
     
     // Quantity - validation error까지 체크
     private var quantityCheckmarkColor: Color {
-        if store.temporaryTrade.quantity == 0 {
+        if store.trade.quantity == 0 {
             return .gray
-        } else if store.temporaryTrade.quantity > 0 && isTradeValid {
+        } else if store.trade.quantity > 0 && isTradeValid {
             return .green
         } else {
             return .red
@@ -78,9 +78,9 @@ extension TradeNavigationView {
     }
     
     private var quantityCheckmarkImageName: String {
-        if store.temporaryTrade.quantity == 0 {
+        if store.trade.quantity == 0 {
             return "checkmark.circle.fill"
-        } else if store.temporaryTrade.quantity > 0 && isTradeValid {
+        } else if store.trade.quantity > 0 && isTradeValid {
             return "checkmark.circle.fill"
         } else {
             return "xmark.circle.fill"
@@ -107,7 +107,7 @@ extension TradeNavigationView {
                         Menu {
                             ForEach(TradeSide.allCases, id: \.self) { side in
                                 Button {
-                                    store.send(.binding(.set(\.temporaryTrade.side, side)))
+                                    store.send(.binding(.set(\.trade.side, side)))
                                 } label: {
                                     HStack {
                                         Image(systemName: side.systemImageName)
@@ -117,9 +117,9 @@ extension TradeNavigationView {
                             }
                         } label: {
                             HStack {
-                                Image(systemName: store.temporaryTrade.side.systemImageName)
+                                Image(systemName: store.trade.side.systemImageName)
                                     .foregroundColor(.black)
-                                Text(store.temporaryTrade.side.displayText)
+                                Text(store.trade.side.displayText)
                                     .foregroundColor(.black)
                             }
                             .padding(.horizontal, 12)
@@ -143,7 +143,7 @@ extension TradeNavigationView {
                         
                         DatePicker(
                             "",
-                            selection: .init(get: { store.temporaryTrade.date }, set: { store.send(.binding(.set(\.temporaryTrade.date, $0))) }),
+                            selection: .init(get: { store.trade.date }, set: { store.send(.binding(.set(\.trade.date, $0))) }),
                             displayedComponents: [.date, .hourAndMinute]
                         )
                         .labelsHidden()
@@ -184,8 +184,8 @@ extension TradeNavigationView {
                     HStack(spacing: 12) {
                         VStack(alignment: .leading) {
                             TextField("Decimal allowed", value: Binding<Double?>(
-                                get: { store.temporaryTrade.price == 0 ? nil : store.temporaryTrade.price },
-                                set: { store.temporaryTrade.price = $0 ?? 0 }
+                                get: { store.trade.price == 0 ? nil : store.trade.price },
+                                set: { store.send(.binding(.set(\.trade.price, $0 ?? 0))) }
                             ), format: .number)
                             .keyboardType(.decimalPad)
                         }
@@ -193,8 +193,8 @@ extension TradeNavigationView {
                         
                         VStack(alignment: .leading) {
                             TextField("Decimal allowed", value: Binding<Double?>(
-                                get: { store.temporaryTrade.quantity == 0 ? nil : store.temporaryTrade.quantity },
-                                set: { store.temporaryTrade.quantity = $0 ?? 0 }
+                                get: { store.trade.quantity == 0 ? nil : store.trade.quantity },
+                                set: { store.send(.binding(.set(\.trade.quantity, $0 ?? 0))) }
                             ), format: .number)
                             .keyboardType(.decimalPad)
                         }
@@ -209,8 +209,8 @@ extension TradeNavigationView {
                         .foregroundColor(.secondary)
                     
                     TextField("Percentage", value: Binding<Double?>(
-                        get: { store.temporaryTrade.fee == 0 ? nil : store.temporaryTrade.fee },
-                        set: { store.temporaryTrade.fee = $0 ?? 0 }
+                        get: { store.trade.fee == 0 ? nil : store.trade.fee },
+                        set: { store.send(.binding(.set(\.trade.fee, $0 ?? 0))) }
                     ), format: .number)
                     .keyboardType(.decimalPad)
                 }
@@ -222,7 +222,7 @@ extension TradeNavigationView {
                         .foregroundColor(.secondary)
                     TextField(
                         "Optional note",
-                        text: .init(get: { store.temporaryTrade.note }, set: { store.send(.binding(.set(\.temporaryTrade.note, $0))) })
+                        text: .init(get: { store.trade.note }, set: { store.send(.binding(.set(\.trade.note, $0))) })
                     )
                 }
                 .padding(.vertical, 4)
@@ -248,7 +248,7 @@ extension TradeNavigationView {
             }
             
             Section {
-                TradeCellView(trade: store.temporaryTrade)
+                TradeCellView(trade: store.trade)
             } header: {
                 Text("Preview")
             }

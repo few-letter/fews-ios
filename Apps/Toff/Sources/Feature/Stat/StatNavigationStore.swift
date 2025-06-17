@@ -11,11 +11,11 @@ import ComposableArchitecture
 @Reducer
 public struct StatNavigationStore {
     @ObservableState
-    public struct State: Equatable {
+    public struct State {
         public var tickers: [Ticker]
-        public var trades: [Trade]
+        public var trades: [TradeModel]
         
-        public init(tickers: [Ticker] = [], trades: [Trade] = []) {
+        public init(tickers: [Ticker] = [], trades: [TradeModel] = []) {
             self.tickers = tickers
             self.trades = trades
         }
@@ -26,7 +26,7 @@ public struct StatNavigationStore {
         case onAppear
         
         case fetch
-        case fetched([Ticker], [Trade])
+        case fetched([Ticker], [TradeModel])
         
         case confirm
         case cancel

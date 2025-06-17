@@ -10,11 +10,10 @@ import ComposableArchitecture
 import SwiftData
 
 public protocol TradeClient {
-    func createOrUpdate(trade: Trade) -> Trade
-    func fetches(ticker: Ticker?) -> [Trade]
-    func delete(trade: Trade) -> Void
+    func createOrUpdate(trade: TradeModel) -> TradeModel
+    func fetches(ticker: Ticker?) -> [TradeModel]
+    func delete(trade: TradeModel)
 }
-
 private struct TradeClientKey: TestDependencyKey {
     static var testValue: any TradeClient = TradeClientTest()
 }

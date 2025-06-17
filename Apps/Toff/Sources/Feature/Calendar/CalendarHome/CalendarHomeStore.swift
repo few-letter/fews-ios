@@ -12,13 +12,13 @@ import ComposableArchitecture
 public struct CalendarHomeStore {
     @ObservableState
     public struct State {
-        public var tradesByDate: [Date: IdentifiedArrayOf<Trade>]
+        public var tradesByDate: [Date: IdentifiedArrayOf<TradeModel>]
         
-        public var selectedDate: Date?
+        public var selectedDate: Date = Calendar.current.startOfDay(for: .now)
         
         public var addTradePresentation: AddTradePresentationStore.State = .init()
         
-        public init(tradesByDate: [Date: IdentifiedArrayOf<Trade>] = [:]) {
+        public init(tradesByDate: [Date: IdentifiedArrayOf<TradeModel>] = [:]) {
             self.tradesByDate = tradesByDate
         }
     }
@@ -28,13 +28,13 @@ public struct CalendarHomeStore {
         
         case onAppear
         
-        case tap(Trade)
+        case tap(TradeModel)
         case delete(IndexSet)
         case dateChanged(Date)
         case plusButtonTapped
         
         case fetch
-        case fetched([Trade])
+        case fetched([TradeModel])
         
         case addTradePresentation(AddTradePresentationStore.Action)
         
@@ -62,14 +62,12 @@ public struct CalendarHomeStore {
                 
             case .tap(let trade):
                 guard let ticker = trade.ticker else { return .none }
-                state.addTradePresentation.tradeNavigation = .init(ticker: ticker, trade: trade)
+                state.addTradePresentation.tradeNavigation = .init(ticker: ticker, date: state.selectedDate, trade: trade)
                 return .none
                 
             case .delete(let indexSet):
-                guard let date = state.selectedDate else { return .none }
-                
                 for index in indexSet {
-                    if let trade = state.tradesByDate[date]?.remove(at: index) {
+                    if let trade = state.tradesByDate[state.selectedDate]?.remove(at: index) {
                         tradeClient.delete(trade: trade)
                     }
                 }
@@ -88,14 +86,21 @@ public struct CalendarHomeStore {
                 return .send(.fetched(trades))
                 
             case .fetched(let trades):
+                state.tradesByDate = [:]
                 trades.forEach { trade in
                     let date = Calendar.current.startOfDay(for: trade.date)
                     state.tradesByDate[date, default: []].updateOrAppend(trade)
                 }
                 return .none
                 
-            case .addTradePresentation(.tradeNavigation(.dismiss)):
-                return .send(.fetch)
+            case .addTradePresentation(.delegate(let action)):
+                switch action {
+                case .requestTradeNavigation(let ticker):
+                    state.addTradePresentation.tradeNavigation = .init(ticker: ticker, date: state.selectedDate)
+                    return .none
+                case .dismiss:
+                    return .send(.fetch)
+                }
                 
             case .delegate, .addTradePresentation:
                 return .none

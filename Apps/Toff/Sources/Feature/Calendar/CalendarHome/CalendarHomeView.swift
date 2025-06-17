@@ -73,7 +73,7 @@ extension CalendarHomeView {
         }
     }
     
-    private func calendarEventListView(trades: [Trade]) -> some View {
+    private func calendarEventListView(trades: [TradeModel]) -> some View {
         List {
             ForEach(trades) { trade in
                 Button {
@@ -90,7 +90,7 @@ extension CalendarHomeView {
 
 private struct CalendarCellContent: View {
     let date: Date
-    let trades: [Trade]
+    let trades: [TradeModel]
     let isSelected: Bool
     let isToday: Bool
     let isInCurrentMonth: Bool
@@ -173,7 +173,7 @@ private struct CalendarCellContent: View {
         return isInCurrentMonth ? .primary : .secondary.opacity(0.5)
     }
     
-    private func tradeDisplayText(for trade: Trade) -> String {
+    private func tradeDisplayText(for trade: TradeModel) -> String {
         if let ticker = trade.ticker {
             return ticker.name
         } else {

@@ -16,14 +16,11 @@ public struct AddTradePresentationStore {
         @Presents public var tradeNavigation: TradeNavigationStore.State? = nil
         
         public var selectedTicker: Ticker?
-        public var selectedDate: Date?
         
         public init(
-            selectedTicker: Ticker? = nil,
-            selectedDate: Date? = nil
+            selectedTicker: Ticker? = nil
         ) {
             self.selectedTicker = selectedTicker
-            self.selectedDate = selectedDate
         }
     }
     
@@ -34,6 +31,13 @@ public struct AddTradePresentationStore {
         
         case tickerNavigation(PresentationAction<TickerNavigationStore.Action>)
         case tradeNavigation(PresentationAction<TradeNavigationStore.Action>)
+        
+        case delegate(Delegate)
+        
+        public enum Delegate {
+            case requestTradeNavigation(Ticker)
+            case dismiss
+        }
     }
     
     public init() {}
@@ -55,8 +59,7 @@ public struct AddTradePresentationStore {
                 switch action {
                 case .requestSelectedTicker(let ticker):
                     state.tickerNavigation = nil
-                    state.tradeNavigation = .init(ticker: ticker)
-                    return .none
+                    return .send(.delegate(.requestTradeNavigation(ticker)))
                     
                 case .requestDismiss:
                     state.tickerNavigation = nil
@@ -67,14 +70,14 @@ public struct AddTradePresentationStore {
                 switch action {
                 case .requestDismiss:
                     state.tradeNavigation = nil
-                    return .none
+                    return .send(.delegate(.dismiss))
                     
                 case .requestSaved:
                     state.tradeNavigation = nil
-                    return .none
+                    return .send(.delegate(.dismiss))
                 }
                 
-            case .tickerNavigation, .tradeNavigation:
+            case .tickerNavigation, .tradeNavigation, .delegate:
                 return .none
             }
         }

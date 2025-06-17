@@ -8,9 +8,9 @@
 import SwiftUI
 
 public struct TradeCellView: View {
-    private let trade: Trade
+    private let trade: TradeModel
     
-    public init(trade: Trade) {
+    public init(trade: TradeModel) {
         self.trade = trade
     }
     

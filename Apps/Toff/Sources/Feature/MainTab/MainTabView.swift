@@ -33,6 +33,14 @@ public struct MainTabView: View {
             }
             .tag(MainTab.stats)
             
+            HistoryNavigationView(
+                store: store.scope(state: \.history, action: \.history)
+            )
+            .tabItem {
+                Image(systemName: MainTab.history.systemImage)
+            }
+            .tag(MainTab.history)
+            
             SettingsView(
                 store: store.scope(state: \.settings, action: \.settings)
             )
@@ -43,6 +51,9 @@ public struct MainTabView: View {
         }
         .onAppear {
             store.send(.onAppear)
+        }
+        .task {
+            await AppOpenAdManager.shared.showAdIfAvailable()
         }
     }
 }

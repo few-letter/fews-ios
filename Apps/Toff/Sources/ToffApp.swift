@@ -3,11 +3,13 @@ import SwiftData
 import AppTrackingTransparency
 import ComposableArchitecture
 import FirebaseCore
+import GoogleMobileAds
 
 public class AppDelegate: NSObject, UIApplicationDelegate {
     public func application(_ application: UIApplication,
                             didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil) -> Bool {
         FirebaseApp.configure()
+        MobileAds.shared.start()
         return true
     }
 }

@@ -9,15 +9,18 @@ import Foundation
 import ComposableArchitecture
 
 public enum MainTab: String, CaseIterable, Equatable {
-    case calendars = "캘린더"
-    case stats = "히스토리"
-    case settings = "내정보"
+    case calendars
+    case history
+    case stats
+    case settings
     
     public var systemImage: String {
         switch self {
         case .calendars:
             return "calendar"
         case .stats:
+            return "chart.pie"
+        case .history:
             return "clock.arrow.circlepath"
         case .settings:
             return "person.circle"
@@ -29,20 +32,23 @@ public enum MainTab: String, CaseIterable, Equatable {
 public struct MainTabStore {
     @ObservableState
     public struct State {
-        public var selectedTab: MainTab = .calendars
-        public var calendars = CalendarNavigationStore.State()
-        public var stats = StatNavigationStore.State()
-        public var settings = SettingsStore.State()
+        public var selectedTab: MainTab
+        public var calendars: CalendarNavigationStore.State
+        public var stats: StatNavigationStore.State
+        public var history: HistoryNavigationStore.State
+        public var settings:SettingsStore.State
         
         public init(
             selectedTab: MainTab = .calendars,
             calendars: CalendarNavigationStore.State = .init(),
             stats: StatNavigationStore.State = .init(),
+            history: HistoryNavigationStore.State = .init(),
             settings: SettingsStore.State = .init()
         ) {
             self.selectedTab = selectedTab
             self.calendars = calendars
             self.stats = stats
+            self.history = history
             self.settings = settings
         }
     }
@@ -56,6 +62,7 @@ public struct MainTabStore {
         
         case calendars(CalendarNavigationStore.Action)
         case stats(StatNavigationStore.Action)
+        case history(HistoryNavigationStore.Action)
         case settings(SettingsStore.Action)
     }
     
@@ -72,6 +79,10 @@ public struct MainTabStore {
             StatNavigationStore()
         }
         
+        Scope(state: \.history, action: \.history) {
+            HistoryNavigationStore()
+        }
+        
         Scope(state: \.settings, action: \.settings) {
             SettingsStore()
         }
@@ -85,7 +96,7 @@ public struct MainTabStore {
                 state.selectedTab = tab
                 return .none
                 
-            case .calendars, .stats, .settings:
+            case .calendars, .stats, .history, .settings:
                 return .none
                 
             case .binding:

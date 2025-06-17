@@ -27,10 +27,7 @@ public struct StatNavigationStore {
         
         case fetch
         case fetched([Ticker], [TradeModel])
-        
-        case confirm
-        case cancel
-        
+
         case delegate(Delegate)
         
         public enum Delegate {
@@ -58,12 +55,6 @@ public struct StatNavigationStore {
                 state.tickers = tickers
                 state.trades = trades
                 return .none
-                
-            case .confirm:
-                return .none
-                
-            case .cancel:
-                return .send(.delegate(.dismiss))
                 
             case .delegate, .binding:
                 return .none

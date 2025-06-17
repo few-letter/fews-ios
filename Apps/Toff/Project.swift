@@ -13,6 +13,7 @@ let project = Project(
             destinations: .iOS,
             product: .app,
             bundleId: "com.tamsadan.toolinder",
+            deploymentTargets: .iOS("18.0"),
             infoPlist: .file(path: "Resources/Info.plist"),
             sources: ["Sources/**"],
             resources: [

@@ -25,6 +25,8 @@ struct SettingView: View {
                             .font(.caption)
                     }
                 }
+                
+                Link("문의하기", destination: .init(string: "https://open.kakao.com/o/snwARoCh")!)
             }
         }
         .navigationTitle("Setting")

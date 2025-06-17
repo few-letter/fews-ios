@@ -36,9 +36,9 @@ extension CalendarHomeView {
                 store.send(.dateChanged(date))
             },
             cellContent: { date, items, isSelected, isToday, isInCurrentMonth, height in
-                DefaultDateCellContent(
+                CalendarCellContent(
                     date: date,
-                    items: items,
+                    trades: items,
                     isSelected: isSelected,
                     isToday: isToday,
                     isInCurrentMonth: isInCurrentMonth,
@@ -46,39 +46,51 @@ extension CalendarHomeView {
                 )
             },
             handleContent: {
-                ZStack {
-                    RoundedRectangle(cornerRadius: 4)
-                        .fill(Color.white)
-                        .frame(width: 44, height: 4)
-                    
-                    HStack {
-                        Spacer()
-                        Button(action: {
-                            store.send(.plusButtonTapped)
-                        }) {
-                            Image(systemName: "plus.circle.fill")
-                                .foregroundColor(.white)
-                                .font(.system(size: 16, weight: .medium))
-                        }
-                    }
-                    .padding(.horizontal, 24)
-                }
+                calendarHandleView
             },
             eventListContent: { trades in
-                List {
-                    ForEach(trades) { trade in
-                        TradeCellView(trade: trade)
-                    }
-                    .onDelete { store.send(.delete($0)) }
-                }
-                .listStyle(.plain)
+                calendarEventListView(trades: trades)
             })
+    }
+    
+    private var calendarHandleView: some View {
+        ZStack {
+            RoundedRectangle(cornerRadius: 4)
+                .fill(Color.white)
+                .frame(width: 44, height: 4)
+            
+            HStack {
+                Spacer()
+                Button(action: {
+                    store.send(.plusButtonTapped)
+                }) {
+                    Image(systemName: "plus.circle.fill")
+                        .foregroundColor(.white)
+                        .font(.system(size: 16, weight: .medium))
+                }
+            }
+            .padding(.horizontal, 24)
+        }
+    }
+    
+    private func calendarEventListView(trades: [Trade]) -> some View {
+        List {
+            ForEach(trades) { trade in
+                Button {
+                    store.send(.tap(trade))
+                } label: {
+                    TradeCellView(trade: trade)
+                }
+            }
+            .onDelete { store.send(.delete($0)) }
+        }
+        .listStyle(.plain)
     }
 }
 
-struct DefaultDateCellContent<Item: CalendarItem>: View {
+private struct CalendarCellContent: View {
     let date: Date
-    let items: [Item]
+    let trades: [Trade]
     let isSelected: Bool
     let isToday: Bool
     let isInCurrentMonth: Bool
@@ -95,9 +107,9 @@ struct DefaultDateCellContent<Item: CalendarItem>: View {
                 .frame(height: 24)
             
             if height > 40 {
-                fullEventList
+                fullTradeList
             } else {
-                compactEventIndicator
+                compactTradeIndicator
             }
             
             Spacer(minLength: 0)
@@ -119,9 +131,9 @@ struct DefaultDateCellContent<Item: CalendarItem>: View {
         }
     }
     
-    private var compactEventIndicator: some View {
+    private var compactTradeIndicator: some View {
         Group {
-            if !items.isEmpty {
+            if !trades.isEmpty {
                 Circle()
                     .fill(Color.accentColor)
                     .frame(width: 4, height: 4)
@@ -129,19 +141,27 @@ struct DefaultDateCellContent<Item: CalendarItem>: View {
         }
     }
     
-    private var fullEventList: some View {
+    private var fullTradeList: some View {
         VStack(spacing: 0.5) {
-            ForEach(Array(items.prefix(2).enumerated()), id: \.offset) { index, item in
-                Text(item.shortTitle)
-                    .font(.system(size: 6))
-                    .lineLimit(1)
-                    .frame(maxWidth: .infinity)
-                    .foregroundColor(.secondary)
+            ForEach(Array(trades.prefix(2).enumerated()), id: \.offset) { index, trade in
+                HStack(spacing: 1) {
+                    Rectangle()
+                        .fill(trade.side.color)
+                        .frame(width: 2, height: 6)
+                    
+                    Text(tradeDisplayText(for: trade))
+                        .font(.system(size: 8))
+                        .lineLimit(1)
+                        .foregroundColor(.secondary)
+                    
+                    Spacer()
+                }
+                .frame(maxWidth: .infinity, alignment: .leading)
             }
             
-            if items.count > 2 {
+            if trades.count > 2 {
                 Text("•••")
-                    .font(.system(size: 6))
+                    .font(.system(size: 8))
                     .foregroundColor(.accentColor)
             }
         }
@@ -152,5 +172,12 @@ struct DefaultDateCellContent<Item: CalendarItem>: View {
         if isToday { return .accentColor }
         return isInCurrentMonth ? .primary : .secondary.opacity(0.5)
     }
+    
+    private func tradeDisplayText(for trade: Trade) -> String {
+        if let ticker = trade.ticker {
+            return ticker.name
+        } else {
+            return "$\(String(format: "%.0f", trade.price))"
+        }
+    }
 }
-

@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct MonthView<Item: CalendarItem, CellContent: View>: View {
+struct MonthView<Item, CellContent: View>: View {
     // MARK: - Properties
     let baseMonth: Int
     @Binding var selectedDate: Date
@@ -133,7 +133,7 @@ struct MonthView<Item: CalendarItem, CellContent: View>: View {
 }
 
 // MARK: - Custom Date Cell Wrapper
-struct CustomDateCell<Item: CalendarItem, CellContent: View>: View {
+struct CustomDateCell<Item, CellContent: View>: View {
     let date: Date
     let referenceMonth: Date
     @Binding var selectedDate: Date

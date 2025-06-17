@@ -1,6 +1,6 @@
 import SwiftUI
 
-struct CollapsibleCalendarView<Item: CalendarItem, CellContent: View, HandleContent: View, EventListContent: View>: View {
+struct CollapsibleCalendarView<Item, CellContent: View, HandleContent: View, EventListContent: View>: View {
     // MARK: - Properties
     @State private var selectedDate: Date = Calendar.current.startOfDay(for: Date())
     @State private var monthIndex: Int = 0

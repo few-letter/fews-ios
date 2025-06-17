@@ -28,8 +28,9 @@ public struct CalendarHomeStore {
         
         case onAppear
         
-        case dateChanged(Date)
+        case tap(Trade)
         case delete(IndexSet)
+        case dateChanged(Date)
         case plusButtonTapped
         
         case fetch
@@ -59,6 +60,11 @@ public struct CalendarHomeStore {
             case .onAppear:
                 return .send(.fetch)
                 
+            case .tap(let trade):
+                guard let ticker = trade.ticker else { return .none }
+                state.addTradePresentation.tradeNavigation = .init(ticker: ticker, trade: trade)
+                return .none
+                
             case .delete(let indexSet):
                 guard let date = state.selectedDate else { return .none }
                 
@@ -78,7 +84,7 @@ public struct CalendarHomeStore {
                 return .none
                 
             case .fetch:
-                let trades = tradeClient.fetches()
+                let trades = tradeClient.fetches(ticker: nil)
                 return .send(.fetched(trades))
                 
             case .fetched(let trades):
@@ -87,6 +93,9 @@ public struct CalendarHomeStore {
                     state.tradesByDate[date, default: []].updateOrAppend(trade)
                 }
                 return .none
+                
+            case .addTradePresentation(.tradeNavigation(.dismiss)):
+                return .send(.fetch)
                 
             case .delegate, .addTradePresentation:
                 return .none

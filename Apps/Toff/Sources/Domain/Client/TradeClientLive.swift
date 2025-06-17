@@ -13,6 +13,7 @@ public class TradeClientLive: TradeClient {
     
     public init(context: ModelContext) {
         self.context = context
+        self.context.autosaveEnabled = false
     }
     
     public func createOrUpdate(trade: Trade) -> Trade {
@@ -26,9 +27,21 @@ public class TradeClientLive: TradeClient {
         return trade
     }
     
-    public func fetches() -> [Trade] {
+    public func fetches(ticker: Ticker?) -> [Trade] {
         do {
-            let descriptor: FetchDescriptor<Trade> = .init()
+            var descriptor: FetchDescriptor<Trade>
+            if let tickerID = ticker?.id {
+                descriptor = .init(
+                    predicate: #Predicate { trade in
+                        trade.ticker?.id == tickerID
+                    },
+                    sortBy: [.init(\.date)]
+                )
+            } else {
+                descriptor = .init(
+                    sortBy: [.init(\.date)]
+                )
+            }
             let result = try context.fetch(descriptor)
             return result
         } catch {
@@ -51,7 +64,7 @@ public class TradeClientTest: TradeClient {
         fatalError()
     }
     
-    public func fetches() -> [Trade] {
+    public func fetches(ticker: Ticker?) -> [Trade] {
         fatalError()
     }
     

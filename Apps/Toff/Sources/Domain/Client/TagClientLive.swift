@@ -13,6 +13,7 @@ public class TagClientLive: TagClient {
     
     public init(context: ModelContext) {
         self.context = context
+        self.context.autosaveEnabled = false
     }
     
     public func create() -> Tag {

@@ -6,6 +6,10 @@
 	<string>Toff</string>
 	<key>CFBundleExecutable</key>
 	<string>${EXECUTABLE_NAME}</string>
+	<key>GADApplicationIdentifier</key>
+	<string>$(ADMOB_APP_ID)</string>
+	<key>ADMOB_OPENING_AD_ID</key>
+	<string>$(ADMOB_OPENING_AD_ID)</string>
 	<key>CFBundleIdentifier</key>
 	<string>com.tamsadan.toolinder</string>
 	<key>CFBundleShortVersionString</key>

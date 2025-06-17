@@ -12,16 +12,21 @@ import ComposableArchitecture
 public struct StatNavigationStore {
     @ObservableState
     public struct State: Equatable {
-        public var tickers: IdentifiedArrayOf<Ticker>
+        public var tickers: [Ticker]
+        public var trades: [Trade]
         
-        public init(tickers: IdentifiedArrayOf<Ticker> = []) {
+        public init(tickers: [Ticker] = [], trades: [Trade] = []) {
             self.tickers = tickers
+            self.trades = trades
         }
     }
     
     public enum Action: BindableAction {
         case binding(BindingAction<State>)
         case onAppear
+        
+        case fetch
+        case fetched([Ticker], [Trade])
         
         case confirm
         case cancel
@@ -33,12 +38,25 @@ public struct StatNavigationStore {
         }
     }
     
+    @Dependency(\.tickerClient) private var tickerClient
+    @Dependency(\.tradeClient) private var tradeClient
+    
     public var body: some ReducerOf<Self> {
         BindingReducer()
         
         Reduce<State, Action> { state, action in
             switch action {
             case .onAppear:
+                return .send(.fetch)
+                
+            case .fetch:
+                let tickers = tickerClient.fetches()
+                let trades = tradeClient.fetches(ticker: nil)
+                return .send(.fetched(tickers, trades))
+                
+            case .fetched(let tickers, let trades):
+                state.tickers = tickers
+                state.trades = trades
                 return .none
                 
             case .confirm:

@@ -3,7 +3,6 @@ import SwiftData
 import AppTrackingTransparency
 import ComposableArchitecture
 import FirebaseCore
-import GoogleMobileAds
 
 public class AppDelegate: NSObject, UIApplicationDelegate {
     public func application(_ application: UIApplication,
@@ -21,6 +20,7 @@ public struct ToffApp: App {
     public init() {
         do {
             container = try ModelContainer(for: Ticker.self, Trade.self, Tag.self)
+            container.mainContext.autosaveEnabled = false
         } catch {
             fatalError("Failed to create ModelContainer: \(error)")
         }

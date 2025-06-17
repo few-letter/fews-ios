@@ -23,18 +23,28 @@ let project = Project(
             dependencies: [
                 .package(product: "FirebaseAnalytics"),
                 .package(product: "ComposableArchitecture"),
-                .package(product: "GoogleMobileAds")
+                .package(product: "GoogleMobileAds"),
+                .sdk(name: "JavaScriptCore", type: .framework)
             ],
-            settings: .settings(configurations: [
-                .debug(
-                    name: "Debug",
-                    settings: SettingsDictionary().automaticCodeSigning(devTeam: "X64MATB2CC"),
-                ),
-                .release(
-                    name: "Release",
-                    settings: SettingsDictionary().automaticCodeSigning(devTeam: "X64MATB2CC"),
-                )
-            ])
+            settings: .settings(
+                base: [
+                    "OTHER_LDFLAGS": ["-ObjC"]
+                ],
+                configurations: [
+                    .debug(
+                        name: "Debug",
+                        settings: SettingsDictionary()
+                            .automaticCodeSigning(devTeam: "X64MATB2CC"),
+                        xcconfig: .path("Resources/Debug.xcconfig"),
+                    ),
+                    .release(
+                        name: "Release",
+                        settings: SettingsDictionary()
+                            .automaticCodeSigning(devTeam: "X64MATB2CC"),
+                        xcconfig: .path("Resources/Release.xcconfig")
+                    )
+                ]
+            )
         )
     ]
 ) 

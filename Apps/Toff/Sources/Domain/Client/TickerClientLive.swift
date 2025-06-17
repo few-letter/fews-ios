@@ -13,6 +13,7 @@ public class TickerClientLive: TickerClient {
     
     public init(context: ModelContext) {
         self.context = context
+        self.context.autosaveEnabled = false
     }
     
     public func create(ticker: Ticker) -> Ticker {

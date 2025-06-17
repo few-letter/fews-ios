@@ -11,7 +11,7 @@ import SwiftData
 
 public protocol TradeClient {
     func createOrUpdate(trade: Trade) -> Trade
-    func fetches() -> [Trade]
+    func fetches(ticker: Ticker?) -> [Trade]
     func delete(trade: Trade) -> Void
 }
 

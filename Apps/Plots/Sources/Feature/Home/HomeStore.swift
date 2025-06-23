@@ -16,7 +16,7 @@ public struct HomeStore {
     public enum Path {
         case folderTree(FolderTreeStore)
         case addPlot(AddPlotStore)
-        case setting(SettingStore)
+        case settings(SettingsStore)
     }
     
     @ObservableState
@@ -58,9 +58,7 @@ public struct HomeStore {
                 return .none
                 
             case .onAppear:
-                return .run { _ in
-                    await adClient.showOpeningAd(adUnitID: .ADMOB_OPENING_AD_ID)
-                }
+                return .none
                 
             case .path(.element(id: _, action: .folderTree(.delegate(let action)))):
                 switch action {
@@ -75,7 +73,7 @@ public struct HomeStore {
             case .folder(.delegate(let action)):
                 switch action {
                 case .requestSetting:
-                    state.path.append(.setting(.init()))
+                    state.path.append(.settings(.init()))
                 case .requestPlot(let folderType):
                     state.path.append(.folderTree(.init(folderType: folderType)))
                 case .requestAddPlot:

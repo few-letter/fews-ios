@@ -8,5 +8,7 @@
 import Foundation
 
 extension String {
+    static let ADMOB_OPENING_AD_ID = Bundle.main.infoDictionary?["ADMOB_OPENING_AD_ID"] as? String ?? ""
+    static let ADMOB_REWARD_AD_ID = Bundle.main.infoDictionary?["ADMOB_REWARD_AD_ID"] as? String ?? ""
     static let MIXPANEL_TOKEN = Bundle.main.infoDictionary?["MIXPANEL_TOKEN"] as? String ?? ""
 }

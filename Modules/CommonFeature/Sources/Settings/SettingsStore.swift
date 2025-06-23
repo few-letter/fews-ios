@@ -37,7 +37,7 @@ public struct SettingsStore {
                 
             case .watchPremiumAd:
                 return .run { send in
-                    await adClient.showRewardedAd(adUnitID: "ca-app-pub-3940256099942544/6978759866")
+                    await adClient.showRewardedAd(customAdUnitID: "ca-app-pub-3940256099942544/6978759866")
                     await send(.updatePremiumStatus)
                 }
                 

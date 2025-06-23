@@ -14,6 +14,9 @@ public struct RootView: View {
     
     public var body: some View {
         HomeView(store: self.store.scope(state: \.home, action: \.home))
+            .onAppear {
+                store.send(.onAppear)
+            }
     }
 }
 

@@ -6,6 +6,7 @@
 //
 
 import ComposableArchitecture
+import CommonFeature
 
 public enum RootScene: Hashable {
     case home
@@ -21,12 +22,19 @@ public struct RootStore {
     }
     
     public enum Action {
+        case onAppear
         case home(HomeStore.Action)
     }
+    
+    @Dependency(\.adClient) private var adClient
     
     public var body: some ReducerOf<Self> {
         Reduce<State, Action> { state, action in
             switch action {
+            case .onAppear:
+                return .run { _ in
+                    await adClient.showOpeningAd(customAdUnitID: nil)
+                }
             case .home:
                 return .none
             }

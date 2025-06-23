@@ -7,6 +7,7 @@
 
 import SwiftUI
 import ComposableArchitecture
+import CommonFeature
 
 public struct MainTabView: View {
     @Bindable public var store: StoreOf<MainTabStore>
@@ -51,9 +52,6 @@ public struct MainTabView: View {
         }
         .onAppear {
             store.send(.onAppear)
-        }
-        .task {
-            await AppOpenAdManager.shared.showAdIfAvailable()
         }
     }
 }

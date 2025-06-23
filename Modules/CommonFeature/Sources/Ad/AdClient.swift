@@ -12,8 +12,8 @@ import ComposableArchitecture
 // MARK: - AdClient Protocol
 
 public protocol AdClient {
-    func showOpeningAd(adUnitID: String) async
-    func showRewardedAd(adUnitID: String) async
+    func showOpeningAd(customAdUnitID: String?) async
+    func showRewardedAd(customAdUnitID: String?) async
     func getPremiumExpirationDate() -> Date?
 }
 
@@ -48,8 +48,16 @@ public class AdClientLive: NSObject, AdClient {
     // MARK: - Public Methods
     
     @MainActor
-    public func showOpeningAd(adUnitID: String) async {
+    public func showOpeningAd(customAdUnitID: String?) async {
+        // 프리미엄이 활성화되어 있으면 광고를 표시하지 않음
+        if isPremiumActive() {
+            print("Premium is active - skipping opening ad")
+            return
+        }
+        
         guard !openingAdIsShowing else { return }
+        
+        let adUnitID: String = customAdUnitID ?? .ADMOB_OPENING_AD_ID
         
         if !isOpeningAdValid(for: adUnitID) {
             await loadOpeningAd(adUnitID: adUnitID)
@@ -59,8 +67,10 @@ public class AdClientLive: NSObject, AdClient {
     }
     
     @MainActor
-    public func showRewardedAd(adUnitID: String) async {
+    public func showRewardedAd(customAdUnitID: String?) async {
         guard !rewardedAdIsShowing else { return }
+        
+        let adUnitID: String = customAdUnitID ?? .ADMOB_REWARD_AD_ID
         
         await loadRewardedAd(adUnitID: adUnitID)
         await presentRewardedAd()
@@ -100,9 +110,13 @@ public class AdClientLive: NSObject, AdClient {
     }
     
     private func isOpeningAdValid(for adUnitID: String) -> Bool {
-        guard let appOpenAd = appOpenAd,
-              let loadTime = openingAdLoadTime,
-              currentOpeningAdUnitID == adUnitID else { return false }
+        guard
+            let _ = appOpenAd,
+            let loadTime = openingAdLoadTime,
+            currentOpeningAdUnitID == adUnitID
+        else {
+            return false
+        }
         
         return Date().timeIntervalSince(loadTime) < openingAdExpirationTime
     }
@@ -154,8 +168,15 @@ public class AdClientLive: NSObject, AdClient {
     // MARK: - Premium Management
     
     private func activatePremiumByReward() {
-        let expirationDate = Calendar.current.date(byAdding: .weekOfYear, value: 1, to: Date()) ?? Date()
+        let expirationDate = Calendar.current.date(byAdding: .month, value: 1, to: Date()) ?? Date()
         userDefaults.set(expirationDate, forKey: Keys.premiumExpirationDate)
+    }
+    
+    private func isPremiumActive() -> Bool {
+        guard let expirationDate = userDefaults.object(forKey: Keys.premiumExpirationDate) as? Date else {
+            return false
+        }
+        return Date() < expirationDate
     }
     
     // MARK: - Helper Methods
@@ -218,11 +239,11 @@ extension AdClientLive: FullScreenContentDelegate {
 public class AdClientTest: AdClient {
     public init() {}
     
-    public func showOpeningAd(adUnitID: String) async {
+    public func showOpeningAd(customAdUnitID: String?) async {
         fatalError()
     }
     
-    public func showRewardedAd(adUnitID: String) async {
+    public func showRewardedAd(customAdUnitID: String?) async {
         fatalError()
     }
     
@@ -244,5 +265,3 @@ extension DependencyValues {
         set { self[AdClientKey.self] = newValue }
     }
 }
-
-//https://discord.gg/BE7qTGBFcB

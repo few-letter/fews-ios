@@ -23,9 +23,6 @@ let project = Project(
             ],
             entitlements: "Resources/Toff.entitlements",
             dependencies: [
-                .package(product: "FirebaseAnalytics"),
-                .package(product: "ComposableArchitecture"),
-                .package(product: "GoogleMobileAds"),
                 .package(product: "Mixpanel"),
                 .project(target: "DS", path: "../../Modules/DS"),
                 .project(target: "CommonFeature", path: "../../Modules/CommonFeature"),

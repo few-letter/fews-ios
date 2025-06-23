@@ -7,6 +7,7 @@
 
 import SwiftUI
 import ComposableArchitecture
+import CommonFeature
 
 public struct HomeView: View {
     @Bindable var store: StoreOf<HomeStore>
@@ -25,8 +26,8 @@ public struct HomeView: View {
                 FolderTreeView(store: store)
             case .addPlot(let store):
                 AddPlotView(store: store)
-            case .setting(let store):
-                SettingView(store: store)
+            case .settings(let store):
+                SettingsView(store: store)
             }
         }
     }

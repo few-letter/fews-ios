@@ -1,23 +1,23 @@
 import ProjectDescription
 
 let project = Project(
-    name: "Plots",
+    name: "Retros",
     packages: [
         .package(url: "https://github.com/mixpanel/mixpanel-swift", .upToNextMajor(from: "5.1.0"))
     ],
     targets: [
         .target(
-            name: "Plots",
+            name: "Retros",
             destinations: .iOS,
             product: .app,
-            bundleId: "com.annapo.plotfolio",
+            bundleId: "com.annapo.kpt",
+            deploymentTargets: .iOS("18.0"),
             infoPlist: .file(path: "Resources/Info.plist"),
             sources: ["Sources/**"],
             resources: [
                 .glob(pattern: "Resources/Assets.xcassets/**"),
-                .glob(pattern: "Resources/GoogleService-Info.plist")
             ],
-            entitlements: "Resources/Plots.entitlements",
+            entitlements: "Resources/Retros.entitlements",
             dependencies: [
                 .package(product: "Mixpanel"),
                 .project(target: "DS", path: "../../Modules/DS"),

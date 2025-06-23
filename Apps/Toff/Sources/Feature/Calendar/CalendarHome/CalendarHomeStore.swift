@@ -8,6 +8,8 @@
 import Foundation
 import ComposableArchitecture
 
+import CommonFeature
+
 @Reducer
 public struct CalendarHomeStore {
     @ObservableState
@@ -114,7 +116,7 @@ public struct CalendarHomeStore {
 }
 
 extension Trade: CalendarItem {
-    var displayTitle: String {
+    public var displayTitle: String {
         return self.ticker?.name ?? ""
     }
 }

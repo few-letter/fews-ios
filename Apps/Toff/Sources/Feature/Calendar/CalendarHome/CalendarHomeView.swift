@@ -8,6 +8,8 @@
 import SwiftUI
 import ComposableArchitecture
 
+import CommonFeature
+
 public struct CalendarHomeView: View {
     @Bindable var store: StoreOf<CalendarHomeStore>
     

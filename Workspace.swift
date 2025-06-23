@@ -3,7 +3,7 @@ import ProjectDescription
 let workspace = Workspace(
     name: "FewsWorkspace",
     projects: [
-        "Apps/FewRetros",
+        "Apps/Retros",
         "Apps/FewCuts",
         "Apps/Plots",
         "Apps/Toff",

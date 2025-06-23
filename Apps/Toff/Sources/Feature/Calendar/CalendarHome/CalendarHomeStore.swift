@@ -15,7 +15,6 @@ public struct CalendarHomeStore {
     @ObservableState
     public struct State {
         public var tradesByDate: [Date: IdentifiedArrayOf<TradeModel>]
-        
         public var selectedDate: Date = Calendar.current.startOfDay(for: .now)
         
         public var addTradePresentation: AddTradePresentationStore.State = .init()

@@ -34,6 +34,9 @@ public struct RetrosApp: App {
             MainTabView(store: Store(initialState: MainTabStore.State())  {
                 MainTabStore()
             } withDependencies: { dependency in
+                let recordClient = RecordClientLive(context: container.mainContext)
+                
+                dependency.recordClient = recordClient
             })
             .environment(\.modelContext, container.mainContext)
             .onReceive(NotificationCenter.default.publisher(for: UIApplication.didBecomeActiveNotification)) { _ in

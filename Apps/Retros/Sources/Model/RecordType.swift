@@ -7,8 +7,23 @@
 
 import Foundation
 
-public enum RecordType: Int {
+public enum RecordType: Int, CaseIterable {
     case keep
     case problem
     case `try`
+    
+    public var systemImageName: String {
+        return switch self {
+        case .keep:
+            "checkmark.circle"
+        case .problem:
+            "exclamationmark.circle"
+        case .try:
+            "arrow.right.circle"
+        }
+    }
+    
+    public var displayText: String {
+        return ""
+    }
 }

@@ -8,6 +8,9 @@ APPS = {
   "Toff" => "com.tamsadan.toolinder"
 }
 
+# Tuist 워크스페이스 경로
+WORKSPACE_NAME = "FewsWorkspace"
+
 platform :ios do
   before_all do
     # API 키 설정 (간소화)
@@ -17,6 +20,24 @@ platform :ios do
       issuer_id: api_key_json["issuer_id"], 
       key_content: api_key_json["key"]
     )
+    
+    # xcodebuild 타임아웃 설정 (복잡한 패키지 의존성 때문에 증가)
+    ENV["FASTLANE_XCODEBUILD_SETTINGS_TIMEOUT"] = "120"
+    ENV["FASTLANE_XCODEBUILD_SETTINGS_RETRIES"] = "2"
+  end
+
+  # Tuist 프로젝트 생성 헬퍼 메서드
+  private_lane :generate do
+    UI.message("🔧 Tuist 프로젝트를 생성합니다...")
+    
+    Dir.chdir("..") do
+      sh("tuist install", error_callback: ->(result) {
+        UI.message("Tuist install 실행 중 오류가 있었지만 계속 진행합니다.")
+      })
+      sh("tuist generate --no-open")
+    end
+    
+    UI.success("✅ Tuist 프로젝트 생성 완료!")
   end
 
   desc "Upload to TestFlight"
@@ -36,34 +57,90 @@ platform :ios do
     bundle_id = APPS[app_name]
     UI.success("선택된 앱: #{app_name}")
 
-    # 현재 버전 정보 표시 후 새 버전 입력
+    # 현재 버전 정보 표시
     plist_path = "Apps/#{app_name}/Resources/Info.plist"
+    
+    # 경로 디버깅
+    UI.message("📁 현재 작업 디렉토리: #{Dir.pwd}")
+    UI.message("📄 Info.plist 경로: #{plist_path}")
+    
+    if !File.exist?(plist_path)
+      # 대안 경로들 시도
+      alternative_paths = [
+        "../Apps/#{app_name}/Resources/Info.plist",
+        "#{app_name}/Resources/Info.plist",
+        "../#{app_name}/Resources/Info.plist"
+      ]
+      
+      alternative_paths.each do |alt_path|
+        if File.exist?(alt_path)
+          plist_path = File.expand_path(alt_path)  # 절대 경로로 변환
+          UI.message("✅ 대안 경로에서 파일 발견: #{plist_path}")
+          break
+        end
+      end
+    end
+    
+    unless File.exist?(plist_path)
+      UI.error("Info.plist 파일을 찾을 수 없습니다!")
+      next
+    end
+    
     current_version = get_info_plist_value(path: plist_path, key: "CFBundleShortVersionString")
     UI.message("현재 버전: #{current_version}")
     
     version = UI.input("새 버전 (현재값 유지하려면 엔터): ")
+    
+    # 빌드 번호: 년월일시분초
     build = Time.now.strftime("%Y%m%d%H%M%S")
-    UI.message("빌드 번호: #{build}")
+    UI.message("새 빌드 번호: #{build}")
     
-    project_path = "Apps/#{app_name}/#{app_name}.xcodeproj"
-    
-    # 버전 업데이트
+    # 버전 업데이트 (generate 전에!)
     set_info_plist_value(path: plist_path, key: "CFBundleShortVersionString", value: version) unless version.empty?
     set_info_plist_value(path: plist_path, key: "CFBundleVersion", value: build)
     
-    # 코드 사이닝
-    match(type: "appstore", app_identifier: bundle_id, readonly: true, username: "mooyoung2309@gmail.com")
-    enable_automatic_code_signing(path: project_path)
+    # 정리 및 프로젝트 생성 (버전 업데이트 후에!)
+    clear_derived_data
+    generate
     
-    # 빌드 & 업로드
+    # 코드 사이닝 (Tuist가 기본 서명을 처리하지만 배포용 인증서 필요)
+    match(type: "appstore", app_identifier: bundle_id, readonly: true, username: "mooyoung2309@gmail.com")
+
+    # 매크로 활성화를 위한 추가 설정 (build lane과 동일)
+    ENV["ENABLE_USER_SCRIPT_SANDBOXING"] = "NO"
+    
+    # 빌드 출력 디렉토리 생성
+    sh("mkdir -p ./build")
+
+    # 빌드 & 업로드 (build lane에서 성공한 설정 적용)
     gym(
+      workspace: "#{WORKSPACE_NAME}.xcworkspace",
       scheme: app_name,
-      project: project_path, 
       configuration: "Release",
-      export_method: "app-store"
+      export_method: "app-store",
+      clean: false,  # clean 비활성화로 빌드 실패 방지
+      destination: "generic/platform=iOS",  # build lane과 동일한 destination
+      skip_package_dependencies_resolution: true,  # 패키지 의존성 스킵
+      disable_package_automatic_updates: true,  # 자동 업데이트 비활성화
+      output_directory: "./build",  # 출력 디렉토리 명시적 설정
+      output_name: app_name,
+      xcargs: "-allowProvisioningUpdates -skipMacroValidation",  # build lane과 동일한 xcargs
+      export_options: {
+        method: "app-store",
+        provisioningProfiles: {
+          bundle_id => "match AppStore #{bundle_id}"
+        },
+        compileBitcode: false,  # Bitcode 비활성화 (호환성 문제 방지)
+        uploadBitcode: false,
+        uploadSymbols: true,
+        manageAppVersionAndBuildNumber: false  # 버전 관리 비활성화
+      }
     )
     
-    upload_to_testflight(skip_waiting_for_build_processing: true)
+    upload_to_testflight(
+      ipa: "./build/#{app_name}.ipa",
+      skip_waiting_for_build_processing: true
+    )
     UI.success("#{app_name} uploaded! 🎉")
   end
   
@@ -74,12 +151,5 @@ platform :ios do
       match(type: type, app_identifier: APPS.values, readonly: false, username: "mooyoung2309@gmail.com")
     end
     UI.success("Certificates reset! 🔐")
-  end
-  
-  desc "Clean everything"
-  lane :clean do
-    clear_derived_data
-    sh("rm -rf ~/Library/Caches/org.swift.swiftpm", error_callback: ->(result) {})
-    UI.success("Cleaned! 🧹")
   end
 end

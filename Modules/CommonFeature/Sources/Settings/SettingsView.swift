@@ -90,6 +90,38 @@ public struct SettingsView: View {
                 }
                 
                 Section {
+                    ForEach(GameType.allCases) { gameType in
+                        Button(action: {
+                            store.send(.showGame(gameType))
+                        }) {
+                            HStack {
+                                Image(systemName: gameType.icon)
+                                    .foregroundColor(gameType.color)
+                                    .frame(width: 24, height: 24)
+                                
+                                VStack(alignment: .leading, spacing: 2) {
+                                    Text(gameType.title)
+                                        .font(.headline)
+                                        .foregroundColor(.primary)
+                                    Text(gameType.description)
+                                        .font(.caption)
+                                        .foregroundColor(.secondary)
+                                }
+                                
+                                Spacer()
+                                
+                                Image(systemName: "chevron.right")
+                                    .foregroundColor(.secondary)
+                                    .font(.caption)
+                            }
+                        }
+                        .buttonStyle(PlainButtonStyle())
+                    }
+                } header: {
+                    Text("Games")
+                }
+                
+                Section {
                     Link("Contact", destination: .init(string: "https://discord.gg/BE7qTGBFcB")!)
                 } header: {
                     Text("Support")
@@ -97,6 +129,19 @@ public struct SettingsView: View {
             }
         }
         .navigationTitle("Settings")
+        .sheet(item: .init(
+            get: { store.selectedGameType },
+            set: { _ in store.send(.hideGame) }
+        )) { gameType in
+            switch gameType {
+//            case .appleGame:
+//                AppleGameView()
+//            case .tetrisGame:
+//                TetrisGameView()
+            case .twentyFortyEight:
+                TwentyFortyEightGameView()
+            }
+        }
         .onAppear {
             store.send(.onAppear)
         }

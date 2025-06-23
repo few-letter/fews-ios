@@ -79,7 +79,6 @@ public struct CalendarNavigationStore {
                 return .none
                 
             case .tap(let record):
-                // 레코드 상세 뷰로 이동하거나 편집 액션
                 return .none
                 
             case .delete(let indexSet):
@@ -88,17 +87,19 @@ public struct CalendarNavigationStore {
                     if index < selectedRecords.count {
                         let recordToDelete = selectedRecords[index]
                         recordClient.delete(recordModel: recordToDelete)
-                        
-                        // 상태에서도 제거
                         state.recordsByDate[state.selectedDate]?.remove(id: recordToDelete.id)
                     }
                 }
-                return .send(.fetch) // 삭제 후 다시 fetch
+                return .send(.fetch)
                 
-            case .addRecordPresentation:
+            case .addRecordPresentation(.delegate(let action)):
+                switch action {
+                case .dismiss:
+                    return .send(.fetch)
+                }
                 return .none
                 
-            case .binding, .path:
+            case .binding, .path, .addRecordPresentation:
                 return .none
             }
         }

@@ -10,9 +10,8 @@ import ComposableArchitecture
 import SwiftData
 
 public protocol RecordClient {
-    func create(recordModel: RecordModel) -> RecordModel
+    func createOrUpdate(recordModel: RecordModel) -> RecordModel
     func fetches() -> [RecordModel]
-    func update(recordModel: RecordModel)
     func delete(recordModel: RecordModel)
 }
 

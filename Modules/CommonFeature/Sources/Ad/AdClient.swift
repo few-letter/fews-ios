@@ -43,6 +43,9 @@ public class AdClientLive: NSObject, AdClient {
     public init(userDefaults: UserDefaults = .standard) {
         self.userDefaults = userDefaults
         super.init()
+        
+        let _ = print("ADMOB_REWARD_AD_ID", String.ADMOB_REWARD_AD_ID)
+        let _ = print("ADMOB_OPENING_AD_ID", String.ADMOB_OPENING_AD_ID)
     }
     
     // MARK: - Public Methods

@@ -27,9 +27,7 @@ public struct AddRecordPresentationStore {
         case addRecordNavigation(PresentationAction<AddRecordNavigationStore.Action>)
         
         case delegate(Delegate)
-        
         public enum Delegate {
-            case requestTradeNavigation
             case dismiss
         }
     }
@@ -49,7 +47,12 @@ public struct AddRecordPresentationStore {
                 return .none
                 
             case .addRecordNavigation(.presented(.delegate(let action))):
-                return .none
+                switch action {
+                case .requestSaved:
+                    return .send(.delegate(.dismiss))
+                case .dismiss:
+                    return .send(.delegate(.dismiss))
+                }
                 
             case .addRecordNavigation, .delegate:
                 return .none

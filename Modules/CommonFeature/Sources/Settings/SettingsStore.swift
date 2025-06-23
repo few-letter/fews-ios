@@ -15,6 +15,7 @@ public struct SettingsStore {
         public var isPremiumActive: Bool = false
         public var remainingDays: Int = 0
         public var expirationDate: Date?
+        public var selectedGameType: GameType? = nil
         
         public init() {}
     }
@@ -23,6 +24,8 @@ public struct SettingsStore {
         case onAppear
         case watchPremiumAd
         case updatePremiumStatus
+        case showGame(GameType)
+        case hideGame
     }
     
     @Dependency(\.adClient) var adClient
@@ -37,7 +40,7 @@ public struct SettingsStore {
                 
             case .watchPremiumAd:
                 return .run { send in
-                    await adClient.showRewardedAd(customAdUnitID: "ca-app-pub-3940256099942544/6978759866")
+                    await adClient.showRewardedAd(customAdUnitID: nil)
                     await send(.updatePremiumStatus)
                 }
                 
@@ -55,6 +58,14 @@ public struct SettingsStore {
                 state.remainingDays = remainingDays
                 state.expirationDate = expirationDate
                 
+                return .none
+                
+            case .showGame(let gameType):
+                state.selectedGameType = gameType
+                return .none
+                
+            case .hideGame:
+                state.selectedGameType = nil
                 return .none
             }
         }

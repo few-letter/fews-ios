@@ -31,14 +31,6 @@ Upload to TestFlight
 
 Reset certificates
 
-### ios clean
-
-```sh
-[bundle exec] fastlane ios clean
-```
-
-Clean everything
-
 ----
 
 This README.md is auto-generated and will be re-generated every time [_fastlane_](https://fastlane.tools) is run.

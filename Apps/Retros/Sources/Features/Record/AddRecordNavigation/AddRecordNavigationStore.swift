@@ -38,8 +38,12 @@ public struct AddRecordNavigationStore {
         
         case delegate(Delegate)
         public enum Delegate {
+            case dismiss
+            case requestSaved
         }
     }
+    
+    @Dependency(\.recordClient) private var recordClient
     
     public var body: some ReducerOf<Self> {
         BindingReducer()
@@ -50,10 +54,11 @@ public struct AddRecordNavigationStore {
                 return .none
                 
             case .cancelButtonTapped:
-                return .none
+                return .send(.delegate(.dismiss))
                 
             case .saveButtonTapped:
-                return .none
+                let _ = recordClient.createOrUpdate(recordModel: state.record)
+                return .send(.delegate(.requestSaved))
                 
             case .binding, .path, .delegate:
                 return .none

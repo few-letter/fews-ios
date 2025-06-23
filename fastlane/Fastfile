@@ -1,165 +1,85 @@
 default_platform(:ios)
 
-# Common 헬퍼 파일들 import
-import "common/auth_helper.rb"
-import "common/app_helper.rb"
-import "common/version_helper.rb"
+# 앱 설정 (환경변수 대신 하드코딩으로 간소화)
+APPS = {
+  "Plots" => "com.annapo.plotfolio",
+  "FewCuts" => "com.annapo.fewcuts", 
+  "FewRetros" => "com.annapo.kpt",
+  "Toff" => "com.tamsadan.toolinder"
+}
 
 platform :ios do
+  before_all do
+    # API 키 설정 (간소화)
+    api_key_json = JSON.parse(File.read("api_key.json"))
+    app_store_connect_api_key(
+      key_id: api_key_json["key_id"],
+      issuer_id: api_key_json["issuer_id"], 
+      key_content: api_key_json["key"]
+    )
+  end
+
   desc "Upload to TestFlight"
-  lane :upload_testflight do
-    # xcodebuild 타임아웃 설정 (초 단위)
-    ENV['FASTLANE_XCODEBUILD_SETTINGS_TIMEOUT'] = '120'  # 2분으로 늘림
-    ENV['FASTLANE_XCODEBUILD_SETTINGS_RETRIES'] = '2'   # 재시도 횟수 줄임
+  lane :upload do
+    # 앱 선택 (숫자로 선택)
+    app_names = APPS.keys
+    UI.message("앱을 선택하세요:")
+    app_names.each_with_index { |name, i| UI.message("#{i+1}. #{name}") }
     
-    xcode_select "/Applications/Xcode-16.3.0.app" # Xcode 버전 지정
-    setup_api_key
-    
-    app_name = select_app
-    if app_name.nil?
-      UI.error("앱 선택이 취소되었습니다.")
+    choice = UI.input("번호 선택 (1-#{app_names.length}): ").to_i
+    unless (1..app_names.length).include?(choice)
+      UI.error("잘못된 선택입니다")
       next
     end
     
-    app_info = get_app_info(app_name)
-    if app_info.nil?
-      next
-    end
+    app_name = app_names[choice-1]
+    bundle_id = APPS[app_name]
+    UI.success("선택된 앱: #{app_name}")
+
+    # 현재 버전 정보 표시 후 새 버전 입력
+    plist_path = "Apps/#{app_name}/Resources/Info.plist"
+    current_version = get_info_plist_value(path: plist_path, key: "CFBundleShortVersionString")
+    UI.message("현재 버전: #{current_version}")
     
-    version_number = UI.input("새 버전 번호를 입력하세요 (현재값 유지하려면 엔터): ")
+    version = UI.input("새 버전 (현재값 유지하려면 엔터): ")
+    build = Time.now.strftime("%Y%m%d%H%M%S")
+    UI.message("빌드 번호: #{build}")
     
-    # 빌드 번호를 현재 날짜시간으로 자동 생성 (예: 20241201140530)
-    build_number = Time.now.strftime("%Y%m%d%H%M%S")
-    UI.message("자동 생성된 빌드 번호: #{build_number}")
+    project_path = "Apps/#{app_name}/#{app_name}.xcodeproj"
     
-    update_version(
-      app_info, 
-      version_number.empty? ? nil : version_number,
-      build_number
-    )
+    # 버전 업데이트
+    set_info_plist_value(path: plist_path, key: "CFBundleShortVersionString", value: version) unless version.empty?
+    set_info_plist_value(path: plist_path, key: "CFBundleVersion", value: build)
     
-        UI.message("#{app_info[:name]} 앱을 TestFlight에 업로드합니다...")
+    # 코드 사이닝
+    match(type: "appstore", app_identifier: bundle_id, readonly: true, username: "mooyoung2309@gmail.com")
+    enable_automatic_code_signing(path: project_path)
     
-    # App Store 인증서/프로파일 매치
-    ENV['MATCH_TYPE'] = 'appstore'
-    match(
-      type: "appstore",
-      app_identifier: app_info[:bundle_id],
-      readonly: true,
-      force_legacy_encryption: true,
-      username: "mooyoung2309@gmail.com"
-    )
-    
-    enable_automatic_code_signing(
-      path: app_info[:project_path]
-    )
-    
-    # Swift Package Manager 의존성 미리 해결
-    UI.message("Swift Package 의존성을 미리 해결합니다...")
-    sh("cd .. && xcodebuild -resolvePackageDependencies -scheme #{app_info[:scheme]} -project #{app_info[:project_path]} || true")
-    
-    # 프로젝트 빌드 설정 확인 (디버깅용)
-    UI.message("빌드 설정을 확인합니다...")
-    sh("cd .. && timeout 60 xcodebuild -showBuildSettings -scheme #{app_info[:scheme]} -project #{app_info[:project_path]} -configuration Release | head -20 || echo '빌드 설정 확인 타임아웃'")
-    
+    # 빌드 & 업로드
     gym(
-      scheme: app_info[:scheme],
-      project: app_info[:project_path],
+      scheme: app_name,
+      project: project_path, 
       configuration: "Release",
-      export_method: "app-store",
-      clean: true,
-      skip_build_archive: false,
-      skip_package_dependencies_resolution: false,
-      destination: "generic/platform=iOS"
+      export_method: "app-store"
     )
     
-    upload_to_testflight(
-      skip_waiting_for_build_processing: true,
-      distribute_external: false,
-      notify_external_testers: false
-    )
-    
-    UI.success("#{app_info[:name]} 앱이 성공적으로 TestFlight에 업로드되었습니다! 🎉")
+    upload_to_testflight(skip_waiting_for_build_processing: true)
+    UI.success("#{app_name} uploaded! 🎉")
   end
   
-  desc "Delete all certificates and profiles (development + appstore)"
-  lane :nuke do
-    setup_api_key
-    
-    UI.message("모든 인증서와 프로파일을 삭제합니다...")
-    
-    # Development 인증서/프로파일 삭제
-    UI.message("Development 인증서/프로파일 삭제 중...")
-    ENV['MATCH_TYPE'] = 'development'
-    match_nuke(
-      type: "development",
-      app_identifier: get_all_bundle_ids,
-      skip_confirmation: false
-    )
-    
-    # App Store 인증서/프로파일 삭제
-    UI.message("App Store 인증서/프로파일 삭제 중...")
-    ENV['MATCH_TYPE'] = 'appstore'
-    match_nuke(
-      type: "appstore",
-      app_identifier: get_all_bundle_ids,
-      skip_confirmation: false
-    )
-    
-    UI.success("모든 인증서와 프로파일이 삭제되었습니다! 🗑️")
-  end
-  
-  desc "Generate certificates and profiles (development + appstore)"
-  lane :sign do
-    setup_api_key
-    
-    UI.message("인증서와 프로파일을 생성합니다...")
-    
-    # Development 인증서/프로파일 생성
-    UI.message("Development 인증서/프로파일 생성 중...")
-    ENV['MATCH_TYPE'] = 'development'
-    match(
-      type: "development",
-      app_identifier: get_all_bundle_ids,
-      readonly: false,
-      force_legacy_encryption: true,
-      username: "mooyoung2309@gmail.com"
-    )
-    
-    # App Store 인증서/프로파일 생성
-    UI.message("App Store 인증서/프로파일 생성 중...")
-    ENV['MATCH_TYPE'] = 'appstore'
-    match(
-      type: "appstore",
-      app_identifier: get_all_bundle_ids,
-      readonly: false,
-      force_legacy_encryption: true,
-      username: "mooyoung2309@gmail.com"
-    )
-    
-    UI.success("모든 인증서와 프로파일이 생성되었습니다! 🔐")
-  end
-  
-  desc "Clean build cache and dependencies"
-  lane :clean_all do
-    UI.message("빌드 캐시와 의존성을 정리합니다...")
-    
-    # DerivedData 정리
-    clear_derived_data
-    
-    # Swift Package 캐시 정리
-    sh("cd .. && rm -rf ~/Library/Caches/org.swift.swiftpm || true")
-    sh("cd .. && rm -rf ~/Library/Developer/Xcode/DerivedData || true")
-    
-    # 각 앱의 패키지 의존성 다시 해결
-    ["Plots", "FewCuts", "FewRetros", "Toff"].each do |app_name|
-      project_path = "Apps/#{app_name}/#{app_name}.xcodeproj"
-      if File.exist?(File.expand_path("../#{project_path}", __dir__))
-        UI.message("#{app_name} 의존성 해결 중...")
-        sh("cd .. && xcodebuild -resolvePackageDependencies -scheme #{app_name} -project #{project_path} || true")
-      end
+  desc "Reset certificates"
+  lane :reset do
+    ["development", "appstore"].each do |type|
+      match_nuke(type: type, app_identifier: APPS.values)
+      match(type: type, app_identifier: APPS.values, readonly: false, username: "mooyoung2309@gmail.com")
     end
-    
-    UI.success("정리가 완료되었습니다! 🧹")
+    UI.success("Certificates reset! 🔐")
+  end
+  
+  desc "Clean everything"
+  lane :clean do
+    clear_derived_data
+    sh("rm -rf ~/Library/Caches/org.swift.swiftpm", error_callback: ->(result) {})
+    UI.success("Cleaned! 🧹")
   end
 end

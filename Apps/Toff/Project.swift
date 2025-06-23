@@ -5,7 +5,8 @@ let project = Project(
     packages: [
         .package(url: "https://github.com/firebase/firebase-ios-sdk.git", .upToNextMajor(from: "10.0.0")),
         .package(url: "https://github.com/pointfreeco/swift-composable-architecture", .upToNextMajor(from: "1.20.0")),
-        .package(url: "https://github.com/googleads/swift-package-manager-google-mobile-ads.git", .upToNextMajor(from: "12.6.0"))
+        .package(url: "https://github.com/googleads/swift-package-manager-google-mobile-ads.git", .upToNextMajor(from: "12.6.0")),
+        .package(url: "https://github.com/mixpanel/mixpanel-swift", .upToNextMajor(from: "5.1.0"))
     ],
     targets: [
         .target(
@@ -25,6 +26,9 @@ let project = Project(
                 .package(product: "FirebaseAnalytics"),
                 .package(product: "ComposableArchitecture"),
                 .package(product: "GoogleMobileAds"),
+                .package(product: "Mixpanel"),
+                .project(target: "DS", path: "../../Modules/DS"),
+                .project(target: "CommonFeature", path: "../../Modules/CommonFeature"),
                 .sdk(name: "JavaScriptCore", type: .framework)
             ],
             settings: .settings(

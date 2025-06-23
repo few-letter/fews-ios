@@ -14,7 +14,7 @@ class AppOpenAdManager: NSObject {
     private var isShowingAd = false
     private var loadTime: Date?
     private let fourHoursInSeconds = TimeInterval(14400)
-    private var adUnitID: String = Bundle.main.infoDictionary?["ADMOB_OPENING_AD_ID"] as? String ?? ""
+    private var adUnitID: String = .ADMOB_OPENING_AD_ID
     
     static let shared = AppOpenAdManager()
     private override init() { super.init() }

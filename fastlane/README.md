@@ -15,37 +15,29 @@ For _fastlane_ installation instructions, see [Installing _fastlane_](https://do
 
 ## iOS
 
-### ios upload_testflight
+### ios upload
 
 ```sh
-[bundle exec] fastlane ios upload_testflight
+[bundle exec] fastlane ios upload
 ```
 
 Upload to TestFlight
 
-### ios nuke
+### ios reset
 
 ```sh
-[bundle exec] fastlane ios nuke
+[bundle exec] fastlane ios reset
 ```
 
-Delete all certificates and profiles (development + appstore)
+Reset certificates
 
-### ios sign
+### ios clean
 
 ```sh
-[bundle exec] fastlane ios sign
+[bundle exec] fastlane ios clean
 ```
 
-Generate certificates and profiles (development + appstore)
-
-### ios clean_all
-
-```sh
-[bundle exec] fastlane ios clean_all
-```
-
-Clean build cache and dependencies
+Clean everything
 
 ----
 

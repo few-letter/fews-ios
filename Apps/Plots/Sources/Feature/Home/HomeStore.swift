@@ -8,6 +8,7 @@
 import ComposableArchitecture
 import Foundation
 import SwiftData
+import CommonFeature
 
 @Reducer
 public struct HomeStore {
@@ -46,6 +47,7 @@ public struct HomeStore {
     
     @Dependency(\.plotClient) var plotClient
     @Dependency(\.folderClient) var folderClient
+    @Dependency(\.adClient) var adClient
     
     public var body: some ReducerOf<Self> {
         BindingReducer()
@@ -56,7 +58,9 @@ public struct HomeStore {
                 return .none
                 
             case .onAppear:
-                return .none
+                return .run { _ in
+                    await adClient.showOpeningAd(adUnitID: .ADMOB_OPENING_AD_ID)
+                }
                 
             case .path(.element(id: _, action: .folderTree(.delegate(let action)))):
                 switch action {

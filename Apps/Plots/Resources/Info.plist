@@ -4,6 +4,8 @@
 <dict>
 	<key>ADMOB_OPENING_AD_ID</key>
 	<string>$(ADMOB_OPENING_AD_ID)</string>
+	<key>ADMOB_REWARD_AD_ID</key>
+	<string>$(ADMOB_REWARD_AD_ID)</string>
 	<key>CFBundleDisplayName</key>
 	<string>Plots</string>
 	<key>CFBundleExecutable</key>
@@ -13,17 +15,19 @@
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundleName</key>
-	<string/>
+	<string></string>
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
-	<string>1.4.0</string>
+	<string>1.4.1</string>
 	<key>CFBundleVersion</key>
-	<string>20250618030650</string>
+	<string>20250622235701</string>
 	<key>GADApplicationIdentifier</key>
 	<string>$(ADMOB_APP_ID)</string>
 	<key>ITSAppUsesNonExemptEncryption</key>
 	<false/>
+	<key>MIXPANEL_TOKEN</key>
+	<string>$(MIXPANEL_TOKEN)</string>
 	<key>MinimumOSVersion</key>
 	<string>18.4</string>
 	<key>NSAppTransportSecurity</key>
@@ -239,9 +243,9 @@
 	<key>UILaunchScreen</key>
 	<dict>
 		<key>UIColorName</key>
-		<string/>
+		<string></string>
 		<key>UIImageName</key>
-		<string/>
+		<string></string>
 	</dict>
 	<key>UISupportedInterfaceOrientations</key>
 	<array>

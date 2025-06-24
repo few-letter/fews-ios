@@ -2,10 +2,11 @@ default_platform(:ios)
 
 # 앱 설정 (환경변수 대신 하드코딩으로 간소화)
 APPS = {
+  "Toffs" => "com.tamsadan.toolinder"
   "Plots" => "com.annapo.plotfolio",
+  "Retros" => "com.annapo.kpt",
+  "Multis" => "com.annapo.taskfolio",
   "FewCuts" => "com.annapo.fewcuts", 
-  "FewRetros" => "com.annapo.kpt",
-  "Toff" => "com.tamsadan.toolinder"
 }
 
 # Tuist 워크스페이스 경로

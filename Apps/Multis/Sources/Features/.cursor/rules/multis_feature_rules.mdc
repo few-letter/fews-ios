@@ -1,0 +1,222 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+# Multis iOS App - Cursor Rules
+
+## 프로젝트 개요
+
+Multis는 태스크 관리 iOS 앱으로, SwiftUI + TCA(The Composable Architecture) + SwiftData를 기반으로 구현되어 있습니다.
+
+## 아키텍처 패턴
+
+### 1. 폴더 구조
+```
+Apps/Multis/Sources/
+├── Core/                          # 공통 코어 모듈
+│   ├── ModelContextDependency.swift  # SwiftData 컨텍스트 의존성
+│   └── PresistentManager.swift       # 데이터 영속성 관리자 (CloudKit 연동)
+├── Domain/                        # 도메인 레이어
+│   ├── Client/                      # 비즈니스 로직 클라이언트
+│   │   ├── TaskClient.swift          # Task 관련 인터페이스
+│   │   ├── TaskClientLive.swift      # Task 실제 구현체
+│   │   └── RecordClient.swift        # Record 관련 클라이언트
+│   ├── Model/                       # 비즈니스 모델
+│   │   ├── TaskModel.swift           # Task 도메인 모델
+│   │   └── RecordModel.swift         # Record 도메인 모델
+│   └── SwiftDataModel/              # SwiftData 엔티티
+│       ├── Task.swift                # Task SwiftData 모델
+│       └── Record.swift              # Record SwiftData 모델
+└── Features/                      # 기능별 모듈
+    ├── MainTab/                     # 메인 탭 관리
+    ├── Calendar/                    # 캘린더 기능
+    ├── Document/                    # 문서/리스트 뷰 기능
+    ├── Task/                        # 태스크 관련 기능
+    └── Record/                      # 레코드 관련 기능
+```
+
+### 2. TCA (The Composable Architecture) 패턴
+
+#### Store & View 구조
+- `XxxStore.swift`: TCA Reducer, State, Action 정의
+- `XxxView.swift`: SwiftUI View 구현
+- `@Reducer` 애노테이션 사용
+- `@ObservableState` 구조체로 상태 정의
+- `BindingAction` 지원
+
+#### Navigation 패턴
+- `XxxNavigationStore` + `XxxNavigationView`: 네비게이션 관리
+- `XxxPresentationStore` + `XxxPresentationView`: 모달 프레젠테이션 관리
+- `StackState<Path.State>`를 통한 네비게이션 스택 관리
+- `@Presents`를 통한 모달 상태 관리
+
+### 3. 데이터 레이어
+
+#### SwiftData 모델
+```swift
+@Model
+public final class Task {
+    public var id: UUID?
+    public var title: String?
+    public var time: Int?
+    public var date: Date?
+}
+```
+
+#### 도메인 모델
+```swift
+public struct TaskModel: Identifiable, Comparable {
+    public var id: UUID
+    public var title: String
+    public var time: Int
+    public var date: Date
+    public var task: Task? // SwiftData 참조
+}
+```
+
+#### Client 패턴
+```swift
+public protocol TaskClient {
+    func createOrUpdate(taskModel: TaskModel) -> TaskModel
+    func fetches() -> [TaskModel]
+    func delete(taskModel: TaskModel)
+}
+```
+
+## 핵심 사용 패턴
+
+### TaskModel과 TaskClient 사용법
+
+#### 1. TaskClient를 Store에서 사용
+```swift
+@Reducer
+public struct CalendarNavigationStore {
+    @Dependency(\.taskClient) private var taskClient
+    
+    case .fetch:
+        let tasks = taskClient.fetches()
+        return .send(.fetched(tasks))
+    
+    case .saveTask:
+        let _ = taskClient.createOrUpdate(taskModel: state.task)
+        return .send(.taskSaved)
+}
+```
+
+#### 2. TaskModel 변환 패턴
+```swift
+// SwiftData → Domain Model
+let taskModel = TaskModel(from: swiftDataTask)
+
+// Domain Model → SwiftData
+let swiftDataTask = taskModel.toSwiftDataTask()
+```
+
+#### 3. 날짜별 태스크 그룹핑
+```swift
+let groupedByDate = Dictionary(grouping: tasks) { task in
+    Calendar.current.startOfDay(for: task.date)
+}
+```
+
+### 네비게이션 패턴
+
+#### 1. Presentation 패턴 (모달)
+```swift
+// Store에서
+state.addTaskPresentation.addTaskNavigation = .init(task: task)
+
+// View에서
+.overlay {
+    AddTaskPresentationView(store: store.scope(state: \.addTaskPresentation, action: \.addTaskPresentation))
+}
+```
+
+#### 2. Delegate 패턴
+```swift
+case .addTaskPresentation(.delegate(let action)):
+    switch action {
+    case .dismiss:
+        return .send(.fetch) // 데이터 새로고침
+    }
+```
+
+## 코딩 컨벤션
+
+### 1. 파일 명명 규칙
+- Store: `XxxStore.swift`
+- View: `XxxView.swift` 
+- Navigation: `XxxNavigationStore.swift` + `XxxNavigationView.swift`
+- Presentation: `XxxPresentationStore.swift` + `XxxPresentationView.swift`
+- Model: `XxxModel.swift`
+- Client: `XxxClient.swift` + `XxxClientLive.swift`
+
+### 2. State 구조
+```swift
+@ObservableState
+public struct State {
+    // 기본 상태
+    public var tasks: [TaskModel] = []
+    
+    // 네비게이션 상태
+    public var path: StackState<Path.State> = .init()
+    
+    // 프레젠테이션 상태
+    public var addTaskPresentation: AddTaskPresentationStore.State = .init()
+}
+```
+
+### 3. Action 구조
+```swift
+public enum Action: BindableAction {
+    case binding(BindingAction<State>)
+    case onAppear
+    
+    // 비즈니스 액션
+    case fetch
+    case fetched([TaskModel])
+    
+    // 자식 액션
+    case addTaskPresentation(AddTaskPresentationStore.Action)
+    case path(StackActionOf<Path>)
+    
+    // 델리게이트 액션
+    case delegate(Delegate)
+    public enum Delegate {
+        case dismiss
+    }
+}
+```
+
+## 개발 가이드라인
+
+### 1. 새로운 기능 추가시
+1. `Domain/Model/` 에 도메인 모델 정의
+2. `Domain/SwiftDataModel/` 에 SwiftData 엔티티 정의
+3. `Domain/Client/` 에 비즈니스 로직 클라이언트 정의
+4. `Features/XxxFeature/` 에 Store와 View 구현
+5. 필요시 Navigation/Presentation 패턴 적용
+
+### 2. 데이터 흐름
+1. View에서 Action 발생
+2. Store의 Reducer에서 처리
+3. Client를 통해 비즈니스 로직 실행
+4. SwiftData를 통해 데이터 영속화
+5. 상태 업데이트 후 View 리렌더링
+
+### 3. Mock 데이터
+- `TaskClientLive`에서 자동으로 Mock 데이터 생성
+- 개발/테스트시 활용 가능
+
+### 4. CloudKit 연동
+- `PresistentManager`에서 CloudKit 설정
+- SwiftData가 자동으로 CloudKit과 동기화
+
+## 주의사항
+
+1. **SourceKit 에러 무시**: SourceKit 관련 에러는 무시하고 진행
+2. **한국어 응답**: 모든 응답은 한국어로 작성
+3. **TCA 패턴 준수**: 새로운 기능 추가시 기존 TCA 패턴을 따라야 함
+4. **데이터 변환**: SwiftData ↔ Domain Model 변환시 extension 활용
+5. **의존성 주입**: `@Dependency`를 통한 클라이언트 주입 패턴 유지

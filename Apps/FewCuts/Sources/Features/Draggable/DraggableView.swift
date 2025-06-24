@@ -49,10 +49,17 @@ public final class DragManager: MultiTouchDelegate {
     private let rotationSnapThreshold: CGFloat = 5
     private let rotationSnapAngles: [CGFloat] = [0, 90, 180, 270, 360]
     
+    // ────── 더블 탭 감지 설정 ──────
+    private let doubleTapTimeThreshold: TimeInterval = 0.5 // 더블 탭 시간 간격
+    private let doubleTapDistanceThreshold: CGFloat = 20   // 더블 탭 거리 임계값
+    
     // ────── 외부 노출 상태 ──────
     public var items: [any Draggable]
     public let gridLines: [GridLine]
     public var activeLineIDs: Set<UUID> = []
+    
+    // ────── 편집 모드 관리 ──────
+    public var editingTextItemID: UUID?
     
     public var isDraggingActive: Bool { !draggingItems.isEmpty }
     public var isResizingActive: Bool { !resizingItems.isEmpty }
@@ -73,10 +80,37 @@ public final class DragManager: MultiTouchDelegate {
     
     private var touchModes: [UITouch: TouchMode] = [:]
     
+    // ────── 더블 탭 감지용 ──────
+    private var lastTapTime: TimeInterval = 0
+    private var lastTapLocation: CGPoint = .zero
+    private var lastTappedItem: (any Draggable)?
+    
     // ────────────────
     public init(items: [any Draggable] = [], gridLines: [GridLine] = []) {
         self.items = items
         self.gridLines = gridLines
+    }
+    
+    // ────── 편집 모드 제어 ──────
+    public func startEditingText(itemID: UUID) {
+        editingTextItemID = itemID
+    }
+    
+    public func stopEditingText() {
+        editingTextItemID = nil
+    }
+    
+    public func isEditingText(itemID: UUID) -> Bool {
+        return editingTextItemID == itemID
+    }
+    
+    // ────── 텍스트 업데이트 ──────
+    public func updateTextItem(itemID: UUID, newText: String) {
+        if let index = items.firstIndex(where: { $0.id.id == itemID }),
+           var textItem = items[index] as? TextDraggable {
+            textItem.updateText(newText)
+            items[index] = textItem
+        }
     }
 }
 
@@ -87,6 +121,44 @@ extension DragManager {
         guard let view else { return }
         for touch in touches {
             let loc = touch.location(in: view)
+            
+            // 편집 중인 텍스트가 있고, 해당 영역 밖을 터치하면 편집 모드 종료
+            if let editingID = editingTextItemID {
+                if let editingItem = items.first(where: { $0.id.id == editingID }) {
+                    if !editingItem.rect.contains(loc) {
+                        stopEditingText()
+                        return // 편집 모드 종료 후 다른 동작 수행하지 않음
+                    }
+                } else {
+                    stopEditingText()
+                }
+            }
+            
+            // 더블 탭 감지 로직
+            let currentTime = CFAbsoluteTimeGetCurrent()
+            let timeDifference = currentTime - lastTapTime
+            let locationDistance = hypot(loc.x - lastTapLocation.x, loc.y - lastTapLocation.y)
+            
+            // 현재 위치에 있는 아이템 찾기
+            if let currentItem = items.reversed().first(where: { $0.rect.contains(loc) }) {
+                // 더블 탭 조건 확인
+                if timeDifference < doubleTapTimeThreshold &&
+                   locationDistance < doubleTapDistanceThreshold &&
+                   let lastItem = lastTappedItem,
+                   lastItem.id.id == currentItem.id.id {
+                    
+                    // TextDraggable인지 확인하고 편집 모드 시작
+                    if currentItem is TextDraggable {
+                        startEditingText(itemID: currentItem.id.id)
+                        return // 더블 탭 처리 완료, 드래그 시작하지 않음
+                    }
+                }
+                
+                // 마지막 탭 정보 업데이트
+                lastTapTime = currentTime
+                lastTapLocation = loc
+                lastTappedItem = currentItem
+            }
             
             // 이미 드래그 중이면 두 번째 손가락 → 리사이즈/회전
             if let anchor = draggingItems.keys.first,
@@ -114,8 +186,13 @@ extension DragManager {
                     startAngles[touch] = atan2(loc.y - anchorLoc.y, loc.x - anchorLoc.x)
                 }
             }
-            // 첫 손가락 드래그 스타트
+            // 첫 손가락 드래그 스타트 (편집 중인 텍스트가 아닌 경우에만)
             else if let item = items.reversed().first(where: { $0.rect.contains(loc) }) {
+                // 현재 편집 중인 텍스트 아이템이라면 드래그 시작하지 않음
+                if let editingID = editingTextItemID, editingID == item.id.id {
+                    return
+                }
+                
                 draggingItems[touch] = item
                 initialPositions[touch] = item.rect.origin
                 touchModes[touch] = .dragging
@@ -411,7 +488,26 @@ public struct DraggableView: View {
             
             // 드래그 가능한 아이템들
             ForEach(Array(dragManager.items.enumerated()), id: \.element.id.id) { index, item in
-                AnyView(item.createView(index: index, color: itemColor(index)))
+                if let textItem = item as? TextDraggable {
+                    // TextDraggable의 경우 편집 상태 전달
+                    AnyView(
+                        textItem.createView(
+                            index: index,
+                            color: itemColor(index),
+                            isEditing: dragManager.isEditingText(itemID: item.id.id),
+                            onEditingChanged: { isEditing in
+                                if isEditing {
+                                    dragManager.startEditingText(itemID: item.id.id)
+                                } else {
+                                    dragManager.stopEditingText()
+                                }
+                            }
+                        )
+                    )
+                } else {
+                    // 다른 타입의 Draggable
+                    AnyView(item.createView(index: index, color: itemColor(index)))
+                }
             }
             
             // 그리드 오버레이

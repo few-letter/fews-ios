@@ -40,35 +40,35 @@ public struct TaskModel: Identifiable, Comparable {
     public static func < (lhs: TaskModel, rhs: TaskModel) -> Bool {
         return lhs.date < rhs.date
     }
+    
+    /// 시간을 0.01초 단위로 표시
+    public var displayTime: String {
+        // 0.01초(10ms) 단위로 변환
+        let displaySeconds = Double(time) / 1000.0
+        return String(format: "%.2f", displaySeconds)
+    }
 }
 
 // MARK: - SwiftData <-> Model Conversion Extensions
 extension TaskModel {
-    /// SwiftData Task 객체로부터 TaskModel 생성
-    /// SwiftData의 time(분) → TaskModel의 time(ms) 변환
+    /// SwiftData Task 객체로부터 TaskModel 생성 (ms 단위 통일)
     public init(from swiftDataTask: Task) {
-        let timeInMinutes = swiftDataTask.time ?? 0
-        let timeInMs = timeInMinutes * 60 * 1000 // 분 → ms 변환
-        
         self.init(
             id: swiftDataTask.id ?? .init(),
-            title: swiftDataTask.title ?? .init(),
-            time: timeInMs,
+            title: swiftDataTask.title ?? "",
+            time: swiftDataTask.time ?? 0, // 이제 SwiftData도 ms 단위
             date: swiftDataTask.date ?? .now,
             task: swiftDataTask
         )
     }
     
-    /// TaskModel을 SwiftData Task 객체로 변환
-    /// TaskModel의 time(ms) → SwiftData의 time(분) 변환
+    /// TaskModel을 SwiftData Task 객체로 변환 (ms 단위 통일)
     public func toSwiftDataTask() -> Task {
-        let timeInMinutes = Int(ceil(Double(self.time) / (60 * 1000))) // ms → 분 변환 (올림)
-        
         return Task(
             id: self.id,
             title: self.title,
             date: self.date,
-            time: timeInMinutes
+            time: self.time // ms 단위 그대로 저장
         )
     }
 }

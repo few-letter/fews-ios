@@ -87,19 +87,22 @@ extension CalendarNavigationView {
     private func calendarEventListView(tasks: [TaskModel]) -> some View {
         List {
             ForEach(tasks) { task in
-                TaskRowView(
-                    task: task,
-                    isTimerRunning: store.runningTimers[task.id] != nil,
-                    elapsedTime: store.runningTimers[task.id]?.elapsedTime ?? 0,
-                    onTap: { store.send(.tap(task)) },
-                    onTimerToggle: {
-                        if store.runningTimers[task.id] != nil {
-                            store.send(.stopTimer(task.id))
-                        } else {
-                            store.send(.startTimer(task))
+                Button(action: {
+                    store.send(.tap(task))
+                }) {
+                    TaskCellView(
+                        task: task,
+                        isTimerRunning: store.runningTimerIds.contains(where: { $0.taskId == task.id }),
+                        onTimerToggle: {
+                            if store.runningTimerIds.contains(where: { $0.taskId == task.id }) {
+                                store.send(.stopTimer(task.id))
+                            } else {
+                                store.send(.startTimer(task))
+                            }
                         }
-                    }
-                )
+                    )
+                }
+                .buttonStyle(.plain)
             }
             .onDelete { store.send(.delete($0)) }
         }
@@ -107,113 +110,6 @@ extension CalendarNavigationView {
     }
     
 
-}
-
-// MARK: - TaskRowView (RecordCellView 스타일)
-private struct TaskRowView: View {
-    let task: TaskModel
-    let isTimerRunning: Bool
-    let elapsedTime: Int
-    let onTap: () -> Void
-    let onTimerToggle: () -> Void
-    
-    var body: some View {
-        HStack(spacing: 12) {
-            // 타이머 상태 아이콘과 색상
-            Circle()
-                .fill(isTimerRunning ? Color.green : Color.gray.opacity(0.3))
-                .frame(width: 32, height: 32)
-                .overlay(
-                    Image(systemName: isTimerRunning ? "stop.fill" : "play.fill")
-                        .foregroundColor(.white)
-                        .font(.system(size: 14, weight: .medium))
-                )
-                .onTapGesture {
-                    onTimerToggle()
-                }
-            
-            VStack(alignment: .leading, spacing: 6) {
-                // Task title
-                Text(task.title.isEmpty ? "Untitled Task" : task.title)
-                    .font(.callout)
-                    .foregroundColor(.primary)
-                    .lineLimit(2)
-                    .multilineTextAlignment(.leading)
-                
-                HStack {
-                    // Accumulated total time
-                    if task.time > 0 {
-                        Text("Total \(formatTaskTime(task.time))")
-                            .font(.caption2)
-                            .fontWeight(.medium)
-                            .foregroundColor(.blue)
-                            .padding(.horizontal, 6)
-                            .padding(.vertical, 2)
-                            .background(
-                                RoundedRectangle(cornerRadius: 3)
-                                    .fill(Color.blue.opacity(0.12))
-                            )
-                    }
-                    
-                    Spacer()
-                    
-                    // Current running time (real-time update) - 오른쪽에 배치
-                    if isTimerRunning {
-                        Text("Running: \(formatElapsedTime(elapsedTime))")
-                            .font(.caption2)
-                            .fontWeight(.medium)
-                            .foregroundColor(.green)
-                            .padding(.horizontal, 6)
-                            .padding(.vertical, 2)
-                            .background(
-                                RoundedRectangle(cornerRadius: 3)
-                                    .fill(Color.green.opacity(0.12))
-                            )
-                    }
-                    
-                    // Date display
-                    Text(task.date.formatted(date: .abbreviated, time: .omitted))
-                        .font(.caption2)
-                        .foregroundColor(.secondary)
-                }
-            }
-        }
-        .contentShape(Rectangle())
-        .onTapGesture {
-            onTap()
-        }
-    }
-    
-    private func formatElapsedTime(_ seconds: Int) -> String {
-        let hours = seconds / 3600
-        let minutes = (seconds % 3600) / 60
-        let secs = seconds % 60
-        
-        if hours > 0 {
-            return String(format: "%d:%02d:%02d", hours, minutes, secs)
-        } else if minutes > 0 {
-            return String(format: "%d:%02d", minutes, secs)
-        } else {
-            return "\(secs)s"
-        }
-    }
-    
-    private func formatTaskTime(_ milliseconds: Int) -> String {
-        let totalSeconds = milliseconds / 1000
-        let hours = totalSeconds / 3600
-        let minutes = (totalSeconds % 3600) / 60
-        let seconds = totalSeconds % 60
-        
-        if hours > 0 {
-            return "\(hours)h \(minutes)m"
-        } else if minutes > 0 {
-            return "\(minutes)m"
-        } else if seconds > 0 {
-            return "\(seconds)s"
-        } else {
-            return "0s"
-        }
-    }
 }
 
 private struct CalendarCellContent: View {
@@ -308,10 +204,10 @@ private struct CalendarCellContent: View {
     }
     
     private func taskTypeColor(for task: TaskModel) -> Color {
-        // 시간에 따라 색상 구분
-        let time = task.time
+        // 시간에 따라 색상 구분 (ms 단위)
+        let timeInMinutes = task.time / (60 * 1000) // ms를 분으로 변환
         
-        switch time {
+        switch timeInMinutes {
         case 0..<30:
             return .green    // 30분 미만 - 초록
         case 30..<60:

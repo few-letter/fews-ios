@@ -175,73 +175,9 @@ extension AddTaskNavigationView {
     
     private var previewSection: some View {
         Section {
-            TaskCellView(task: store.task)
+            TaskCellView(task: store.task, isTimerRunning: false, onTimerToggle: {})
         } header: {
             Text("Preview")
-        }
-    }
-}
-
-// MARK: - TaskCellView (Placeholder)
-struct TaskCellView: View {
-    let task: TaskModel
-    
-    var body: some View {
-        VStack(alignment: .leading, spacing: 8) {
-            Text(task.title.isEmpty ? "Task Title" : task.title)
-                .font(.headline)
-                .foregroundColor(task.title.isEmpty ? .secondary : .primary)
-            
-            HStack {
-                Text(task.date, style: .date)
-                    .font(.caption)
-                    .foregroundColor(.secondary)
-                
-                Spacer()
-                
-                if task.time > 0 {
-                    HStack(spacing: 4) {
-                        Image(systemName: "clock.fill")
-                            .font(.caption2)
-                        Text(formatTaskTime(task.time))
-                            .font(.caption)
-                            .fontWeight(.medium)
-                    }
-                    .foregroundColor(.blue)
-                    .padding(.horizontal, 8)
-                    .padding(.vertical, 2)
-                    .background(Color.blue.opacity(0.1))
-                    .cornerRadius(4)
-                } else {
-                    HStack(spacing: 4) {
-                        Image(systemName: "clock")
-                            .font(.caption2)
-                        Text("0분")
-                            .font(.caption)
-                    }
-                    .foregroundColor(.secondary)
-                }
-            }
-        }
-        .padding()
-        .background(Color(.systemGray6))
-        .cornerRadius(8)
-    }
-    
-    private func formatTaskTime(_ milliseconds: Int) -> String {
-        let totalSeconds = milliseconds / 1000
-        let hours = totalSeconds / 3600
-        let minutes = (totalSeconds % 3600) / 60
-        let seconds = totalSeconds % 60
-        
-        if hours > 0 {
-            return "\(hours)h \(minutes)m"
-        } else if minutes > 0 {
-            return "\(minutes)m"
-        } else if seconds > 0 {
-            return "\(seconds)s"
-        } else {
-            return "0s"
         }
     }
 }

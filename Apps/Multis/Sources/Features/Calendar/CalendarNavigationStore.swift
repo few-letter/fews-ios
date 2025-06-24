@@ -12,13 +12,15 @@ private enum TimerID: Hashable {
     case timer(UUID)
 }
 
-private func findTask(id: UUID, in tasksByDate: [Date: IdentifiedArrayOf<TaskModel>]) -> TaskModel? {
-    for (_, tasks) in tasksByDate {
-        if let task = tasks.first(where: { $0.id == id }) {
-            return task
-        }
+public struct TaskTimerID: Hashable, Identifiable {
+    public var id: UUID { taskId }
+    public let taskId: UUID
+    public let date: Date
+    
+    public init(taskId: UUID, date: Date) {
+        self.taskId = taskId
+        self.date = Calendar.current.startOfDay(for: date)
     }
-    return nil
 }
 
 @Reducer
@@ -31,8 +33,8 @@ public struct CalendarNavigationStore {
         public var tasksByDate: [Date: IdentifiedArrayOf<TaskModel>]
         public var selectedDate: Date
         
-        // 멀티 타이머 관련 상태
-        public var runningTimers: [UUID: TimerState] = [:]
+        // 실행 중인 타이머 ID들
+        public var runningTimerIds: IdentifiedArrayOf<TaskTimerID> = []
         
         public var path: StackState<Path.State>
         public var addTaskPresentation: AddTaskPresentationStore.State
@@ -44,20 +46,8 @@ public struct CalendarNavigationStore {
             
             self.tasksByDate = [:]
             self.selectedDate = Calendar.current.startOfDay(for: .now)
-            self.runningTimers = [:]
+            self.runningTimerIds = []
             self.addTaskPresentation = .init()
-        }
-    }
-    
-    public struct TimerState {
-        public var taskId: UUID
-        public var startTime: Date
-        public var elapsedTime: Int
-        
-        public init(taskId: UUID) {
-            self.taskId = taskId
-            self.startTime = .now
-            self.elapsedTime = 0
         }
     }
     
@@ -76,7 +66,7 @@ public struct CalendarNavigationStore {
         // 타이머 관련 액션들
         case startTimer(TaskModel)
         case stopTimer(UUID)
-        case timerTick(UUID)
+        case timerTick(UUID, Int)
         
         case addTaskPresentation(AddTaskPresentationStore.Action)
         case path(StackActionOf<Path>)
@@ -135,57 +125,39 @@ public struct CalendarNavigationStore {
                 
             // 타이머 관련 액션 처리
             case .startTimer(let task):
-                state.runningTimers[task.id] = TimerState(taskId: task.id)
+                let timerID = TaskTimerID(taskId: task.id, date: task.date)
+                state.runningTimerIds.append(timerID)
                 return .run { send in
                     while true {
-                        try await _Concurrency.Task.sleep(for: .seconds(1))
-                        await send(.timerTick(task.id))
+                        try await _Concurrency.Task.sleep(for: .milliseconds(100))
+                        await send(.timerTick(task.id, 100))
                     }
                 }
                 .cancellable(id: TimerID.timer(task.id))
                 
             case .stopTimer(let taskId):
-                guard let timerState = state.runningTimers[taskId] else { return .none }
+                state.runningTimerIds.removeAll { $0.taskId == taskId }
                 
-                // 타이머 시간을 태스크에 업데이트 (초를 ms로 변환)
-                if let task = findTask(id: taskId, in: state.tasksByDate) {
-                    let elapsedMs = timerState.elapsedTime * 1000 // 초 → ms 변환
-                    let updatedTask = TaskModel(
-                        id: task.id,
-                        title: task.title,
-                        time: task.time + elapsedMs, // ms 단위로 누적
-                        date: task.date,
-                        task: task.task
-                    )
+                if let timerID = state.runningTimerIds.first(where: { $0.taskId == taskId }),
+                   let tasksForDate = state.tasksByDate[timerID.date],
+                   let task = tasksForDate[id: taskId] {
                     
-                    let totalHours = updatedTask.time / (60 * 60 * 1000)
-                    let totalMinutes = (updatedTask.time % (60 * 60 * 1000)) / (60 * 1000)
-                    let totalSeconds = (updatedTask.time % (60 * 1000)) / 1000
-                    
-                    print("🕐 Timer stopped for '\(task.title)': +\(timerState.elapsedTime)s → Total: \(totalHours)h \(totalMinutes)m \(totalSeconds)s")
-                    
-                    // TaskClient를 통해 업데이트
-                    let savedTask = taskClient.createOrUpdate(taskModel: updatedTask)
-                    
-                    // State도 직접 업데이트
-                    let taskDate = Calendar.current.startOfDay(for: task.date)
-                    if var tasksForDate = state.tasksByDate[taskDate] {
-                        if let index = tasksForDate.firstIndex(where: { $0.id == taskId }) {
-                            tasksForDate[index] = savedTask
-                            state.tasksByDate[taskDate] = tasksForDate
-                        }
-                    }
+                    let savedTask = taskClient.createOrUpdate(taskModel: task)
+                    state.tasksByDate[timerID.date]?[id: taskId] = savedTask
                 }
                 
-                state.runningTimers.removeValue(forKey: taskId)
                 return .concatenate(
                     .cancel(id: TimerID.timer(taskId)),
-                    .send(.fetch) // 전체 데이터 새로고침으로 확실하게 동기화
+                    .send(.fetch)
                 )
                 
-            case .timerTick(let taskId):
-                if state.runningTimers[taskId] != nil {
-                    state.runningTimers[taskId]?.elapsedTime += 1
+            case .timerTick(let taskId, let ms):
+                guard let timerID = state.runningTimerIds.first(where: { $0.taskId == taskId }) else { 
+                    return .none 
+                }
+                state.tasksByDate[timerID.date]?[id: taskId]?.time += ms
+                if let task = state.tasksByDate[timerID.date]?[id: taskId] {
+                    let _ = taskClient.createOrUpdate(taskModel: task)
                 }
                 return .none
                 

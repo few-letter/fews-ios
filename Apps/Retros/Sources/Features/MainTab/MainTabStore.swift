@@ -19,7 +19,7 @@ public enum MainTab: String, CaseIterable, Equatable {
         case .calendars:
             return "calendar"
         case .documents:
-            return "chart.pie"
+            return "doc.text"
         case .settings:
             return "person.circle"
         }

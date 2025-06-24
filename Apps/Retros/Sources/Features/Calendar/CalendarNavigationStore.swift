@@ -64,10 +64,22 @@ public struct CalendarNavigationStore {
                 
             case .fetched(let records):
                 state.recordsByDate = [:]
-                records.forEach { record in
-                    let date = Calendar.current.startOfDay(for: record.showAt)
-                    state.recordsByDate[date, default: []].updateOrAppend(record)
+                
+                let groupedByDate = Dictionary(grouping: records) { record in
+                    Calendar.current.startOfDay(for: record.showAt)
                 }
+                
+                for (date, recordsForDate) in groupedByDate {
+                    let sortedRecords = recordsForDate.sorted { lhs, rhs in
+                        if lhs.type.rawValue != rhs.type.rawValue {
+                            return lhs.type.rawValue < rhs.type.rawValue
+                        }
+                        return lhs.createAt < rhs.createAt
+                    }
+                    
+                    state.recordsByDate[date] = IdentifiedArrayOf(uniqueElements: sortedRecords)
+                }
+                
                 return .none
                 
             case .dateChanged(let date):
@@ -75,10 +87,11 @@ public struct CalendarNavigationStore {
                 return .none
                 
             case .plusButtonTapped:
-                state.addRecordPresentation.addRecordNavigation = .init()
+                state.addRecordPresentation.addRecordNavigation = .init(record: .init(showAt: state.selectedDate))
                 return .none
                 
             case .tap(let record):
+                state.addRecordPresentation.addRecordNavigation = .init(record: record)
                 return .none
                 
             case .delete(let indexSet):
@@ -97,7 +110,6 @@ public struct CalendarNavigationStore {
                 case .dismiss:
                     return .send(.fetch)
                 }
-                return .none
                 
             case .binding, .path, .addRecordPresentation:
                 return .none

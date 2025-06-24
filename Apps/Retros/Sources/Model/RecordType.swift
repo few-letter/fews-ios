@@ -6,24 +6,43 @@
 //
 
 import Foundation
+import SwiftUI
 
 public enum RecordType: Int, CaseIterable {
     case keep
     case problem
     case `try`
     
-    public var systemImageName: String {
-        return switch self {
+    public var color: Color {
+        switch self {
         case .keep:
-            "checkmark.circle"
+            return .green
         case .problem:
-            "exclamationmark.circle"
+            return .red
         case .try:
-            "arrow.right.circle"
+            return .blue
         }
     }
     
-    public var displayText: String {
-        return ""
+    public var systemImageName: String {
+        switch self {
+        case .keep:
+            return "checkmark.circle.fill"
+        case .problem:
+            return "exclamationmark.triangle.fill"
+        case .try:
+            return "lightbulb.fill"
+        }
+    }
+    
+    public var displayName: String {
+        switch self {
+        case .keep:
+            return "Keep"
+        case .problem:
+            return "Problem"
+        case .try:
+            return "Try"
+        }
     }
 }

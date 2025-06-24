@@ -90,7 +90,7 @@ extension CalendarNavigationView {
                 Button {
                     store.send(.tap(record))
                 } label: {
-//                    RecordCellView(record: record)
+                    RecordCellView(record: record)
                 }
             }
             .onDelete { store.send(.delete($0)) }
@@ -115,7 +115,7 @@ private struct CalendarCellContent: View {
     var body: some View {
         VStack(spacing: 1) {
             dayNumberView
-                .frame(height: 24)
+                .frame(height: 20)
             
             if height > 40 {
                 fullRecordList
@@ -133,11 +133,11 @@ private struct CalendarCellContent: View {
             if isSelected {
                 Circle()
                     .fill(Color.accentColor)
-                    .frame(width: 24, height: 24)
+                    .frame(width: 20, height: 20)
             }
             
             Text("\(dayNumber)")
-                .font(.system(size: height > 40 ? 12 : 14, weight: .medium))
+                .font(.system(size: height > 40 ? 11 : 13, weight: .medium))
                 .foregroundStyle(dayNumberTextColor)
         }
     }
@@ -147,21 +147,21 @@ private struct CalendarCellContent: View {
             if !records.isEmpty {
                 Circle()
                     .fill(Color.accentColor)
-                    .frame(width: 4, height: 4)
+                    .frame(width: 3, height: 3)
             }
         }
     }
     
     private var fullRecordList: some View {
         VStack(spacing: 0.5) {
-            ForEach(Array(records.prefix(2).enumerated()), id: \.offset) { index, record in
-                HStack(spacing: 1) {
-                    Rectangle()
+            ForEach(Array(records.prefix(3).enumerated()), id: \.offset) { index, record in
+                HStack(spacing: 2) {
+                    Circle()
                         .fill(recordTypeColor(for: record))
-                        .frame(width: 2, height: 6)
+                        .frame(width: 4, height: 4)
                     
                     Text(recordDisplayText(for: record))
-                        .font(.system(size: 8))
+                        .font(.system(size: 7))
                         .lineLimit(1)
                         .foregroundColor(.secondary)
                     
@@ -170,10 +170,11 @@ private struct CalendarCellContent: View {
                 .frame(maxWidth: .infinity, alignment: .leading)
             }
             
-            if records.count > 2 {
+            if records.count > 3 {
                 Text("•••")
-                    .font(.system(size: 8))
+                    .font(.system(size: 7))
                     .foregroundColor(.accentColor)
+                    .padding(.top, 1)
             }
         }
     }
@@ -185,11 +186,10 @@ private struct CalendarCellContent: View {
     }
     
     private func recordDisplayText(for record: RecordModel) -> String {
-        return String(record.context.prefix(10))
+        return String(record.context.prefix(8))
     }
     
     private func recordTypeColor(for record: RecordModel) -> Color {
-        // RecordType에 따른 색상 반환 (RecordType enum이 있다고 가정)
-        .black
+        return record.type.color
     }
 }

@@ -20,9 +20,10 @@ public struct AddRecordNavigationStore {
         
         public init(
             path: StackState<Path.State> = .init(),
+            record: RecordModel
         ) {
             self.path = path
-            self.record = .init(id: .init(), type: .keep, context: "", showAt: .now, updateAt: .now)
+            self.record = record
         }
     }
     

@@ -1,13 +1,13 @@
 import SwiftUI
 
 struct Tile: Identifiable, Equatable {
-    let id: Int  // UUID 대신 고정된 ID 사용
+    let id: Int
     var value: Int
     var position: Position
     var previousPosition: Position?
     var isNew: Bool = false
     var isMerged: Bool = false
-    var mergedFromId: Int?  // 병합된 타일의 ID 추적
+    var mergedFromId: Int?
 }
 
 struct Position: Equatable, Hashable {
@@ -23,7 +23,6 @@ public struct TwentyFortyEightGameView: View {
     
     public var body: some View {
         VStack(spacing: 20) {
-            // Header
             VStack(spacing: 10) {
                 Text("2048")
                     .font(.largeTitle)
@@ -32,7 +31,7 @@ public struct TwentyFortyEightGameView: View {
                 
                 HStack {
                     VStack {
-                        Text("점수")
+                        Text("Score")
                             .font(.caption)
                             .foregroundColor(.secondary)
                         Text("\(gameModel.score)")
@@ -47,7 +46,7 @@ public struct TwentyFortyEightGameView: View {
                     Spacer()
                     
                     VStack {
-                        Text("최고점수")
+                        Text("Best Score")
                             .font(.caption)
                             .foregroundColor(.secondary)
                         Text("\(gameModel.bestScore)")
@@ -61,13 +60,11 @@ public struct TwentyFortyEightGameView: View {
                 }
             }
             
-            // Game Board
             GeometryReader { geometry in
                 let boardSize = min(geometry.size.width, geometry.size.height - 100)
-                let tileSize = (boardSize - 5 * 8) / 4  // 5개의 간격 (양쪽 끝 + 타일 사이 3개)
+                let tileSize = (boardSize - 5 * 8) / 4
                 
                 ZStack {
-                    // Background grid
                     VStack(spacing: 8) {
                         ForEach(0..<4, id: \.self) { row in
                             HStack(spacing: 8) {
@@ -83,14 +80,13 @@ public struct TwentyFortyEightGameView: View {
                     .background(Color.gray.opacity(0.3))
                     .cornerRadius(12)
                     
-                    // Animated tiles
                     ForEach(gameModel.tiles) { tile in
                         AnimatedTileView(
                             tile: tile,
                             tileSize: tileSize,
                             boardSize: boardSize
                         )
-                        .zIndex(tile.isMerged ? 1 : 0)  // 병합된 타일을 위로
+                        .zIndex(tile.isMerged ? 1 : 0)
                     }
                     .padding(8)
                 }
@@ -98,17 +94,10 @@ public struct TwentyFortyEightGameView: View {
                 .position(x: geometry.size.width / 2, y: geometry.size.height / 2)
             }
             .frame(height: 400)
-            .gesture(
-                DragGesture()
-                    .onEnded { value in
-                        gameModel.handleSwipe(value: value)
-                    }
-            )
             
-            // Game Controls
             VStack(spacing: 15) {
                 if gameModel.isGameOver {
-                    Text(gameModel.hasWon ? "승리!" : "게임 오버!")
+                    Text(gameModel.hasWon ? "You Win!" : "Game Over!")
                         .font(.title)
                         .fontWeight(.bold)
                         .foregroundColor(gameModel.hasWon ? .green : .red)
@@ -119,7 +108,7 @@ public struct TwentyFortyEightGameView: View {
                 Button(action: {
                     showingNewGameAlert = true
                 }) {
-                    Text("새 게임")
+                    Text("New Game")
                         .font(.headline)
                         .foregroundColor(.white)
                         .padding()
@@ -127,17 +116,16 @@ public struct TwentyFortyEightGameView: View {
                         .background(Color.orange)
                         .cornerRadius(8)
                 }
-                .alert("새 게임을 시작하시겠습니까?", isPresented: $showingNewGameAlert) {
-                    Button("취소", role: .cancel) { }
-                    Button("새 게임", role: .destructive) {
+                .alert("Start a new game?", isPresented: $showingNewGameAlert) {
+                    Button("Cancel", role: .cancel) { }
+                    Button("New Game", role: .destructive) {
                         gameModel.newGame()
                     }
                 } message: {
-                    Text("현재 진행 중인 게임이 초기화됩니다.")
+                    Text("Current game will be reset.")
                 }
                 
-                // 조작법 안내
-                Text("스와이프하여 타일을 이동하세요")
+                Text("Swipe to move tiles")
                     .font(.caption)
                     .foregroundColor(.secondary)
             }
@@ -145,6 +133,12 @@ public struct TwentyFortyEightGameView: View {
             Spacer()
         }
         .padding()
+        .gesture(
+            DragGesture()
+                .onEnded { value in
+                    gameModel.handleSwipe(value: value)
+                }
+        )
         .onAppear {
             gameModel.newGame()
         }
@@ -194,7 +188,7 @@ struct AnimatedTileView: View {
     
     private var offsetX: CGFloat {
         let spacing: CGFloat = 8
-        let totalSpacing = spacing * 5  // 양쪽 끝 + 타일 사이 간격들
+        let totalSpacing = spacing * 5
         let availableSpace = boardSize - totalSpacing
         let cellSize = availableSpace / 4
         
@@ -294,7 +288,6 @@ class GameModel: ObservableObject {
         var newTiles: [Tile] = []
         var tileMap: [Position: Tile] = [:]
         
-        // 현재 타일들을 맵에 저장
         for tile in tiles {
             tileMap[tile.position] = tile
         }
@@ -303,30 +296,25 @@ class GameModel: ObservableObject {
             var rowTiles: [Tile] = []
             var mergedPositions: Set<Int> = []
             
-            // 현재 행의 타일들을 수집
             for col in 0..<4 {
                 if let tile = tileMap[Position(row: row, col: col)] {
                     rowTiles.append(tile)
                 }
             }
             
-            // 왼쪽으로 이동 및 병합
             var targetCol = 0
             for var tile in rowTiles {
                 tile.previousPosition = tile.position
                 tile.isMerged = false
                 
-                // 같은 값의 타일 찾기
                 if targetCol > 0 && !mergedPositions.contains(targetCol - 1) {
                     if let lastTile = newTiles.last(where: { $0.position.row == row && $0.position.col == targetCol - 1 }) {
                         if lastTile.value == tile.value {
-                            // 병합
                             var mergedTile = lastTile
                             mergedTile.value *= 2
                             mergedTile.isMerged = true
                             mergedTile.mergedFromId = tile.id
                             
-                            // 기존 타일 제거하고 병합된 타일 추가
                             newTiles.removeAll { $0.id == lastTile.id }
                             newTiles.append(mergedTile)
                             
@@ -338,7 +326,6 @@ class GameModel: ObservableObject {
                     }
                 }
                 
-                // 병합되지 않은 경우 이동
                 tile.position = Position(row: row, col: targetCol)
                 if tile.previousPosition != tile.position {
                     moved = true
@@ -347,7 +334,6 @@ class GameModel: ObservableObject {
                 targetCol += 1
             }
             
-            // 보드 업데이트
             for col in 0..<4 {
                 board[row][col] = 0
             }
@@ -620,7 +606,6 @@ class GameModel: ObservableObject {
     private func checkGameState() {
         updateBestScore()
         
-        // 2048 달성 체크
         for row in 0..<4 {
             for col in 0..<4 {
                 if board[row][col] >= 2048 && !hasWon {
@@ -630,14 +615,12 @@ class GameModel: ObservableObject {
             }
         }
         
-        // 게임 오버 체크
         if getEmptyCells().isEmpty && !canMove() {
             isGameOver = true
         }
     }
     
     private func canMove() -> Bool {
-        // 가로 방향 체크
         for row in 0..<4 {
             for col in 0..<3 {
                 if board[row][col] == board[row][col + 1] {
@@ -646,7 +629,6 @@ class GameModel: ObservableObject {
             }
         }
         
-        // 세로 방향 체크
         for row in 0..<3 {
             for col in 0..<4 {
                 if board[row][col] == board[row + 1][col] {

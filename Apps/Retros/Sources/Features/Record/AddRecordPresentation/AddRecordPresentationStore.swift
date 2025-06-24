@@ -49,8 +49,10 @@ public struct AddRecordPresentationStore {
             case .addRecordNavigation(.presented(.delegate(let action))):
                 switch action {
                 case .requestSaved:
+                    state.addRecordNavigation = nil
                     return .send(.delegate(.dismiss))
                 case .dismiss:
+                    state.addRecordNavigation = nil
                     return .send(.delegate(.dismiss))
                 }
                 

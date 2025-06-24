@@ -112,17 +112,10 @@ extension AddRecordNavigationView {
     
     private var recordInformationSection: some View {
         Section(header: Text("Record Information")) {
-            typeAndDateRow
-            contextField
-        }
-    }
-    
-    private var typeAndDateRow: some View {
-        HStack(spacing: 16) {
             typeSelector
             dateSelector
+            contextField
         }
-        .padding(.vertical, 4)
     }
     
     private var typeSelector: some View {
@@ -137,37 +130,40 @@ extension AddRecordNavigationView {
                     .font(.system(size: 12))
             }
             
-            Menu {
-                ForEach(RecordType.allCases, id: \.systemImageName) { type in
-                    Button {
-                        store.send(.binding(.set(\.record.type, type)))
-                    } label: {
-                        HStack {
-                            Image(systemName: type.systemImageName)
-                            Text(type.displayText)
-                        }
-                    }
-                }
+            Button {
+                // 다음 타입으로 순환
+                let currentType = RecordType(rawValue: store.record.type.rawValue) ?? .keep
+                let allCases = RecordType.allCases
+                let currentIndex = allCases.firstIndex(of: currentType) ?? 0
+                let nextIndex = (currentIndex + 1) % allCases.count
+                let nextType = allCases[nextIndex]
+                
+                store.send(.binding(.set(\.record.type, nextType)))
             } label: {
                 HStack {
                     Image(systemName: RecordType(rawValue: store.record.type.rawValue)?.systemImageName ?? "circle")
-                        .foregroundColor(.black)
-                    Text(RecordType(rawValue: store.record.type.rawValue)?.displayText ?? "Unknown")
-                        .foregroundColor(.black)
+                        .foregroundColor(RecordType(rawValue: store.record.type.rawValue)?.color ?? .gray)
+                    Text(RecordType(rawValue: store.record.type.rawValue)?.displayName ?? "Unknown")
+                        .foregroundColor(.primary)
+                    Spacer()
+                    Image(systemName: "chevron.right")
+                        .foregroundColor(.secondary)
+                        .font(.system(size: 12))
                 }
-                .padding(.horizontal, 12)
-                .padding(.vertical, 8)
+                .padding(.horizontal, 16)
+                .padding(.vertical, 12)
                 .background(Color(.systemGray6))
                 .cornerRadius(8)
             }
+            .buttonStyle(PlainButtonStyle())
         }
-        .frame(maxWidth: .infinity, alignment: .leading)
+        .padding(.vertical, 4)
     }
     
     private var dateSelector: some View {
         VStack(alignment: .leading, spacing: 8) {
             HStack {
-                Text("Show At")
+                Text("Date")
                     .font(.subheadline)
                     .foregroundColor(.secondary)
                 
@@ -183,7 +179,7 @@ extension AddRecordNavigationView {
             )
             .labelsHidden()
         }
-        .frame(maxWidth: .infinity, alignment: .leading)
+        .padding(.vertical, 4)
     }
     
     private var contextField: some View {
@@ -228,7 +224,7 @@ extension AddRecordNavigationView {
     
     private var previewSection: some View {
         Section {
-//            RecordCellView(record: store.record)
+            RecordCellView(record: store.record)
         } header: {
             Text("Preview")
         }

@@ -20,12 +20,12 @@ public struct RecordModel: Identifiable {
     public var record: Record?
     
     public init(
-        id: UUID,
-        type: RecordType,
-        context: String,
-        showAt: Date,
+        id: UUID = .init(),
+        type: RecordType = .keep,
+        context: String = "",
+        showAt: Date = .now,
         createAt: Date = .now,
-        updateAt: Date,
+        updateAt: Date = .now,
         record: Record? = nil
     ) {
         self.id = id

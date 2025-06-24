@@ -45,35 +45,51 @@ public class TaskClientLive: TaskClient {
         let currentMonth = calendar.component(.month, from: now)
         let currentYear = calendar.component(.year, from: now)
         
-        let taskTitles = [
-            "팀 회의 준비",
-            "코드 리뷰 진행",
-            "버그 수정",
-            "새로운 기능 개발",
-            "문서 작성",
-            "테스트 케이스 작성",
-            "데이터베이스 최적화",
-            "UI/UX 개선",
-            "배포 준비",
-            "고객 피드백 검토",
-            "API 설계",
-            "성능 테스트",
-            "보안 검토",
-            "프로젝트 계획 수립",
-            "멘토링 세션",
-            "기술 스터디",
-            "백로그 정리",
-            "스프린트 계획",
-            "일일 스탠드업",
-            "회고 미팅"
+        // Task classification by category
+        let tasksByCategory = [
+            ("Work", [
+                "Prepare team meeting",
+                "Conduct code review",
+                "Fix bugs",
+                "Develop new feature",
+                "Design API",
+                "Prepare deployment",
+                "Establish project plan"
+            ]),
+            ("Learning", [
+                "Technical study",
+                "Mentoring session",
+                "Write documentation",
+                "Write test cases"
+            ]),
+            ("Personal", [
+                "Daily standup",
+                "Retrospective meeting",
+                "Organize backlog",
+                "Sprint planning"
+            ]),
+            ("Others", [
+                "Database optimization",
+                "UI/UX improvement",
+                "Review customer feedback",
+                "Performance testing",
+                "Security review"
+            ])
         ]
         
-        let taskTimes = [15, 30, 45, 60, 90, 120, 180, 240] // 분 단위
+        // Fetch all categories and create mapping
+        let availableCategories = fetchAvailableCategories()
+        let categoryMap = Dictionary(
+            availableCategories.map { ($0.title, $0) },
+            uniquingKeysWith: { first, _ in first }
+        )
+        
+        let taskTimes = [15, 30, 45, 60, 90, 120, 180, 240] // in minutes
         
         var mockTasks: [TaskModel] = []
         
         let targetDates = [
-            now, // 오늘 날짜
+            now, // today's date
             calendar.date(from: DateComponents(year: currentYear, month: currentMonth, day: 2))!,
             calendar.date(from: DateComponents(year: currentYear, month: currentMonth, day: 5))!,
             calendar.date(from: DateComponents(year: currentYear, month: currentMonth, day: 10))!,
@@ -83,36 +99,60 @@ public class TaskClientLive: TaskClient {
         ].map { calendar.startOfDay(for: $0) }
         
         let dateDistribution = [
-            (targetDates[0], 5), // 오늘에 5개
-            (targetDates[1], 4), // 2일에 4개
-            (targetDates[2], 6), // 5일에 6개
-            (targetDates[3], 3), // 10일에 3개
-            (targetDates[4], 4), // 15일에 4개
-            (targetDates[5], 2), // 20일에 2개
-            (targetDates[6], 3)  // 25일에 3개
+            (targetDates[0], 5), // 5 tasks on today
+            (targetDates[1], 4), // 4 tasks on 2nd
+            (targetDates[2], 6), // 6 tasks on 5th
+            (targetDates[3], 3), // 3 tasks on 10th
+            (targetDates[4], 4), // 4 tasks on 15th
+            (targetDates[5], 2), // 2 tasks on 20th
+            (targetDates[6], 3)  // 3 tasks on 25th
         ]
         
-        var titleIndex = 0
+        var categoryIndex = 0
+        var taskIndex = 0
         
         for (date, count) in dateDistribution {
             for hour in 0..<count {
                 let taskDate = calendar.date(byAdding: .hour, value: 9 + hour * 2, to: date)!
-                let title = taskTitles[titleIndex % taskTitles.count]
                 let time = taskTimes.randomElement()!
+                
+                // Assign tasks by cycling through categories
+                let categoryData = tasksByCategory[categoryIndex % tasksByCategory.count]
+                let categoryName = categoryData.0
+                let categoryTasks = categoryData.1
+                let title = categoryTasks[taskIndex % categoryTasks.count]
+                
+                let category = categoryMap[categoryName]
                 
                 let task = TaskModel(
                     id: UUID(),
                     title: title,
-                    time: time * 60 * 1000, // 분을 ms로 변환
-                    date: taskDate
+                    time: time * 60 * 1000, // convert minutes to ms
+                    date: taskDate,
+                    category: category
                 )
                 
                 mockTasks.append(task)
-                titleIndex += 1
+                
+                taskIndex += 1
+                if taskIndex % categoryTasks.count == 0 {
+                    categoryIndex += 1
+                }
             }
         }
         
         return mockTasks
+    }
+    
+    private func fetchAvailableCategories() -> [CategoryModel] {
+        do {
+            let descriptor: FetchDescriptor<Category> = .init()
+            let result = try context.fetch(descriptor)
+            return result.map { CategoryModel(from: $0) }
+        } catch {
+            print("Failed to fetch categories for mock data: \(error)")
+            return []
+        }
     }
     
     public func createOrUpdate(taskModel: TaskModel) -> TaskModel {
@@ -120,15 +160,19 @@ public class TaskClientLive: TaskClient {
             let swiftDataTask: Task
             
             if let existingTask = taskModel.task {
-                // toSwiftDataTask()를 사용해서 일관된 변환 로직 적용
-                let convertedTask = taskModel.toSwiftDataTask()
-                
-                existingTask.title = convertedTask.title
-                existingTask.time = convertedTask.time
-                existingTask.date = convertedTask.date
+                existingTask.title = taskModel.title
+                existingTask.time = taskModel.time
+                existingTask.date = taskModel.date
+                existingTask.category = taskModel.category?.category
                 swiftDataTask = existingTask
             } else {
-                swiftDataTask = taskModel.toSwiftDataTask()
+                swiftDataTask = Task(
+                    id: taskModel.id,
+                    title: taskModel.title,
+                    date: taskModel.date,
+                    time: taskModel.time,
+                    category: taskModel.category?.category
+                )
                 context.insert(swiftDataTask)
             }
             

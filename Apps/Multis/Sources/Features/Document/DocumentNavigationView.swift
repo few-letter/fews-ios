@@ -73,13 +73,24 @@ extension DocumentNavigationView {
                 emptyStateView
             } else {
                 ForEach(sortedGroupKeys, id: \.self) { key in
-                    Section(header: Text(key).font(.headline)) {
+                    Section(header: sectionHeaderView(for: key)) {
                         ForEach(store.groupedTasks[key] ?? [], id: \.id) { task in
-                            TaskDocumentCellView(task: task)
-                                .contentShape(Rectangle())
-                                .onTapGesture {
-                                    store.send(.tap(task))
-                                }
+                            Button(action: {
+                                store.send(.tap(task))
+                            }) {
+                                TaskCellView(
+                                    task: task,
+                                    isTimerRunning: store.runningTimerIds.contains(where: { $0.taskId == task.id }),
+                                    onTimerToggle: {
+                                        if store.runningTimerIds.contains(where: { $0.taskId == task.id }) {
+                                            store.send(.stopTimer(task.id))
+                                        } else {
+                                            store.send(.startTimer(task))
+                                        }
+                                    }
+                                )
+                            }
+                            .buttonStyle(.plain)
                         }
                     }
                 }
@@ -109,57 +120,43 @@ extension DocumentNavigationView {
     }
     
     private var sortedGroupKeys: [String] {
-        let formatter = DateFormatter()
-        
-        switch store.selectedPeriod {
-        case .daily:
-            formatter.dateFormat = "yyyy-MM-dd"
-        case .monthly:
-            formatter.dateFormat = "yyyy-MM"
-        case .yearly:
-            formatter.dateFormat = "yyyy"
-        }
-        
         return store.groupedTasks.keys.sorted { key1, key2 in
-            let date1 = formatter.date(from: String(key1.prefix(10))) ?? Date.distantPast
-            let date2 = formatter.date(from: String(key2.prefix(10))) ?? Date.distantPast
-            return date1 > date2
+            // "no category"를 맨 아래로
+            if key1 == "no category" { return false }
+            if key2 == "no category" { return true }
+            return key1 < key2
         }
     }
-}
-
-// MARK: - TaskDocumentCellView
-struct TaskDocumentCellView: View {
-    let task: TaskModel
     
-    var body: some View {
-        VStack(alignment: .leading, spacing: 8) {
-            HStack {
-                Text(task.title.isEmpty ? "Task Title" : task.title)
+    private func sectionHeaderView(for key: String) -> some View {
+        let tasks = store.groupedTasks[key] ?? []
+        let totalTime = tasks.reduce(0) { $0 + $1.time } // milliseconds
+        
+        return HStack {
+            VStack(alignment: .leading, spacing: 2) {
+                Text(key)
                     .font(.headline)
-                    .foregroundColor(task.title.isEmpty ? .secondary : .primary)
-                
-                Spacer()
-                
-                if task.time > 0 {
-                    Text("\(task.time) min")
-                        .font(.caption)
-                        .foregroundColor(.blue)
-                        .padding(.horizontal, 8)
-                        .padding(.vertical, 2)
-                        .background(Color.blue.opacity(0.1))
-                        .cornerRadius(4)
-                }
+                Text("\(tasks.count) tasks • \(formattedTime(totalTime))")
+                    .font(.caption)
+                    .foregroundColor(.secondary)
             }
-            
-            Text(task.date, style: .date)
-                .font(.caption)
-                .foregroundColor(.secondary)
+            Spacer()
         }
-        .padding(.horizontal, 16)
-        .padding(.vertical, 12)
-        .background(Color(.systemBackground))
-        .cornerRadius(8)
-        .shadow(color: .black.opacity(0.1), radius: 2, x: 0, y: 1)
+        .padding(.vertical, 4)
+    }
+    
+    private func formattedTime(_ milliseconds: Int) -> String {
+        let totalSeconds = milliseconds / 1000
+        let hours = totalSeconds / 3600
+        let minutes = (totalSeconds % 3600) / 60
+        let seconds = totalSeconds % 60
+        
+        if hours > 0 {
+            return "\(hours)h \(minutes)m"
+        } else if minutes > 0 {
+            return "\(minutes)m \(seconds)s"
+        } else {
+            return "\(seconds)s"
+        }
     }
 }

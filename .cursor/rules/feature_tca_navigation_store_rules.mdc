@@ -1,0 +1,313 @@
+---
+description: TCA Navigation Store 규칙
+globs: 
+alwaysApply: false
+---
+# TCA Navigation Store 규칙
+
+## 네이밍 규칙
+
+### 1. Store 네이밍
+- Navigation Store: `{Feature}NavigationStore`
+- View: `{Feature}NavigationView` 또는 `{Feature}View`
+- Home의 경우는 예외적으로 `HomeStore`, `HomeView` 사용
+
+### 2. Path 정의
+```swift
+@Reducer
+public enum Path {
+    case featureA(FeatureAStore)
+    case featureB(FeatureBStore)
+    case settings(SettingsStore)
+}
+```
+
+## Store 구조 규칙
+
+### 1. 기본 구조
+```swift
+@Reducer
+public struct FeatureNavigationStore {
+    @Reducer
+    public enum Path {
+        case subFeature(SubFeatureStore)
+        case settings(SettingsStore)
+    }
+    
+    @ObservableState
+    public struct State {
+        public var path: StackState<Path.State>
+        
+        // 메인 기능 상태
+        public var mainFeature: MainFeatureStore.State
+        
+        public init(
+            path: StackState<Path.State> = .init(),
+            mainFeature: MainFeatureStore.State = .init()
+        ) {
+            self.path = path
+            self.mainFeature = mainFeature
+        }
+    }
+    
+    public enum Action: BindableAction {
+        case binding(BindingAction<State>)
+        case onAppear
+        
+        case path(StackActionOf<Path>)
+        case mainFeature(MainFeatureStore.Action)
+    }
+    
+    public var body: some ReducerOf<Self> {
+        BindingReducer()
+        
+        Reduce<State, Action> { state, action in
+            // Action 처리 로직
+        }
+        
+        Scope(state: \.mainFeature, action: \.mainFeature) {
+            MainFeatureStore()
+        }
+        .forEach(\.path, action: \.path)
+    }
+}
+```
+
+### 2. State 필수 요소
+- `path: StackState<Path.State>` - 네비게이션 스택 관리
+- 메인 기능의 Store State 포함
+- `init`에서 기본값 설정
+
+### 3. Action 필수 요소
+- `BindableAction` 채택
+- `binding(BindingAction<State>)` 액션
+- `onAppear` 액션
+- `path(StackActionOf<Path>)` 액션
+- 메인 기능의 Action 포함
+
+## View 구조 규칙
+
+### 1. NavigationStack 사용
+```swift
+public struct FeatureNavigationView: View {
+    @Bindable var store: StoreOf<FeatureNavigationStore>
+    
+    public var body: some View {
+        NavigationStack(
+            path: $store.scope(state: \.path, action: \.path)
+        ) {
+            mainView
+                .onAppear {
+                    store.send(.onAppear)
+                }
+        } destination: { store in
+            switch store.case {
+            case .subFeature(let store):
+                SubFeatureView(store: store)
+            case .settings(let store):
+                SettingsView(store: store)
+            }
+        }
+    }
+}
+
+extension FeatureNavigationView {
+    private var mainView: some View {
+        MainFeatureView(store: store.scope(state: \.mainFeature, action: \.mainFeature))
+    }
+}
+```
+
+### 2. View 필수 요소
+- `@Bindable var store` 선언
+- `NavigationStack`에서 path scope 바인딩
+- `destination`에서 switch로 각 경로별 뷰 처리
+- `onAppear`에서 `.onAppear` 액션 전송
+- extension으로 `mainView` 분리
+
+## 네비게이션 처리 패턴
+
+### 1. Delegate 패턴 활용
+```swift
+// 자식 Store에서 delegate 액션 정의
+public enum Delegate {
+    case requestNavigation(Destination)
+    case requestDismiss
+}
+
+// 부모 Store에서 delegate 처리
+case .mainFeature(.delegate(let action)):
+    switch action {
+    case .requestNavigation(let destination):
+        state.path.append(destination)
+        return .none
+    case .requestDismiss:
+        // 처리 로직
+        return .none
+    }
+```
+
+### 2. Path 액션 처리
+```swift
+case .path(.element(id: _, action: .subFeature(.delegate(let action)))):
+    switch action {
+    case .requestSomeAction(let data):
+        // 네비게이션 요청 처리
+        state.path.append(.anotherFeature(.init(data: data)))
+        return .none
+    case .requestDismiss:
+        return .none
+    }
+```
+
+## 데이터 전달 패턴
+
+### 1. 네비게이션 시 데이터 전달
+```swift
+// Client에서 데이터 생성 후 전달
+case .requestAddItem:
+    let newItem = itemClient.create()
+    state.path.append(.addItem(.init(item: newItem)))
+    return .none
+
+// 기존 데이터를 전달
+case .requestEdit(let item):
+    state.path.append(.editItem(.init(item: item)))
+    return .none
+```
+
+### 2. 네비게이션 완료 후 데이터 동기화
+```swift
+case .path(.element(id: _, action: .addItem(.delegate(.dismiss)))):
+    // 데이터 새로고침
+    return .send(.fetch)
+
+case .addItemPresentation(.delegate(.dismiss)):
+    return .send(.fetch)
+```
+
+## 특수 케이스 처리
+
+### 1. AppStorage 사용
+```swift
+@ObservableState
+public struct State {
+    @Shared(.appStorage("currentFolderID")) var currentFolderID: String? = nil
+    
+    // 다른 상태들...
+}
+```
+
+### 2. 타이머 관리
+```swift
+private enum TimerID: Hashable {
+    case timer(UUID)
+}
+
+// 타이머 시작
+case .startTimer(let item):
+    return .run { send in
+        while true {
+            try await _Concurrency.Task.sleep(for: .milliseconds(100))
+            await send(.timerTick(item.id, 100))
+        }
+    }
+    .cancellable(id: TimerID.timer(item.id))
+
+// 타이머 정지
+case .stopTimer(let itemId):
+    return .cancel(id: TimerID.timer(itemId))
+```
+
+### 3. 실행 중 상태 관리
+```swift
+@ObservableState
+public struct State {
+    public var runningTimerIds: IdentifiedArrayOf<TaskTimerID> = []
+    
+    // 실행 중인지 확인
+    public func isRunning(taskId: UUID) -> Bool {
+        return runningTimerIds.contains(where: { $0.taskId == taskId })
+    }
+}
+```
+
+## Reducer Body 구조
+
+### 1. 표준 구조
+```swift
+public var body: some ReducerOf<Self> {
+    BindingReducer()
+    
+    Reduce<State, Action> { state, action in
+        // 메인 액션 처리 로직
+    }
+    
+    // 자식 Store들 연결
+    Scope(state: \.mainFeature, action: \.mainFeature) {
+        MainFeatureStore()
+    }
+    
+    // Path 처리 (마지막에 위치)
+    .forEach(\.path, action: \.path)
+}
+```
+
+### 2. 의존성 주입
+```swift
+@Dependency(\.itemClient) private var itemClient
+@Dependency(\.userClient) private var userClient
+```
+
+## 파일 구조
+
+```
+Feature/
+├── FeatureName/
+│   ├── FeatureNavigationStore.swift
+│   ├── FeatureNavigationView.swift
+│   └── SubFeatures/
+│       ├── SubFeatureStore.swift
+│       └── SubFeatureView.swift
+```
+
+## 공통 액션 패턴
+
+### 1. 필수 액션들
+```swift
+case onAppear              // 화면 진입 시
+case fetch                 // 데이터 가져오기
+case fetched([Model])      // 데이터 가져오기 완료
+```
+
+### 2. 네비게이션 액션들
+```swift
+case tap(Model)            // 아이템 탭
+case requestAdd            // 추가 요청
+case requestEdit(Model)    // 편집 요청
+case requestDelete(Model)  // 삭제 요청
+```
+
+## 에러 처리
+
+### 1. 실패 상황 처리
+```swift
+case .fetch:
+    return .run { send in
+        do {
+            let items = try await itemClient.fetches()
+            await send(.fetched(items))
+        } catch {
+            await send(.fetchFailed(error))
+        }
+    }
+```
+
+### 2. 상태 복구
+```swift
+case .fetchFailed(let error):
+    // 에러 로깅 및 기본 상태로 복구
+    print("Fetch failed: \(error)")
+    return .none
+```
+

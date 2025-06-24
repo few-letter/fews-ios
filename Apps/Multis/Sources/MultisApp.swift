@@ -35,8 +35,10 @@ public struct MultisApp: App {
                 MainTabStore()
             } withDependencies: { dependency in
                 let taskClient = TaskClientLive(context: container.mainContext)
+                let categoryClient = CategoryClientLive(context: container.mainContext)
                 
                 dependency.taskClient = taskClient
+                dependency.categoryClient = categoryClient
             })
             .environment(\.modelContext, container.mainContext)
             .onReceive(NotificationCenter.default.publisher(for: UIApplication.didBecomeActiveNotification)) { _ in

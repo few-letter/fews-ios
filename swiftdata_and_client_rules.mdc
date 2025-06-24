@@ -1,0 +1,295 @@
+---
+description:
+globs:
+alwaysApply: false
+---
+# SwiftData와 Client 패턴 규칙
+
+## Client 패턴 규칙
+
+### 1. Client 프로토콜 정의
+- Client는 프로토콜로 정의하고 기본 CRUD 메서드들을 포함해야 함
+- ComposableArchitecture와 SwiftData를 import 해야 함
+
+```swift
+import Foundation
+import ComposableArchitecture
+import SwiftData
+
+public protocol EntityClient {
+    func createOrUpdate(entityModel: EntityModel) -> EntityModel
+    func fetches() -> [EntityModel]
+    func delete(entityModel: EntityModel)
+}
+```
+
+### 2. DependencyKey 분리
+- Client와 같은 파일에 DependencyKey를 정의
+- TestDependencyKey를 상속받아야 함
+- DependencyValues extension을 통해 접근 가능하도록 설정
+
+```swift
+private struct EntityClientKey: TestDependencyKey {
+    static var testValue: any EntityClient = EntityClientTest()
+}
+
+extension DependencyValues {
+    var entityClient: any EntityClient {
+        get { self[EntityClientKey.self] }
+        set { self[EntityClientKey.self] = newValue }
+    }
+}
+```
+
+### 3. Test 구현체
+- 프로토콜과 같은 파일에 Test 구현체를 작성
+- 테스트용 기본 동작을 제공하거나 fatalError() 사용
+
+```swift
+public struct EntityClientTest: EntityClient {
+    public func createOrUpdate(entityModel: EntityModel) -> EntityModel {
+        return entityModel // 또는 fatalError()
+    }
+    
+    public func fetches() -> [EntityModel] {
+        return [] // 또는 fatalError()
+    }
+    
+    public func delete(entityModel: EntityModel) {
+        // Test implementation 또는 fatalError()
+    }
+}
+```
+
+### 4. Live 구현체 (별도 파일)
+- class로 구현하며 ModelContext를 DI로 받음
+- autosaveEnabled = false 설정
+- Mock 데이터 생성 로직 포함
+
+```swift
+public class EntityClientLive: EntityClient {
+    private var context: ModelContext
+    
+    public init(context: ModelContext) {
+        self.context = context
+        self.context.autosaveEnabled = false
+        
+        createMockDataIfNeeded()
+    }
+    
+    private func createMockDataIfNeeded() {
+        // Mock 데이터 생성 로직
+    }
+    
+    // CRUD 메서드 구현...
+}
+```
+
+## Model 분리 패턴 규칙
+
+### 1. SwiftDataModel (@Model)
+- `@Model` 어노테이션을 가진 SwiftData 전용 모델
+- 모든 프로퍼티는 Optional로 정의
+- SwiftData의 제약사항을 준수
+
+```swift
+import SwiftData
+import Foundation
+
+@Model
+public final class Entity {
+    public var id: UUID?
+    public var title: String?
+    public var date: Date?
+    
+    // Relationship 정의 시
+    @Relationship(deleteRule: .nullify, inverse: \RelatedEntity.entity)
+    public var relatedEntities: [RelatedEntity]?
+    
+    public init(
+        id: UUID? = .init(),
+        title: String? = nil,
+        date: Date? = nil
+    ) {
+        self.id = id
+        self.title = title
+        self.date = date
+    }
+}
+```
+
+### 2. Business Model (struct)
+- 비즈니스 로직에서 사용하는 struct 모델
+- Non-optional 프로퍼티로 안전성 보장
+- SwiftData 객체 참조를 포함 (저장용)
+
+```swift
+import Foundation
+import SwiftData
+
+public struct EntityModel: Identifiable, Comparable {
+    public var id: UUID
+    public var title: String
+    public var date: Date
+    
+    // SwiftData 객체 참조 (저장용)
+    public var entity: Entity?
+    
+    public init(
+        id: UUID = .init(),
+        title: String = "",
+        date: Date = .now,
+        entity: Entity? = nil
+    ) {
+        self.id = id
+        self.title = title
+        self.date = date
+        self.entity = entity
+    }
+    
+    // Equatable
+    public static func == (lhs: EntityModel, rhs: EntityModel) -> Bool {
+        return lhs.id == rhs.id
+    }
+    
+    // Comparable
+    public static func < (lhs: EntityModel, rhs: EntityModel) -> Bool {
+        return lhs.date < rhs.date
+    }
+}
+```
+
+### 3. 변환 Extension
+- Model과 SwiftDataModel 간의 변환 로직
+- 양방향 변환 메서드 제공
+
+```swift
+// MARK: - SwiftData <-> Model Conversion Extensions
+extension EntityModel {
+    /// SwiftData Entity 객체로부터 EntityModel 생성
+    public init(from swiftDataEntity: Entity) {
+        self.init(
+            id: swiftDataEntity.id ?? .init(),
+            title: swiftDataEntity.title ?? "",
+            date: swiftDataEntity.date ?? .now,
+            entity: swiftDataEntity
+        )
+    }
+    
+    /// EntityModel을 SwiftData Entity 객체로 변환
+    public func toSwiftDataEntity() -> Entity {
+        return Entity(
+            id: self.id,
+            title: self.title,
+            date: self.date
+        )
+    }
+}
+```
+
+## Client 구현 세부 규칙
+
+### 1. createOrUpdate 메서드
+```swift
+public func createOrUpdate(entityModel: EntityModel) -> EntityModel {
+    do {
+        let swiftDataEntity: Entity
+        
+        if let existingEntity = entityModel.entity {
+            // 기존 객체 업데이트
+            existingEntity.title = entityModel.title
+            existingEntity.date = entityModel.date
+            swiftDataEntity = existingEntity
+        } else {
+            // 새 객체 생성
+            swiftDataEntity = entityModel.toSwiftDataEntity()
+            context.insert(swiftDataEntity)
+        }
+        
+        try context.save()
+        
+        return EntityModel(from: swiftDataEntity)
+    } catch {
+        print("Failed to createOrUpdate entity: \(error)")
+        return entityModel
+    }
+}
+```
+
+### 2. fetches 메서드
+```swift
+public func fetches() -> [EntityModel] {
+    do {
+        let descriptor: FetchDescriptor<Entity> = .init()
+        let result = try context.fetch(descriptor)
+        return result.map { EntityModel(from: $0) }
+    } catch {
+        print("Failed to fetch entities: \(error)")
+        return []
+    }
+}
+```
+
+### 3. delete 메서드
+```swift
+public func delete(entityModel: EntityModel) {
+    do {
+        if let existingEntity = entityModel.entity {
+            context.delete(existingEntity)
+            try context.save()
+        }
+    } catch {
+        print("Failed to delete entity: \(error)")
+    }
+}
+```
+
+## 관계(Relationship) 처리 규칙
+
+### 1. SwiftDataModel에서 관계 정의
+```swift
+@Relationship(deleteRule: .nullify, inverse: \RelatedEntity.entity)
+public var relatedEntities: [RelatedEntity]?
+```
+
+### 2. Business Model에서 관계 처리
+```swift
+public struct EntityModel {
+    public var relatedEntity: RelatedEntityModel?
+    
+    // 변환 시 관계도 함께 변환
+    public init(from swiftDataEntity: Entity) {
+        let relatedEntityModel = swiftDataEntity.relatedEntity != nil ? 
+            RelatedEntityModel(from: swiftDataEntity.relatedEntity!) : nil
+        
+        self.init(
+            // ... 다른 프로퍼티들
+            relatedEntity: relatedEntityModel,
+            entity: swiftDataEntity
+        )
+    }
+}
+```
+
+## 파일 구조 규칙
+
+```
+Domain/
+├── Client/
+│   ├── EntityClient.swift          // 프로토콜 + DependencyKey + Test 구현체
+│   └── EntityClientLive.swift      // Live 구현체
+├── Model/
+│   └── EntityModel.swift           // Business Model + 변환 Extension
+└── SwiftDataModel/
+    └── Entity.swift                 // @Model SwiftData 객체
+```
+
+## 네이밍 규칙
+
+- Client 프로토콜: `{Entity}Client`
+- Live 구현체: `{Entity}ClientLive`  
+- Test 구현체: `{Entity}ClientTest`
+- DependencyKey: `{Entity}ClientKey`
+- Business Model: `{Entity}Model`
+- SwiftData Model: `{Entity}` (클래스명)
+- 변환 메서드: `init(from:)`, `toSwiftData{Entity}()`

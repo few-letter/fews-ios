@@ -7,7 +7,7 @@
 	<key>ADMOB_REWARD_AD_ID</key>
 	<string>$(ADMOB_REWARD_AD_ID)</string>
 	<key>CFBundleDisplayName</key>
-	<string>Retros</string>
+	<string>Multis</string>
 	<key>CFBundleExecutable</key>
 	<string>${EXECUTABLE_NAME}</string>
 	<key>CFBundleIdentifier</key>

@@ -8,6 +8,10 @@
 import Foundation
 import ComposableArchitecture
 
+private enum TimerID: Hashable {
+    case timer(UUID)
+}
+
 public enum DocumentPeriod: String, CaseIterable {
     case daily = "daily"
     case monthly = "monthly"
@@ -36,6 +40,9 @@ public struct DocumentNavigationStore {
         public var selectedPeriod: DocumentPeriod
         public var groupedTasks: [String: [TaskModel]]
         
+        // 실행 중인 타이머 ID들
+        public var runningTimerIds: IdentifiedArrayOf<TaskTimerID> = []
+        
         public var path: StackState<Path.State>
         public var addTaskPresentation: AddTaskPresentationStore.State
         
@@ -46,6 +53,7 @@ public struct DocumentNavigationStore {
             self.tasks = []
             self.selectedPeriod = .daily
             self.groupedTasks = [:]
+            self.runningTimerIds = []
             self.addTaskPresentation = .init()
         }
     }
@@ -59,6 +67,11 @@ public struct DocumentNavigationStore {
         case periodChanged(DocumentPeriod)
         
         case tap(TaskModel)
+        
+        // 타이머 관련 액션들
+        case startTimer(TaskModel)
+        case stopTimer(UUID)
+        case timerTick(UUID, Int)
         
         case addTaskPresentation(AddTaskPresentationStore.Action)
         case path(StackActionOf<Path>)
@@ -89,11 +102,48 @@ public struct DocumentNavigationStore {
                 
             case .periodChanged(let period):
                 state.selectedPeriod = period
-                state.groupedTasks = groupTasksByPeriod(tasks: state.tasks, period: period)
+                state.groupedTasks = groupTasksByCategory(tasks: filterTasksByPeriod(tasks: state.tasks, period: period))
                 return .none
                 
             case .tap(let task):
                 state.addTaskPresentation.addTaskNavigation = .init(task: task)
+                return .none
+                
+            // 타이머 관련 액션 처리
+            case .startTimer(let task):
+                let timerID = TaskTimerID(taskId: task.id, date: task.date)
+                state.runningTimerIds.append(timerID)
+                return .run { send in
+                    while true {
+                        try await _Concurrency.Task.sleep(for: .milliseconds(100))
+                        await send(.timerTick(task.id, 100))
+                    }
+                }
+                .cancellable(id: TimerID.timer(task.id))
+                
+            case .stopTimer(let taskId):
+                state.runningTimerIds.removeAll { $0.taskId == taskId }
+                
+                if let taskIndex = state.tasks.firstIndex(where: { $0.id == taskId }) {
+                    let task = state.tasks[taskIndex]
+                    let savedTask = taskClient.createOrUpdate(taskModel: task)
+                    state.tasks[taskIndex] = savedTask
+                }
+                
+                return .concatenate(
+                    .cancel(id: TimerID.timer(taskId)),
+                    .send(.fetch)
+                )
+                
+            case .timerTick(let taskId, let ms):
+                guard state.runningTimerIds.contains(where: { $0.taskId == taskId }) else { 
+                    return .none 
+                }
+                if let taskIndex = state.tasks.firstIndex(where: { $0.id == taskId }) {
+                    state.tasks[taskIndex].time += ms
+                    let task = state.tasks[taskIndex]
+                    let _ = taskClient.createOrUpdate(taskModel: task)
+                }
                 return .none
                 
             case .addTaskPresentation(.delegate(let action)):
@@ -101,7 +151,6 @@ public struct DocumentNavigationStore {
                 case .dismiss:
                     return .send(.fetch)
                 }
-                return .none
                 
             case .binding, .path, .addTaskPresentation:
                 return .none
@@ -114,20 +163,9 @@ public struct DocumentNavigationStore {
         .forEach(\.path, action: \.path)
     }
     
-    private func groupTasksByPeriod(tasks: [TaskModel], period: DocumentPeriod) -> [String: [TaskModel]] {
-        let formatter = DateFormatter()
-        
-        switch period {
-        case .daily:
-            formatter.dateFormat = "yyyy-MM-dd (EEEE)"
-        case .monthly:
-            formatter.dateFormat = "yyyy-MM"
-        case .yearly:
-            formatter.dateFormat = "yyyy"
-        }
-        
+    private func groupTasksByCategory(tasks: [TaskModel]) -> [String: [TaskModel]] {
         let grouped = Dictionary(grouping: tasks) { task in
-            formatter.string(from: task.date)
+            task.category?.title ?? "no category"
         }
         
         return grouped.mapValues { tasks in
@@ -138,5 +176,22 @@ public struct DocumentNavigationStore {
                 return lhs.date > rhs.date
             }
         }
+    }
+    
+    private func filterTasksByPeriod(tasks: [TaskModel], period: DocumentPeriod) -> [TaskModel] {
+        let calendar = Calendar.current
+        let now = Date()
+        
+        let filteredTasks = tasks.filter { task in
+            switch period {
+            case .daily:
+                return calendar.isDate(task.date, inSameDayAs: now)
+            case .monthly:
+                return calendar.isDate(task.date, equalTo: now, toGranularity: .month)
+            case .yearly:
+                return calendar.isDate(task.date, equalTo: now, toGranularity: .year)
+            }
+        }
+        return filteredTasks
     }
 }

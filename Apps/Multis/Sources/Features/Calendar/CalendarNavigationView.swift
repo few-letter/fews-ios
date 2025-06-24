@@ -204,18 +204,12 @@ private struct CalendarCellContent: View {
     }
     
     private func taskTypeColor(for task: TaskModel) -> Color {
-        // 시간에 따라 색상 구분 (ms 단위)
-        let timeInMinutes = task.time / (60 * 1000) // ms를 분으로 변환
-        
-        switch timeInMinutes {
-        case 0..<30:
-            return .green    // 30분 미만 - 초록
-        case 30..<60:
-            return .blue     // 30분~1시간 - 파랑
-        case 60..<120:
-            return .orange   // 1~2시간 - 주황
-        default:
-            return .red      // 2시간 이상 - 빨강
+        // 카테고리 색상 우선 사용
+        if let category = task.category {
+            return Color(hex: category.color) ?? .accentColor
         }
+        
+        // 카테고리가 없는 경우 기본 색상
+        return .gray
     }
 }

@@ -11,12 +11,15 @@ import ComposableArchitecture
 @Reducer
 public struct AddTaskNavigationStore {
     @Reducer
-    public enum Path { }
+    public enum Path {
+        case addCategory(AddCategoryStore)
+    }
     
     @ObservableState
     public struct State {
         public var path: StackState<Path.State>
         public var task: TaskModel
+        public var categories: [CategoryModel] = []
         
         public init(
             path: StackState<Path.State> = .init(),
@@ -31,9 +34,11 @@ public struct AddTaskNavigationStore {
         case binding(BindingAction<State>)
         
         case onAppear
+        case loadCategories
         
         case cancelButtonTapped
         case saveButtonTapped
+        case addCategoryButtonTapped
 
         case path(StackActionOf<Path>)
         
@@ -45,6 +50,7 @@ public struct AddTaskNavigationStore {
     }
     
     @Dependency(\.taskClient) private var taskClient
+    @Dependency(\.categoryClient) private var categoryClient
     
     public var body: some ReducerOf<Self> {
         BindingReducer()
@@ -52,6 +58,10 @@ public struct AddTaskNavigationStore {
         Reduce<State, Action> { state, action in
             switch action {
             case .onAppear:
+                return .send(.loadCategories)
+                
+            case .loadCategories:
+                state.categories = categoryClient.fetches()
                 return .none
                 
             case .cancelButtonTapped:
@@ -60,6 +70,19 @@ public struct AddTaskNavigationStore {
             case .saveButtonTapped:
                 let _ = taskClient.createOrUpdate(taskModel: state.task)
                 return .send(.delegate(.requestSaved))
+                
+            case .addCategoryButtonTapped:
+                state.path.append(.addCategory(AddCategoryStore.State()))
+                return .none
+                
+            case .path(.element(_, action: .addCategory(.delegate(.categorySaved(let category))))):
+                state.task.category = category
+                state.path.removeLast()
+                return .send(.loadCategories)
+                
+            case .path(.element(_, action: .addCategory(.delegate(.dismiss)))):
+                state.path.removeLast()
+                return .none
                 
             case .binding, .path, .delegate:
                 return .none

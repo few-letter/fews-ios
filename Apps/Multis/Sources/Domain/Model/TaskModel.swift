@@ -13,6 +13,7 @@ public struct TaskModel: Identifiable, Comparable {
     public var title: String
     public var time: Int // milliseconds (ms) 단위로 관리
     public var date: Date
+    public var category: CategoryModel?
     
     // SwiftData 객체 참조 (저장용)
     public var task: Task?
@@ -22,12 +23,14 @@ public struct TaskModel: Identifiable, Comparable {
         title: String = "",
         time: Int = 0, // ms 단위
         date: Date = .now,
+        category: CategoryModel? = nil,
         task: Task? = nil
     ) {
         self.id = id
         self.title = title
         self.time = time
         self.date = date
+        self.category = category
         self.task = task
     }
     
@@ -53,11 +56,13 @@ public struct TaskModel: Identifiable, Comparable {
 extension TaskModel {
     /// SwiftData Task 객체로부터 TaskModel 생성 (ms 단위 통일)
     public init(from swiftDataTask: Task) {
+        let categoryModel = swiftDataTask.category != nil ? CategoryModel(from: swiftDataTask.category!) : nil
         self.init(
             id: swiftDataTask.id ?? .init(),
             title: swiftDataTask.title ?? "",
             time: swiftDataTask.time ?? 0, // 이제 SwiftData도 ms 단위
             date: swiftDataTask.date ?? .now,
+            category: categoryModel,
             task: swiftDataTask
         )
     }
@@ -68,7 +73,8 @@ extension TaskModel {
             id: self.id,
             title: self.title,
             date: self.date,
-            time: self.time // ms 단위 그대로 저장
+            time: self.time, // ms 단위 그대로 저장
+            category: self.category?.toSwiftDataCategory()
         )
     }
 }

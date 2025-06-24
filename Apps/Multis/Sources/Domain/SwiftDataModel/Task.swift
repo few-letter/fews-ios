@@ -15,15 +15,20 @@ public final class Task {
     public var time: Int?
     public var date: Date?
     
+    // 카테고리와의 관계
+    public var category: Category?
+    
     public init(
         id: UUID? = .init(),
         title: String? = nil,
         date: Date? = nil,
-        time: Int? = nil
+        time: Int? = nil,
+        category: Category? = nil
     ) {
         self.id = id
         self.title = title
         self.time = time
         self.date = date
+        self.category = category
     }
 }

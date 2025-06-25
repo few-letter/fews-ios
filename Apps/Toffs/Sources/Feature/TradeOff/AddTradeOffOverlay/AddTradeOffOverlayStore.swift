@@ -9,14 +9,14 @@ import Foundation
 import ComposableArchitecture
 
 @Reducer
-public struct AddTradePresentationStore {
+public struct AddTradeOffOverlayStore {
     @ObservableState
     public struct State {
-        @Presents public var tickerNavigation: TickerNavigationStore.State? = nil
+        @Presents public var addTickerNavigation: AddTickerNavigationStore.State? = nil
         @Presents public var addTradeNavigation: AddTradeNavigationStore.State? = nil
         
         public var selectedDate: Date = .now
-        public var selectedTicker: Ticker?
+        public var selectedTicker: TickerModel?
         
         public init() { }
     }
@@ -26,7 +26,7 @@ public struct AddTradePresentationStore {
         
         case onAppear
         
-        case tickerNavigation(PresentationAction<TickerNavigationStore.Action>)
+        case addTickerNavigation(PresentationAction<AddTickerNavigationStore.Action>)
         case addTradeNavigation(PresentationAction<AddTradeNavigationStore.Action>)
         
         case delegate(Delegate)
@@ -51,8 +51,8 @@ public struct AddTradePresentationStore {
             case .onAppear:
                 return .none
                 
-            case .tickerNavigation(.presented(.delegate(let action))):
-                state.tickerNavigation = nil
+            case .addTickerNavigation(.presented(.delegate(let action))):
+                state.addTickerNavigation = nil
                 
                 switch action {
                 case .requestSelectedTicker(let ticker):
@@ -75,12 +75,12 @@ public struct AddTradePresentationStore {
                     return .send(.delegate(.dismiss))
                 }
                 
-            case .tickerNavigation, .addTradeNavigation, .delegate:
+            case .addTickerNavigation, .addTradeNavigation, .delegate:
                 return .none
             }
         }
-        .ifLet(\.$tickerNavigation, action: \.tickerNavigation) {
-            TickerNavigationStore()
+        .ifLet(\.$addTickerNavigation, action: \.addTickerNavigation) {
+            AddTickerNavigationStore()
         }
         .ifLet(\.$addTradeNavigation, action: \.addTradeNavigation) {
             AddTradeNavigationStore()

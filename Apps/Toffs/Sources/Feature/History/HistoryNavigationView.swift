@@ -24,7 +24,12 @@ public struct HistoryNavigationView: View {
                     store.send(.onAppear)
                 }
         } destination: { store in
-            
+            switch store.case {
+            case .tickerDetail(let store):
+                TickerDetailView(store: store)
+            case .tradeDetail(let store):
+                TradeDetailView(store: store)
+            }
         }
     }
 }
@@ -39,9 +44,8 @@ extension HistoryNavigationView {
                         Button {
                             store.send(.tickerTapped(ticker))
                         } label: {
-                            TickerHistoryItemView(ticker: ticker)
+                            TickerCellView(ticker: ticker)
                         }
-                        .buttonStyle(PlainButtonStyle())
                     }
                 } header: {
                     HStack {
@@ -77,9 +81,6 @@ extension HistoryNavigationView {
         }
         .navigationTitle("Trading History")
         .navigationBarTitleDisplayMode(.large)
-        .overlay {
-            AddTradePresentationView(store: store.scope(state: \.addTradePresentation, action: \.addTradePresentation))
-        }
     }
     
     private var emptyStateView: some View {

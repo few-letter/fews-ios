@@ -17,7 +17,7 @@ public struct AddTradeNavigationStore {
     public enum Path {}
     
     public enum AddTradeType {
-        case new(ticker: Ticker, selectedDate: Date)
+        case new(ticker: TickerModel, selectedDate: Date)
         case edit(trade: TradeModel)
     }
     

@@ -13,10 +13,10 @@ import SwiftData
 public struct AddTickerStore {
     @ObservableState
     public struct State {
-        public var ticker: Ticker
+        public var ticker: TickerModel
         public var tags: IdentifiedArrayOf<Tag> = []
         
-        public init(ticker: Ticker) {
+        public init(ticker: TickerModel) {
             self.ticker = ticker
         }
     }
@@ -33,12 +33,11 @@ public struct AddTickerStore {
         
         case delegate(Delegate)
         public enum Delegate {
-            case requestSaved(Ticker)
+            case saved(TickerModel)
         }
     }
     
     @Dependency(\.tickerClient) private var tickerClient
-    @Dependency(\.dismiss) var dismiss
     
     public var body: some ReducerOf<Self> {
         BindingReducer()
@@ -51,7 +50,8 @@ public struct AddTickerStore {
             case .onAppear:
                 return .none
             case .saveButtonTapped:
-                return .send(.delegate(.requestSaved(state.ticker)))
+                let _ = tickerClient.createOrUpdate(ticker: state.ticker)
+                return .send(.delegate(.saved(state.ticker)))
                 
             case .fetch:
                 return .none

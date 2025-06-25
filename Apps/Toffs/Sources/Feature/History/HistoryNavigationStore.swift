@@ -11,19 +11,20 @@ import ComposableArchitecture
 @Reducer
 public struct HistoryNavigationStore {
     @Reducer
-    public enum Path { }
+    public enum Path {
+        case tickerDetail(TickerDetailStore)
+        case tradeDetail(TradeDetailStore)
+    }
     
     @ObservableState
     public struct State {
         public var path: StackState<Path.State>
-        public var tickers: [Ticker]
+        public var tickers: [TickerModel]
         public var trades: [TradeModel]
-        
-        public var addTradePresentation: AddTradePresentationStore.State = .init()
         
         public init(
             path: StackState<Path.State> = .init(),
-            tickers: [Ticker] = [],
+            tickers: [TickerModel] = [],
             trades: [TradeModel] = []
         ) {
             self.path = path
@@ -37,14 +38,12 @@ public struct HistoryNavigationStore {
         case onAppear
         
         case fetch
-        case fetched([Ticker], [TradeModel])
+        case fetched([TickerModel], [TradeModel])
         
-        case tickerTapped(Ticker)
+        case tickerTapped(TickerModel)
         case tradeTapped(TradeModel)
 
         case path(StackActionOf<Path>)
-        
-        case addTradePresentation(AddTradePresentationStore.Action)
         
         case delegate(Delegate)
         
@@ -75,26 +74,25 @@ public struct HistoryNavigationStore {
                 return .none
                 
             case .tickerTapped(let ticker):
+                state.path.append(.tickerDetail(.init(ticker: ticker)))
                 return .none
                 
             case .tradeTapped(let trade):
-                state.addTradePresentation.addTradeNavigation = .init(addTradeType: .edit(trade: trade))
+                state.path.append(.tradeDetail(.init(trade: trade)))
                 return .none
                 
-            case .addTradePresentation(.delegate(let action)):
+            case .path(.element(id: _, action: .tradeDetail(.delegate(let action)))):
                 switch action {
-                case .dismiss:
+                case .requestDismiss:
+                    _ = state.path.popLast()
                     return .send(.fetch)
                 }
                 
-            case .delegate, .binding, .path, .addTradePresentation:
+            case .delegate, .binding, .path:
                 return .none
             }
         }
         .forEach(\.path, action: \.path)
-        
-        Scope(state: \.addTradePresentation, action: \.addTradePresentation) {
-            AddTradePresentationStore()
-        }
+
     }
 }

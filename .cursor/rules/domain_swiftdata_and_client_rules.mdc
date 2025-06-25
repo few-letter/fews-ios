@@ -162,6 +162,7 @@ public struct EntityModel: Identifiable, Comparable {
 ### 3. 변환 Extension
 - Model과 SwiftDataModel 간의 변환 로직
 - 양방향 변환 메서드 제공
+- updateSwiftData 메서드로 참조 객체 업데이트
 
 ```swift
 // MARK: - SwiftData <-> Model Conversion Extensions
@@ -184,6 +185,42 @@ extension EntityModel {
             date: self.date
         )
     }
+    
+    /// EntityModel의 값들로 참조하고 있는 SwiftData Entity 객체를 업데이트
+    public func updateSwiftData() {
+        guard let swiftDataEntity = self.entity else { return }
+        
+        swiftDataEntity.title = self.title
+        swiftDataEntity.date = self.date
+        // 관계가 있는 경우 관계도 업데이트
+        // swiftDataEntity.relatedEntity = self.relatedEntity?.entity
+    }
+}
+```
+
+### 4. updateSwiftData 메서드
+- EntityModel이 참조하는 SwiftData 객체를 현재 Model 값으로 업데이트
+- Client의 createOrUpdate에서 기존 객체 업데이트 시 사용
+- 코드 간소화와 책임 분리 효과
+
+```swift
+/// EntityModel의 값들로 참조하고 있는 SwiftData Entity 객체를 업데이트
+public func updateSwiftData() {
+    guard let swiftDataEntity = self.entity else { return }
+    
+    swiftDataEntity.title = self.title
+    swiftDataEntity.date = self.date
+    // 관계가 있는 경우
+    swiftDataEntity.relatedEntity = self.relatedEntity?.entity
+}
+```
+
+**사용 예시:**
+```swift
+// Client에서 기존 객체 업데이트 시
+if let existingEntity = entityModel.entity {
+    entityModel.updateSwiftData() // 간단한 한 줄 호출
+    swiftDataEntity = existingEntity
 }
 ```
 
@@ -196,9 +233,8 @@ public func createOrUpdate(entityModel: EntityModel) -> EntityModel {
         let swiftDataEntity: Entity
         
         if let existingEntity = entityModel.entity {
-            // 기존 객체 업데이트
-            existingEntity.title = entityModel.title
-            existingEntity.date = entityModel.date
+            // 기존 객체 업데이트 - updateSwiftData() 메서드 사용
+            entityModel.updateSwiftData()
             swiftDataEntity = existingEntity
         } else {
             // 새 객체 생성

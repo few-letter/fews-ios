@@ -1,14 +1,14 @@
 //
-//  TickerHistoryItemView.swift
-//  Toff
+//  TickerCellView.swift
+//  Toffs
 //
-//  Created by 송영모 on 6/17/25.
+//  Created by 송영모 on 6/25/25.
 //
 
 import SwiftUI
 
-public struct TickerHistoryItemView: View {
-    public let ticker: Ticker
+public struct TickerCellView: View {
+    public let ticker: TickerModel
     public let isSelected: Bool
     
     private var tradingData: TradingData {
@@ -29,7 +29,7 @@ public struct TickerHistoryItemView: View {
     }
     
     public init(
-        ticker: Ticker,
+        ticker: TickerModel,
         isSelected: Bool = false
     ) {
         self.ticker = ticker
@@ -37,6 +37,11 @@ public struct TickerHistoryItemView: View {
     }
     
     public var body: some View {
+        mainView
+    }
+    
+    // MARK: - Main View (거래 통계 포함 통합 모드)
+    private var mainView: some View {
         VStack(spacing: 8) {
             // Header Section
             HStack(alignment: .top) {
@@ -44,11 +49,11 @@ public struct TickerHistoryItemView: View {
                     .foregroundColor(.black)
                     .frame(width: 20, height: 20)
                 
-                VStack(alignment: .leading, spacing: 2) {
-                    Text(ticker.name)
-                        .font(.subheadline)
-                        .fontWeight(.medium)
-                        .foregroundColor(.primary)
+                                 VStack(alignment: .leading, spacing: 2) {
+                     Text(ticker.name.isEmpty ? "Ticker Name" : ticker.name)
+                         .font(.subheadline)
+                         .fontWeight(.medium)
+                         .foregroundColor(ticker.name.isEmpty ? .secondary : .primary)
                     
                     HStack(spacing: 8) {
                         Text(ticker.type.displayText)
@@ -120,6 +125,7 @@ public struct TickerHistoryItemView: View {
         .cornerRadius(8)
     }
     
+    // MARK: - Helper Views
     private func compactStatItem(title: String, value: String, color: Color) -> some View {
         HStack(spacing: 4) {
             Text(title)
@@ -146,8 +152,9 @@ public struct TickerHistoryItemView: View {
         }
     }
     
+    // MARK: - Trading Data Calculation
     private func calculateTradingData() -> TradingData {
-        guard let trades = ticker.trades, !trades.isEmpty else {
+        guard let trades = ticker.ticker?.trades, !trades.isEmpty else {
             return TradingData()
         }
         
@@ -192,6 +199,7 @@ public struct TickerHistoryItemView: View {
     }
 }
 
+// MARK: - Trading Data Model
 private struct TradingData {
     let tradeCount: Int
     let totalVolume: Double
@@ -216,3 +224,4 @@ private struct TradingData {
         self.totalInvestedAmount = totalInvestedAmount
     }
 }
+

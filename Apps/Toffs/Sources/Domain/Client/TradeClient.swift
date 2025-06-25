@@ -12,7 +12,7 @@ import UIKit
 
 public protocol TradeClient {
     func createOrUpdate(trade: TradeModel) -> TradeModel
-    func fetches(ticker: Ticker?) -> [TradeModel]
+    func fetches(ticker: TickerModel?) -> [TradeModel]
     func delete(trade: TradeModel)
     
     // 이미지 처리 메서드

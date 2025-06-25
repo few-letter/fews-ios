@@ -25,7 +25,7 @@ extension CalendarHomeView {
     private var mainView: some View {
         calendarView
             .overlay {
-                AddTradePresentationView(store: store.scope(state: \.addTradePresentation, action: \.addTradePresentation))
+                AddTradeOffOverlayView(store: store.scope(state: \.addTradeOffOverlay, action: \.addTradeOffOverlay))
             }
     }
     

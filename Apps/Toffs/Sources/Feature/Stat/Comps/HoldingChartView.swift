@@ -101,7 +101,7 @@ public struct HoldingsChartView: View {
         guard !trades.isEmpty else { return [] }
         
         // ticker가 있는 거래만 필터링 후 ticker ID별로 그룹화
-        let validTrades = trades.compactMap { trade -> (TradeModel, Ticker)? in
+        let validTrades = trades.compactMap { trade -> (TradeModel, TickerModel)? in
             guard let ticker = trade.ticker else { return nil }
             return (trade, ticker)
         }

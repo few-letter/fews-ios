@@ -12,10 +12,10 @@ import ComposableArchitecture
 public struct StatNavigationStore {
     @ObservableState
     public struct State {
-        public var tickers: [Ticker]
+        public var tickers: [TickerModel]
         public var trades: [TradeModel]
         
-        public init(tickers: [Ticker] = [], trades: [TradeModel] = []) {
+        public init(tickers: [TickerModel] = [], trades: [TradeModel] = []) {
             self.tickers = tickers
             self.trades = trades
         }
@@ -26,7 +26,7 @@ public struct StatNavigationStore {
         case onAppear
         
         case fetch
-        case fetched([Ticker], [TradeModel])
+        case fetched([TickerModel], [TradeModel])
 
         case delegate(Delegate)
         

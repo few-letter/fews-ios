@@ -136,4 +136,31 @@ platform :ios do
     end
     UI.success("Certificates reset! 🔐")
   end
+  
+  desc "Upload metadata only to App Store Connect"
+  lane :upload_metadata do
+    app_names = APPS.keys
+    UI.message("앱을 선택하세요:")
+    app_names.each_with_index { |name, i| UI.message("#{i+1}. #{name}") }
+    
+    choice = UI.input("번호 선택 (1-#{app_names.length}): ").to_i
+    unless (1..app_names.length).include?(choice)
+      UI.error("잘못된 선택입니다")
+      next
+    end
+    
+    app_name = app_names[choice-1]
+    bundle_id = APPS[app_name]
+    UI.success("선택된 앱: #{app_name}")
+
+    upload_to_app_store(
+      app_identifier: bundle_id,
+      skip_binary_upload: true,
+      skip_screenshots: true,
+      force: true,
+      metadata_path: "./fastlane/metadata/#{app_name}"
+    )
+    
+    UI.success("#{app_name} 메타데이터 업로드 완료! 📝")
+  end
 end

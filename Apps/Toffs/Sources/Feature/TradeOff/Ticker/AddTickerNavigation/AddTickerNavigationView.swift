@@ -8,8 +8,8 @@
 import SwiftUI
 import ComposableArchitecture
 
-public struct TickerNavigationView: View {
-    @Bindable var store: StoreOf<TickerNavigationStore>
+public struct AddTickerNavigationView: View {
+    @Bindable var store: StoreOf<AddTickerNavigationStore>
     
     public var body: some View {
         NavigationStack(
@@ -44,52 +44,19 @@ public struct TickerNavigationView: View {
     }
 }
 
-extension TickerNavigationView {
+extension AddTickerNavigationView {
     private var mainView: some View {
         List {
             ForEach(store.tickers) { ticker in
-                tickerItem(ticker: ticker) {
+                Button {
                     store.send(.select(ticker))
+                } label: {
+                    TickerCellView(ticker: ticker)
                 }
             }
             .onDelete { store.send(.delete($0)) }
         }
     }
     
-    private func tickerItem(ticker: Ticker, isSelected: Bool = false, onTap: @escaping () -> Void) -> some View {
-        HStack {
-            Image(systemName: ticker.type.systemImageName)
-                .foregroundColor(.black)
-                .frame(width: 24)
-            
-            VStack(alignment: .leading) {
-                Text(ticker.name)
-                    .font(.headline)
-                    .foregroundColor(.primary)
-                
-                HStack {
-                    Text(ticker.type.displayText)
-                        .font(.caption)
-                        .foregroundColor(.secondary)
-                    
-                    Spacer()
-                    
-                    HStack(spacing: 4) {
-                        Image(systemName: ticker.currency.systemImageName)
-                            .font(.caption)
-                        Text(ticker.currency.displayText)
-                            .font(.caption)
-                    }
-                    .foregroundColor(.secondary)
-                }
-            }
-            
-            Spacer()
-        }
-        .contentShape(Rectangle())
-        .onTapGesture {
-            onTap()
-        }
-        .padding(.vertical, 8)
-    }
+
 }

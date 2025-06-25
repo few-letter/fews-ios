@@ -9,7 +9,7 @@ import Foundation
 import ComposableArchitecture
 
 @Reducer
-public struct TickerNavigationStore {
+public struct AddTickerNavigationStore {
     @Reducer
     public enum Path {
         case addTicker(AddTickerStore)
@@ -20,7 +20,7 @@ public struct TickerNavigationStore {
     public struct State {
         public var path: StackState<Path.State>
         
-        public var tickers: IdentifiedArrayOf<Ticker> = []
+        public var tickers: IdentifiedArrayOf<TickerModel> = []
         public var selectedTickerID: TickerID?
         
         public init(
@@ -39,11 +39,11 @@ public struct TickerNavigationStore {
         
         case cancelButtonTapped
         case addButtonTapped
-        case select(Ticker)
+        case select(TickerModel)
         case delete(IndexSet)
         
         case fetch
-        case fetched([Ticker])
+        case fetched([TickerModel])
         
         case path(StackActionOf<Path>)
         
@@ -51,7 +51,7 @@ public struct TickerNavigationStore {
         
         public enum Delegate {
             case requestDismiss
-            case requestSelectedTicker(Ticker)
+            case requestSelectedTicker(TickerModel)
         }
     }
     
@@ -74,7 +74,7 @@ public struct TickerNavigationStore {
                 return .send(.delegate(.requestDismiss))
                 
             case .addButtonTapped:
-                let ticker: Ticker = .init()
+                let ticker: TickerModel = .init()
                 state.selectedTickerID = ticker.id
                 state.path.append(.addTicker(.init(ticker: ticker)))
                 return .none
@@ -100,8 +100,8 @@ public struct TickerNavigationStore {
                 
             case .path(.element(id: let id, action: .addTicker(.delegate(let action)))):
                 switch action {
-                case .requestSaved(let ticker):
-                    let _ = tickerClient.create(ticker: ticker)
+                case .saved(let ticker):
+                    let _ = tickerClient.createOrUpdate(ticker: ticker)
                     return .concatenate([
                         .send(.path(.popFrom(id: id))),
                         .send(.fetch)

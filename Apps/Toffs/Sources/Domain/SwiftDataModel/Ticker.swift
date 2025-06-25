@@ -10,22 +10,22 @@ import SwiftData
 
 @Model
 public class Ticker {
-    public var id: TickerID = TickerID()
-    public var type: TickerType = TickerType.stock
-    public var currency: Currency = Currency.dollar
-    public var name: String = ""
+    public var id: TickerID?
+    public var type: TickerType?
+    public var currency: Currency?
+    public var name: String?
     public var createdDate: Date?
     
     @Relationship(deleteRule: .cascade, inverse: \Trade.ticker) public var trades: [Trade]? = []
     @Relationship(inverse: \Tag.tickers) public var tags: [Tag]? = []
 
     public init(
-        id: TickerID = .init(),
-        type: TickerType = .stock,
-        currency: Currency = .dollar,
-        name: String = "",
+        id: TickerID? = .init(),
+        type: TickerType? = .stock,
+        currency: Currency? = .dollar,
+        name: String? = "",
         tags: [Tag] = [],
-        createDate: Date = .init(),
+        createDate: Date? = .init()
     ) {
         self.id = id
         self.type = type

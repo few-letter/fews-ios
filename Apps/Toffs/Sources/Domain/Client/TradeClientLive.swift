@@ -23,14 +23,7 @@ public class TradeClientLive: TradeClient {
             
             if let existingTrade = trade.trade {
                 // 이미 저장된 trade가 있으면 프로퍼티 업데이트
-                existingTrade.side = trade.side
-                existingTrade.price = trade.price
-                existingTrade.quantity = trade.quantity
-                existingTrade.fee = trade.fee
-                existingTrade.images = trade.images // 이미지 데이터 배열 업데이트 (@Attribute(.externalStorage)로 저장)
-                existingTrade.note = trade.note
-                existingTrade.date = trade.date
-                existingTrade.ticker = trade.ticker
+                trade.updateSwiftData()
                 swiftDataTrade = existingTrade
             } else {
                 // 새로운 trade 생성 (이미지 포함)
@@ -48,7 +41,7 @@ public class TradeClientLive: TradeClient {
         }
     }
     
-    public func fetches(ticker: Ticker?) -> [TradeModel] {
+    public func fetches(ticker: TickerModel?) -> [TradeModel] {
         do {
             var descriptor: FetchDescriptor<Trade>
             if let tickerID = ticker?.id {
@@ -145,7 +138,7 @@ public class TradeClientTest: TradeClient {
         fatalError()
     }
     
-    public func fetches(ticker: Ticker?) -> [TradeModel] {
+    public func fetches(ticker: TickerModel?) -> [TradeModel] {
         fatalError()
     }
     

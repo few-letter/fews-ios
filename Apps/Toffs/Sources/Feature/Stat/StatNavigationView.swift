@@ -139,7 +139,7 @@ extension StatNavigationView {
         return store.trades.filter { $0.ticker?.currency == selectedCurrency }
     }
     
-    private var activeTickers: [Ticker] {
+    private var activeTickers: [TickerModel] {
         let tradeTickerIds = Set(filteredTrades.compactMap { $0.ticker?.id })
         return store.tickers.filter { tradeTickerIds.contains($0.id) }
     }

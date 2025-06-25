@@ -10,10 +10,9 @@ import ComposableArchitecture
 import SwiftData
 
 public protocol TickerClient {
-    func create(ticker: Ticker) -> Ticker
-    func fetches() -> [Ticker]
-    func update(ticker: Ticker) -> Void
-    func delete(ticker: Ticker) -> Void
+    func createOrUpdate(ticker: TickerModel) -> TickerModel
+    func fetches() -> [TickerModel]
+    func delete(ticker: TickerModel)
 }
 
 private struct TickerClientKey: TestDependencyKey {
@@ -24,5 +23,19 @@ extension DependencyValues {
     var tickerClient: any TickerClient {
         get { self[TickerClientKey.self] }
         set { self[TickerClientKey.self] = newValue }
+    }
+}
+
+public struct TickerClientTest: TickerClient {
+    public func createOrUpdate(ticker: TickerModel) -> TickerModel {
+        return ticker
+    }
+    
+    public func fetches() -> [TickerModel] {
+        return []
+    }
+    
+    public func delete(ticker: TickerModel) {
+        // Test implementation
     }
 }

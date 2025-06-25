@@ -17,7 +17,7 @@ public struct CalendarHomeStore {
         public var tradesByDate: [Date: IdentifiedArrayOf<TradeModel>]
         public var selectedDate: Date = Calendar.current.startOfDay(for: .now)
         
-        public var addTradePresentation: AddTradePresentationStore.State = .init()
+        public var addTradeOffOverlay: AddTradeOffOverlayStore.State = .init()
         
         public init(tradesByDate: [Date: IdentifiedArrayOf<TradeModel>] = [:]) {
             self.tradesByDate = tradesByDate
@@ -37,7 +37,7 @@ public struct CalendarHomeStore {
         case fetch
         case fetched([TradeModel])
         
-        case addTradePresentation(AddTradePresentationStore.Action)
+        case addTradeOffOverlay(AddTradeOffOverlayStore.Action)
         
         case delegate(Delegate)
         
@@ -62,7 +62,7 @@ public struct CalendarHomeStore {
                 return .send(.fetch)
                 
             case .tap(let trade):
-                state.addTradePresentation.addTradeNavigation = .init(addTradeType: .edit(trade: trade))
+                state.addTradeOffOverlay.addTradeNavigation = .init(addTradeType: .edit(trade: trade))
                 return .none
                 
             case .delete(let indexSet):
@@ -78,7 +78,7 @@ public struct CalendarHomeStore {
                 return .none
                 
             case .plusButtonTapped:
-                state.addTradePresentation.tickerNavigation = .init(selectedTickerID: nil)
+                state.addTradeOffOverlay.addTickerNavigation = .init(selectedTickerID: nil)
                 return .none
                 
             case .fetch:
@@ -93,19 +93,19 @@ public struct CalendarHomeStore {
                 }
                 return .none
                 
-            case .addTradePresentation(.delegate(let action)):
+            case .addTradeOffOverlay(.delegate(let action)):
                 switch action {
                 case .dismiss:
                     return .send(.fetch)
                 }
                 
-            case .delegate, .addTradePresentation:
+            case .delegate, .addTradeOffOverlay:
                 return .none
             }
         }
         
-        Scope(state: \.addTradePresentation, action: \.addTradePresentation) {
-            AddTradePresentationStore()
+        Scope(state: \.addTradeOffOverlay, action: \.addTradeOffOverlay) {
+            AddTradeOffOverlayStore()
         }
     }
 }

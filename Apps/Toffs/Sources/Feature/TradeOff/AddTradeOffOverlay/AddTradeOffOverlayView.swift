@@ -8,8 +8,8 @@
 import SwiftUI
 import ComposableArchitecture
 
-public struct AddTradePresentationView: View {
-    @Bindable var store: StoreOf<AddTradePresentationStore>
+public struct AddTradeOffOverlayView: View {
+    @Bindable var store: StoreOf<AddTradeOffOverlayStore>
     
     public var body: some View {
         mainView
@@ -19,11 +19,11 @@ public struct AddTradePresentationView: View {
     }
 }
 
-extension AddTradePresentationView {
+extension AddTradeOffOverlayView {
     private var mainView: some View {
         Color.clear
-            .sheet(item: $store.scope(state: \.tickerNavigation, action: \.tickerNavigation)) { store in
-                TickerNavigationView(store: store)
+            .sheet(item: $store.scope(state: \.addTickerNavigation, action: \.addTickerNavigation)) { store in
+                AddTickerNavigationView(store: store)
             }
             .sheet(item: $store.scope(state: \.addTradeNavigation, action: \.addTradeNavigation)) { store in
                 AddTradeNavigationView(store: store)

@@ -17,7 +17,7 @@ public struct TradeModel: Identifiable {
     public var images: [Data]
     public var note: String
     public var date: Date
-    public var ticker: Ticker?
+    public var ticker: TickerModel?
     
     // SwiftData 객체 참조 (저장용)
     public var trade: Trade?
@@ -31,7 +31,7 @@ public struct TradeModel: Identifiable {
         images: [Data] = [],
         note: String = "",
         date: Date = .now,
-        ticker: Ticker? = nil,
+        ticker: TickerModel? = nil,
         trade: Trade? = nil
     ) {
         self.id = id
@@ -59,8 +59,11 @@ extension TradeModel {
         self.images = swiftDataTrade.images
         self.note = swiftDataTrade.note
         self.date = swiftDataTrade.date
-        self.ticker = swiftDataTrade.ticker
         self.trade = swiftDataTrade
+        
+        if let ticker = swiftDataTrade.ticker {
+            self.ticker = .init(from: ticker)
+        }
     }
     
     /// TradeModel을 SwiftData Trade 객체로 변환
@@ -74,7 +77,21 @@ extension TradeModel {
             images: self.images,
             note: self.note,
             date: self.date,
-            ticker: self.ticker
+            ticker: self.ticker?.ticker
         )
+    }
+    
+    /// TradeModel의 값들로 참조하고 있는 SwiftData Trade 객체를 업데이트
+    public func updateSwiftData() {
+        guard let swiftDataTrade = self.trade else { return }
+        
+        swiftDataTrade.side = self.side
+        swiftDataTrade.price = self.price
+        swiftDataTrade.quantity = self.quantity
+        swiftDataTrade.fee = self.fee
+        swiftDataTrade.images = self.images
+        swiftDataTrade.note = self.note
+        swiftDataTrade.date = self.date
+        swiftDataTrade.ticker = self.ticker?.ticker
     }
 }

@@ -66,36 +66,7 @@ public struct AddTickerView: View {
             }
             
             Section {
-                HStack {
-                    Image(systemName: store.ticker.type.systemImageName)
-                        .foregroundColor(.black)
-                        .frame(width: 24)
-                    
-                    VStack(alignment: .leading) {
-                        Text(store.ticker.name.isEmpty ? "Ticker Name" : store.ticker.name)
-                            .font(.headline)
-                            .foregroundColor(store.ticker.name.isEmpty ? .secondary : .primary)
-                        
-                        HStack {
-                            Text(store.ticker.type.displayText)
-                                .font(.caption)
-                                .foregroundColor(.secondary)
-                            
-                            Spacer()
-                            
-                            HStack(spacing: 4) {
-                                Image(systemName: store.ticker.currency.systemImageName)
-                                    .font(.caption)
-                                Text(store.ticker.currency.displayText)
-                                    .font(.caption)
-                            }
-                            .foregroundColor(.secondary)
-                        }
-                    }
-                    
-                    Spacer()
-                }
-                .padding(.vertical, 8)
+                TickerCellView(ticker: store.ticker)
             } header: {
                 Text("Preview")
             }
@@ -122,22 +93,4 @@ public struct AddTickerView: View {
             store.send(.onAppear)
         }
     }
-}
-
-#Preview {
-    AddTickerView(
-        store: Store(
-            initialState: AddTickerStore.State(
-                ticker: Ticker(
-                    type: .stock,
-                    currency: .dollar,
-                    name: "",
-                    tags: [],
-                    createDate: Date()
-                )
-            )
-        ) {
-            AddTickerStore()
-        }
-    )
 }

@@ -59,9 +59,8 @@ extension HistoryNavigationView {
                         Button {
                             store.send(.tradeTapped(trade))
                         } label: {
-                            TradeHistoryItemView(trade: trade)
+                            TradeCellView(trade: trade)
                         }
-                        .buttonStyle(PlainButtonStyle())
                     }
                 } header: {
                     HStack {
@@ -72,13 +71,15 @@ extension HistoryNavigationView {
                 }
             }
             
-            // Empty state view when there's no data
             if store.tickers.isEmpty && store.trades.isEmpty {
                 emptyStateView
             }
         }
         .navigationTitle("Trading History")
         .navigationBarTitleDisplayMode(.large)
+        .overlay {
+            AddTradePresentationView(store: store.scope(state: \.addTradePresentation, action: \.addTradePresentation))
+        }
     }
     
     private var emptyStateView: some View {

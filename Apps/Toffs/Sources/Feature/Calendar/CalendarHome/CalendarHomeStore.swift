@@ -62,8 +62,7 @@ public struct CalendarHomeStore {
                 return .send(.fetch)
                 
             case .tap(let trade):
-                guard let ticker = trade.ticker else { return .none }
-                state.addTradePresentation.tradeNavigation = .init(ticker: ticker, date: state.selectedDate, trade: trade)
+                state.addTradePresentation.addTradeNavigation = .init(addTradeType: .edit(trade: trade))
                 return .none
                 
             case .delete(let indexSet):
@@ -96,9 +95,6 @@ public struct CalendarHomeStore {
                 
             case .addTradePresentation(.delegate(let action)):
                 switch action {
-                case .requestTradeNavigation(let ticker):
-                    state.addTradePresentation.tradeNavigation = .init(ticker: ticker, date: state.selectedDate)
-                    return .none
                 case .dismiss:
                     return .send(.fetch)
                 }

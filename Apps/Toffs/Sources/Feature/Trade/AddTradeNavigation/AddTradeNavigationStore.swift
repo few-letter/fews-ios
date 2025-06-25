@@ -12,23 +12,24 @@ import PhotosUI
 import _PhotosUI_SwiftUI
 
 @Reducer
-public struct TradeNavigationStore {
+public struct AddTradeNavigationStore {
     @Reducer
     public enum Path {}
+    
+    public enum AddTradeType {
+        case new(ticker: Ticker, selectedDate: Date)
+        case edit(trade: TradeModel)
+    }
     
     @ObservableState
     public struct State {
         public var path: StackState<Path.State>
 
-        public let ticker: Ticker
         public var trade: TradeModel
         public var trades: [TradeModel] = []
         
-        // 이미지 관리
         public var selectedPhotos: [PhotosPickerItem] = []
         public var isLoadingImages: Bool = false
-        
-        // 이미지 상세보기
         public var isShowingImageDetail: Bool = false
         public var selectedImageIndex: Int = 0
         
@@ -38,20 +39,15 @@ public struct TradeNavigationStore {
         
         public init(
             path: StackState<Path.State> = .init(),
-            ticker: Ticker,
-            date: Date,
-            trade: TradeModel? = nil
+            addTradeType: AddTradeType
         ) {
             self.path = path
-            self.ticker = ticker
             
-            if let trade {
+            switch addTradeType {
+            case .new(let ticker, let selectedDate):
+                self.trade = .init(date: selectedDate, ticker: ticker)
+            case .edit(let trade):
                 self.trade = trade
-            } else {
-                self.trade = TradeModel(
-                    date: date,
-                    ticker: ticker
-                )
             }
         }
     }
@@ -67,13 +63,12 @@ public struct TradeNavigationStore {
         case cancelButtonTapped
         case saveButtonTapped
         
-        // 이미지 관련 액션
         case photosSelected([PhotosPickerItem])
         case loadImagesFromPhotos
         case imagesLoaded([UIImage])
-        case removeImage(Int) // 이미지 인덱스로 제거
-        case showImageDetail(Int) // 이미지 상세보기 표시
-        case hideImageDetail // 이미지 상세보기 숨김
+        case removeImage(Int)
+        case showImageDetail(Int)
+        case hideImageDetail
         
         case path(StackActionOf<Path>)
         
@@ -101,7 +96,8 @@ public struct TradeNavigationStore {
                 return .send(.fetch)
                 
             case .fetch:
-                let trades = tradeClient.fetches(ticker: state.ticker)
+                let ticker = state.trade.ticker
+                let trades = tradeClient.fetches(ticker: ticker)
                 return .send(.fetched(trades))
                 
             case .fetched(let trades):
@@ -116,7 +112,6 @@ public struct TradeNavigationStore {
                 state.trade = savedTrade
                 return .send(.delegate(.requestSaved))
                 
-            // MARK: - 이미지 관련 액션 처리
             case .photosSelected(let photos):
                 state.selectedPhotos = photos
                 return .send(.loadImagesFromPhotos)

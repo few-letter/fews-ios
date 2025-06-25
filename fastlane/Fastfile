@@ -43,7 +43,6 @@ platform :ios do
 
   desc "Upload to TestFlight"
   lane :upload do
-    # 앱 선택 (숫자로 선택)
     app_names = APPS.keys
     UI.message("앱을 선택하세요:")
     app_names.each_with_index { |name, i| UI.message("#{i+1}. #{name}") }
@@ -58,15 +57,12 @@ platform :ios do
     bundle_id = APPS[app_name]
     UI.success("선택된 앱: #{app_name}")
 
-    # 현재 버전 정보 표시
     plist_path = "Apps/#{app_name}/Resources/Info.plist"
     
-    # 경로 디버깅
     UI.message("📁 현재 작업 디렉토리: #{Dir.pwd}")
     UI.message("📄 Info.plist 경로: #{plist_path}")
     
     if !File.exist?(plist_path)
-      # 대안 경로들 시도
       alternative_paths = [
         "../Apps/#{app_name}/Resources/Info.plist",
         "#{app_name}/Resources/Info.plist",
@@ -75,7 +71,7 @@ platform :ios do
       
       alternative_paths.each do |alt_path|
         if File.exist?(alt_path)
-          plist_path = File.expand_path(alt_path)  # 절대 경로로 변환
+          plist_path = File.expand_path(alt_path)
           UI.message("✅ 대안 경로에서 파일 발견: #{plist_path}")
           break
         end
@@ -92,81 +88,38 @@ platform :ios do
     
     version = UI.input("새 버전 (현재값 유지하려면 엔터): ")
     
-    # 빌드 번호: 년월일시분초
     build = Time.now.strftime("%Y%m%d%H%M%S")
     UI.message("새 빌드 번호: #{build}")
     
-    # 버전 업데이트 (generate 전에!)
     set_info_plist_value(path: plist_path, key: "CFBundleShortVersionString", value: version) unless version.empty?
     set_info_plist_value(path: plist_path, key: "CFBundleVersion", value: build)
     
-    # 정리 및 프로젝트 생성 (버전 업데이트 후에!)
     clear_derived_data
     generate
     
-    # 코드 사이닝 (Tuist가 기본 서명을 처리하지만 배포용 인증서 필요)
-    # Multis 앱의 경우 match 건너뛰기 (OpenSSL 암호화 문제로 인해)
-    unless bundle_id == "com.annapo.taskfolio"
-      match(type: "appstore", app_identifier: bundle_id, readonly: true, username: "mooyoung2309@gmail.com")
-    else
-      UI.message("Multis 앱은 자동 코드 사이닝을 사용합니다 (match 건너뛰기)")
-    end
-
-    # 매크로 활성화를 위한 추가 설정 (build lane과 동일)
     ENV["ENABLE_USER_SCRIPT_SANDBOXING"] = "NO"
     
-    # 빌드 출력 디렉토리 생성
     sh("mkdir -p ./build")
-
-    # 빌드 & 업로드 (build lane에서 성공한 설정 적용)
-    if bundle_id == "com.annapo.taskfolio"
-      # Multis 앱의 경우 자동 코드 사이닝 사용
-      gym(
-        workspace: "#{WORKSPACE_NAME}.xcworkspace",
-        scheme: app_name,
-        configuration: "Release",
-        export_method: "app-store",
-        clean: false,
-        destination: "generic/platform=iOS",
-        skip_package_dependencies_resolution: true,
-        disable_package_automatic_updates: true,
-        output_directory: "./build",
-        output_name: app_name,
-        xcargs: "-allowProvisioningUpdates -skipMacroValidation",
-        export_options: {
-          method: "app-store",
-          compileBitcode: false,
-          uploadBitcode: false,
-          uploadSymbols: true,
-          manageAppVersionAndBuildNumber: false
-        }
-      )
-    else
-      # 다른 앱들은 기존 match 방식 사용
-      gym(
-        workspace: "#{WORKSPACE_NAME}.xcworkspace",
-        scheme: app_name,
-        configuration: "Release",
-        export_method: "app-store",
-        clean: false,
-        destination: "generic/platform=iOS",
-        skip_package_dependencies_resolution: true,
-        disable_package_automatic_updates: true,
-        output_directory: "./build",
-        output_name: app_name,
-        xcargs: "-allowProvisioningUpdates -skipMacroValidation",
-        export_options: {
-          method: "app-store",
-          provisioningProfiles: {
-            bundle_id => "match AppStore #{bundle_id}"
-          },
-          compileBitcode: false,
-          uploadBitcode: false,
-          uploadSymbols: true,
-          manageAppVersionAndBuildNumber: false
-        }
-      )
-    end
+    gym(
+      workspace: "#{WORKSPACE_NAME}.xcworkspace",
+      scheme: app_name,
+      configuration: "Release",
+      export_method: "app-store",
+      clean: false,
+      destination: "generic/platform=iOS",
+      skip_package_dependencies_resolution: true,
+      disable_package_automatic_updates: true,
+      output_directory: "./build",
+      output_name: app_name,
+      xcargs: "-allowProvisioningUpdates -skipMacroValidation",
+      export_options: {
+        method: "app-store",
+        compileBitcode: false,
+        uploadBitcode: false,
+        uploadSymbols: true,
+        manageAppVersionAndBuildNumber: false
+      }
+    )
     
     upload_to_testflight(
       ipa: "./build/#{app_name}.ipa",

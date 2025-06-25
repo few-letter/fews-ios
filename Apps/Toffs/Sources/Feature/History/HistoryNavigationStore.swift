@@ -19,6 +19,8 @@ public struct HistoryNavigationStore {
         public var tickers: [Ticker]
         public var trades: [TradeModel]
         
+        public var addTradePresentation: AddTradePresentationStore.State = .init()
+        
         public init(
             path: StackState<Path.State> = .init(),
             tickers: [Ticker] = [],
@@ -41,6 +43,8 @@ public struct HistoryNavigationStore {
         case tradeTapped(TradeModel)
 
         case path(StackActionOf<Path>)
+        
+        case addTradePresentation(AddTradePresentationStore.Action)
         
         case delegate(Delegate)
         
@@ -67,19 +71,30 @@ public struct HistoryNavigationStore {
                 
             case .fetched(let tickers, let trades):
                 state.tickers = tickers
-                state.trades = trades
+                state.trades = trades.sorted { $0.date > $1.date }
                 return .none
                 
             case .tickerTapped(let ticker):
                 return .none
                 
             case .tradeTapped(let trade):
+                state.addTradePresentation.addTradeNavigation = .init(addTradeType: .edit(trade: trade))
                 return .none
                 
-            case .delegate, .binding, .path:
+            case .addTradePresentation(.delegate(let action)):
+                switch action {
+                case .dismiss:
+                    return .send(.fetch)
+                }
+                
+            case .delegate, .binding, .path, .addTradePresentation:
                 return .none
             }
         }
         .forEach(\.path, action: \.path)
+        
+        Scope(state: \.addTradePresentation, action: \.addTradePresentation) {
+            AddTradePresentationStore()
+        }
     }
 }

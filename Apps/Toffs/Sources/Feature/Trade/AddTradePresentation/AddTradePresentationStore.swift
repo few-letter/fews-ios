@@ -13,15 +13,12 @@ public struct AddTradePresentationStore {
     @ObservableState
     public struct State {
         @Presents public var tickerNavigation: TickerNavigationStore.State? = nil
-        @Presents public var tradeNavigation: TradeNavigationStore.State? = nil
+        @Presents public var addTradeNavigation: AddTradeNavigationStore.State? = nil
         
+        public var selectedDate: Date = .now
         public var selectedTicker: Ticker?
         
-        public init(
-            selectedTicker: Ticker? = nil
-        ) {
-            self.selectedTicker = selectedTicker
-        }
+        public init() { }
     }
     
     public enum Action: BindableAction {
@@ -30,12 +27,11 @@ public struct AddTradePresentationStore {
         case onAppear
         
         case tickerNavigation(PresentationAction<TickerNavigationStore.Action>)
-        case tradeNavigation(PresentationAction<TradeNavigationStore.Action>)
+        case addTradeNavigation(PresentationAction<AddTradeNavigationStore.Action>)
         
         case delegate(Delegate)
         
         public enum Delegate {
-            case requestTradeNavigation(Ticker)
             case dismiss
         }
     }
@@ -56,36 +52,38 @@ public struct AddTradePresentationStore {
                 return .none
                 
             case .tickerNavigation(.presented(.delegate(let action))):
+                state.tickerNavigation = nil
+                
                 switch action {
                 case .requestSelectedTicker(let ticker):
-                    state.tickerNavigation = nil
-                    return .send(.delegate(.requestTradeNavigation(ticker)))
+                    state.selectedTicker = ticker
+                    state.addTradeNavigation = .init(addTradeType: .new(ticker: ticker, selectedDate: state.selectedDate))
+                    return .none
                     
                 case .requestDismiss:
-                    state.tickerNavigation = nil
                     return .none
                 }
                 
-            case .tradeNavigation(.presented(.delegate(let action))):
+            case .addTradeNavigation(.presented(.delegate(let action))):
                 switch action {
                 case .requestDismiss:
-                    state.tradeNavigation = nil
+                    state.addTradeNavigation = nil
                     return .send(.delegate(.dismiss))
                     
                 case .requestSaved:
-                    state.tradeNavigation = nil
+                    state.addTradeNavigation = nil
                     return .send(.delegate(.dismiss))
                 }
                 
-            case .tickerNavigation, .tradeNavigation, .delegate:
+            case .tickerNavigation, .addTradeNavigation, .delegate:
                 return .none
             }
         }
         .ifLet(\.$tickerNavigation, action: \.tickerNavigation) {
             TickerNavigationStore()
         }
-        .ifLet(\.$tradeNavigation, action: \.tradeNavigation) {
-            TradeNavigationStore()
+        .ifLet(\.$addTradeNavigation, action: \.addTradeNavigation) {
+            AddTradeNavigationStore()
         }
     }
 }

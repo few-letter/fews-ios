@@ -9,15 +9,15 @@ import SwiftUI
 import ComposableArchitecture
 import PhotosUI
 
-public struct TradeNavigationView: View {
-    @Bindable var store: StoreOf<TradeNavigationStore>
+public struct AddTradeNavigationView: View {
+    @Bindable var store: StoreOf<AddTradeNavigationStore>
     
     public var body: some View {
         NavigationStack(
             path: $store.scope(state: \.path, action: \.path)
         ) {
             mainView
-                .navigationTitle(store.ticker.name)
+                .navigationTitle(store.trade.ticker?.name ?? "")
                 .navigationBarTitleDisplayMode(.inline)
                 .toolbar {
                     ToolbarItem(placement: .topBarLeading) {
@@ -49,7 +49,7 @@ public struct TradeNavigationView: View {
     }
 }
 
-extension TradeNavigationView {
+extension AddTradeNavigationView {
     
     // MARK: - Validation Computed Properties
     
@@ -368,7 +368,7 @@ struct ImageDetailView: View {
                 TabView(selection: $selectedIndex) {
                     ForEach(Array(images.enumerated()), id: \.offset) { index, image in
                         GeometryReader { geometry in
-                            ScrollView([.horizontal, .vertical]) {
+                            ScrollView(.horizontal) {
                                 Image(uiImage: image)
                                     .resizable()
                                     .aspectRatio(contentMode: .fit)

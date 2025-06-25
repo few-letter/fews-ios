@@ -1,0 +1,97 @@
+---
+description: iOS 앱의 주요 기능 스크린샷 캡처 방법 (MCP 서버 사용)
+globs: 
+alwaysApply: false
+---
+# iOS 앱의 주요 기능 스크린샷 캡처 방법 (MCP 서버 사용)
+
+## 준비 사항
+- **Node.js**: 시스템에 설치되어 있어야 합니다.
+- **MCP 서버**: 아래 명령어로 설정 및 실행:
+  ```bash
+  npx -y ios-simulator-mcp
+  ```
+- **iOS 시뮬레이터**: 대상 앱들이 설치되어 있어야 합니다.
+
+---
+
+## 수동 단계
+한 번에 하나의 앱에 대해 스크린샷을 캡처하려면 다음 단계를 따르세요:
+
+1. **MCP 서버 시작**
+   터미널에서 다음 명령어를 실행합니다:
+   ```bash
+   npx -y ios-simulator-mcp
+   ```
+
+2. **앱 실행**
+   `com.example.app`을 앱의 실제 번들 ID로, `appName`을 앱의 이름으로 교체하세요:
+   ```bash
+   mcp-ios-simulator launch com.example.app
+   ```
+
+3. **원하는 화면으로 이동**
+   앱 UI에 따라 좌표(`x`, `y`)를 조정하여 탭 명령을 사용하세요:
+   ```bash
+   mcp-ios-simulator tap 100 200
+   ```
+
+4. **스크린샷 캡처**
+   먼저 `screenShots` 디렉토리가 존재하는지 확인하고 없으면 생성합니다:
+   ```bash
+   mkdir -p metadata/appName/screenShots
+   ```
+   그런 다음 스크린샷을 캡처하여 지정된 경로에 저장합니다:
+   ```bash
+   mcp-ios-simulator screenshot metadata/appName/screenShots/appName_Feature.png
+   ```
+
+5. **다른 앱 및 기능에 대해 반복**
+   필요에 따라 앱 이름, 번들 ID, 이동 단계를 조정하여 반복하세요.
+
+---
+
+## 자동화 스크립트
+여러 앱에 대해 자동으로 스크린샷을 캡처하려면 아래 Bash 스크립트를 사용하세요. 이 스크립트는 앱을 실행하고, 화면으로 이동한 뒤, 스크린샷을 지정된 디렉토리에 저장합니다.
+
+```bash
+#!/bin/bash
+
+# 앱 정의: ["앱 이름"]="번들 ID"
+declare -A apps=( ["MyApp"]="com.example.myapp" ["AnotherApp"]="com.example.another" )
+
+# 탭 좌표 (필요에 따라 조정)
+TAP_X=100
+TAP_Y=200
+
+for appName in "${!apps[@]}"; do
+    bundleID=${apps[$appName]}
+    
+    # 디렉토리 생성 (없을 경우)
+    mkdir -p "metadata/$appName/screenShots"
+    
+    # 앱 실행
+    mcp-ios-simulator launch $bundleID
+    sleep 5  # 앱 로딩 대기
+    
+    # 기능 화면으로 이동 (예: 좌표 탭)
+    mcp-ios-simulator tap $TAP_X $TAP_Y
+    sleep 2  # 화면 업데이트 대기
+    
+    # 스크린샷 캡처
+    mcp-ios-simulator screenshot "metadata/$appName/screenShots/${appName}_Feature.png"
+done
+```
+
+### 스크립트 주의사항
+- **앱 설정**: `apps` 배열에 본인의 앱 이름과 번들 ID를 추가하세요.
+- **이동 조정**: `TAP_X`, `TAP_Y` 좌표를 앱 UI에 맞게 변경하세요.
+- **디렉토리 생성**: 스크립트가 자동으로 `screenShots` 디렉토리를 생성합니다.
+- **맞춤 설정**: 앱마다 다른 이동 단계가 필요하면 스크립트를 수정하세요 (예: 앱별 조건문 추가).
+
+---
+
+## 추가 참고
+- **MCP 서버 실행**: 명령어 또는 스크립트를 실행하기 전에 MCP 서버가 실행 중인지 확인하세요.
+- **파일 이름**: 스크린샷은 `${appName}_Feature.png`로 저장됩니다. 특정 기능을 반영하려면 이름을 수정하세요 (예: `${appName}_Tabs.png`).
+- **복잡한 상호작용**: 여러 탭이나 스와이프가 필요한 경우, 수동 명령 또는 스크립트에 단계를 추가하세요.

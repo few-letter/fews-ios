@@ -1,0 +1,130 @@
+---
+description: Fastlane App Store 메타데이터 글자수 제한 규칙
+globs: 
+alwaysApply: false
+---
+# Fastlane App Store 메타데이터 글자수 제한 규칙
+
+## 📋 Apple App Store 글자수 제한
+Apple App Store Connect에서 각 메타데이터 파일별로 글자수 제한이 있습니다:
+
+- **name.txt**: 최대 30자 (앱 이름)
+- **subtitle.txt**: 최대 30자 (부제목)
+- **keywords.txt**: 최대 100자 (키워드, 쉼표 포함)
+- **description.txt**: 최대 4,000자 (앱 설명)
+
+## 🔍 글자수 검증 명령어
+
+### 통합 검증 명령어 (권장)
+모든 메타데이터 파일의 글자수를 한 번에 검증:
+
+```bash
+find fastlane/metadata/{AppName} -name "*.txt" -exec sh -c '
+    chars=$(wc -c < "$1")
+    filename=$(basename "$1")
+    if ([ "$filename" = "name.txt" ] && [ $chars -gt 30 ]) || \
+       ([ "$filename" = "subtitle.txt" ] && [ $chars -gt 30 ]) || \
+       ([ "$filename" = "keywords.txt" ] && [ $chars -gt 100 ]); then
+        echo "❌ $1: $chars chars"
+        echo "Content: $(cat "$1")"
+        echo "---"
+    fi
+' _ {} \;
+```
+
+### 개별 파일 유형별 검증 명령어
+
+#### name.txt (앱 이름) 검증
+```bash
+find fastlane/metadata/{AppName} -name "name.txt" -exec sh -c '
+    chars=$(wc -c < "$1")
+    if [ $chars -gt 30 ]; then
+        echo "❌ $1: $chars chars"
+        echo "Content: $(cat "$1")"
+        echo "---"
+    fi
+' _ {} \;
+```
+
+#### subtitle.txt (부제목) 검증
+```bash
+find fastlane/metadata/{AppName} -name "subtitle.txt" -exec sh -c '
+    chars=$(wc -c < "$1")
+    if [ $chars -gt 30 ]; then
+        echo "❌ $1: $chars chars"
+        echo "Content: $(cat "$1")"
+        echo "---"
+    fi
+' _ {} \;
+```
+
+#### keywords.txt (키워드) 검증
+```bash
+find fastlane/metadata/{AppName} -name "keywords.txt" -exec sh -c '
+    chars=$(wc -c < "$1")
+    if [ $chars -gt 100 ]; then
+        echo "❌ $1: $chars chars"
+        echo "Content: $(cat "$1")"
+        echo "---"
+    fi
+' _ {} \;
+```
+
+## 📊 검증 결과 해석
+
+### ✅ 성공 시
+- 아무 출력 없음
+- 모든 파일이 글자수 제한 범위 내에 있음
+
+### ❌ 실패 시
+- 초과한 파일들이 "❌" 표시와 함께 출력됨
+- 파일 경로, 글자수, 내용이 함께 표시됨
+- 해당 파일들을 수정 후 재검증 필요
+
+## 🛠️ 글자수 초과 시 대응 방법
+
+### 1. name.txt 수정 전략
+- 브랜드명은 유지하고 부가 설명 제거
+- 예: `Plots - 책 읽기 일기장` → `Plots - 독서일기`
+
+### 2. subtitle.txt 수정 전략  
+- 핵심 기능만 간결하게 표현
+- 불필요한 조사나 연결어 제거
+- 예: `책, 영화, 문화생활 기록` → `책, 영화, 문화 기록`
+
+### 3. keywords.txt 수정 전략
+- 가장 중요한 키워드만 선별
+- 중복되는 의미의 키워드 제거
+- 쉼표와 공백도 글자수에 포함됨을 주의
+
+### 4. 멀티바이트 문자 주의사항
+- 힌디어, 아랍어, 한자 등은 바이트 수가 많이 차지
+- 실제 표시되는 글자수보다 바이트 수가 훨씬 클 수 있음
+- 더 간결한 표현으로 수정 필요
+
+## 📝 사용 예시
+
+### Plots 앱 검증
+```bash
+find fastlane/metadata/Plots -name "*.txt" -exec sh -c '
+    chars=$(wc -c < "$1")
+    filename=$(basename "$1")
+    if ([ "$filename" = "name.txt" ] && [ $chars -gt 30 ]) || \
+       ([ "$filename" = "subtitle.txt" ] && [ $chars -gt 30 ]) || \
+       ([ "$filename" = "keywords.txt" ] && [ $chars -gt 100 ]); then
+        echo "❌ $1: $chars chars"
+        echo "Content: $(cat "$1")"
+        echo "---"
+    fi
+' _ {} \;
+```
+
+### 다른 앱 검증 시
+`{AppName}` 부분을 실제 앱 이름으로 변경:
+- `Multis`, `Retros`, `Toffs` 등
+
+## ⚠️ 주의사항
+- Fastlane 업로드 전 반드시 글자수 검증 수행
+- 번역 작업 후에는 모든 언어에 대해 검증 필요
+- 글자수 제한을 초과하면 App Store Connect 업로드 실패
+- `wc -c` 명령어는 바이트 수를 계산하므로 멀티바이트 문자 주의

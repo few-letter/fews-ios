@@ -1,0 +1,1 @@
+timer,tarefas,produtividade,pomodoro,multitarefa,gestão tempo,foco,segundo plano,calendário 

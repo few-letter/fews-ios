@@ -7,6 +7,7 @@
 
 import SwiftUI
 import ComposableArchitecture
+import PhotosUI
 
 public struct TradeNavigationView: View {
     @Bindable var store: StoreOf<TradeNavigationStore>
@@ -35,6 +36,13 @@ public struct TradeNavigationView: View {
                 .onAppear {
                     store.send(.onAppear)
                 }
+                .fullScreenCover(isPresented: $store.isShowingImageDetail) {
+                    ImageDetailView(
+                        images: tradeImages,
+                        selectedIndex: $store.selectedImageIndex,
+                        isPresented: $store.isShowingImageDetail
+                    )
+                }
         } destination: { store in
             
         }
@@ -47,6 +55,12 @@ extension TradeNavigationView {
     
     private var validationError: String? {
         return store.trade.validateBalance(in: store.trades)
+    }
+    
+    // MARK: - Image Computed Property
+    
+    private var tradeImages: [UIImage] {
+        return store.trade.images.compactMap { UIImage(from: $0) }
     }
     
     private var isTradeValid: Bool {
@@ -226,8 +240,89 @@ extension TradeNavigationView {
                     )
                 }
                 .padding(.vertical, 4)
+                
+                // MARK: - 이미지 섹션 (Trade Information 내부에 통합)
+                VStack(alignment: .leading, spacing: 8) {
+                    HStack {
+                        Text("Images")
+                            .font(.subheadline)
+                            .foregroundColor(.secondary)
+                        
+                        Spacer()
+                        
+                        PhotosPicker(
+                            selection: Binding(
+                                get: { store.selectedPhotos },
+                                set: { store.send(.photosSelected($0)) }
+                            ),
+                            maxSelectionCount: 5,
+                            matching: .images
+                        ) {
+                            Image(systemName: "photo.badge.plus")
+                                .font(.system(size: 16))
+                                .foregroundColor(.blue)
+                        }
+                        .disabled(store.isLoadingImages)
+                    }
+                    
+                    // 로딩 상태
+                    if store.isLoadingImages {
+                        HStack(spacing: 8) {
+                            ProgressView()
+                                .scaleEffect(0.7)
+                            Text("Loading...")
+                                .font(.caption2)
+                                .foregroundColor(.secondary)
+                        }
+                        .padding(.vertical, 4)
+                    }
+                    
+                    // 이미지 표시 - 가로 스크롤
+                    if !store.trade.images.isEmpty {
+                        ScrollView(.horizontal, showsIndicators: false) {
+                            HStack(spacing: 12) {
+                                ForEach(Array(tradeImages.enumerated()), id: \.offset) { index, uiImage in
+                                    ZStack(alignment: .topTrailing) {
+                                        // 이미지 터치 영역
+                                        Button {
+                                            store.send(.showImageDetail(index))
+                                        } label: {
+                                            Image(uiImage: uiImage)
+                                                .resizable()
+                                                .aspectRatio(contentMode: .fill)
+                                                .frame(width: 60, height: 60)
+                                                .clipped()
+                                                .cornerRadius(8)
+                                                .overlay(
+                                                    RoundedRectangle(cornerRadius: 8)
+                                                        .stroke(Color(.systemGray4), lineWidth: 0.5)
+                                                )
+                                        }
+                                        .buttonStyle(PlainButtonStyle())
+                                        
+                                        // 삭제 버튼 (별도 버튼으로 분리)
+                                        Button {
+                                            store.send(.removeImage(index))
+                                        } label: {
+                                            Image(systemName: "xmark.circle.fill")
+                                                .font(.system(size: 16))
+                                                .foregroundColor(.red)
+                                                .background(Color.white)
+                                                .clipShape(Circle())
+                                        }
+                                        .offset(x: 6, y: -6)
+                                    }
+                                }
+                            }
+                            .padding(.horizontal, 8) // X 버튼이 잘리지 않도록 여백 추가
+                            .padding(.vertical, 6) // 상하 여백도 추가
+                        }
+                        .clipped(antialiased: false) // 스크롤뷰 클리핑 해제
+                    }
+                                }
+                .padding(.vertical, 4)
             }
-            
+             
             // MARK: - Validation Error Section
             if let errorMessage = validationError {
                 Section {
@@ -253,5 +348,54 @@ extension TradeNavigationView {
                 Text("Preview")
             }
         }
+    }
+}
+
+// MARK: - ImageDetailView
+struct ImageDetailView: View {
+    let images: [UIImage]
+    @Binding var selectedIndex: Int
+    @Binding var isPresented: Bool
+    
+    var body: some View {
+        ZStack(alignment: .topTrailing) {
+            // 배경
+            Color.black
+                .ignoresSafeArea()
+            
+            // 이미지 뷰
+            if !images.isEmpty {
+                TabView(selection: $selectedIndex) {
+                    ForEach(Array(images.enumerated()), id: \.offset) { index, image in
+                        GeometryReader { geometry in
+                            ScrollView([.horizontal, .vertical]) {
+                                Image(uiImage: image)
+                                    .resizable()
+                                    .aspectRatio(contentMode: .fit)
+                                    .frame(maxWidth: geometry.size.width, maxHeight: geometry.size.height)
+                                    .clipped()
+                            }
+                            .frame(maxWidth: .infinity, maxHeight: .infinity)
+                        }
+                        .tag(index)
+                    }
+                }
+                .tabViewStyle(PageTabViewStyle(indexDisplayMode: .always))
+                .indexViewStyle(PageIndexViewStyle(backgroundDisplayMode: .always))
+            }
+            
+            // 닫기 버튼
+            Button {
+                isPresented = false
+            } label: {
+                Image(systemName: "xmark.circle.fill")
+                    .font(.system(size: 24))
+                    .foregroundColor(.white)
+                    .background(Color.black.opacity(0.6))
+                    .clipShape(Circle())
+            }
+            .padding()
+        }
+        .statusBarHidden()
     }
 }

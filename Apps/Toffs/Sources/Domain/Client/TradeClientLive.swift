@@ -7,6 +7,7 @@
 
 import Foundation
 import SwiftData
+import UIKit
 
 public class TradeClientLive: TradeClient {
     private var context: ModelContext
@@ -26,13 +27,13 @@ public class TradeClientLive: TradeClient {
                 existingTrade.price = trade.price
                 existingTrade.quantity = trade.quantity
                 existingTrade.fee = trade.fee
-                existingTrade.images = trade.images
+                existingTrade.images = trade.images // 이미지 데이터 배열 업데이트 (@Attribute(.externalStorage)로 저장)
                 existingTrade.note = trade.note
                 existingTrade.date = trade.date
                 existingTrade.ticker = trade.ticker
                 swiftDataTrade = existingTrade
             } else {
-                // 새로운 trade 생성
+                // 새로운 trade 생성 (이미지 포함)
                 swiftDataTrade = trade.toSwiftDataTrade()
                 context.insert(swiftDataTrade)
             }
@@ -80,6 +81,63 @@ public class TradeClientLive: TradeClient {
             // 에러 처리 (필요에 따라 로깅 추가)
         }
     }
+    
+    // MARK: - 이미지 처리 헬퍼 메서드 (인라인)
+    
+    /// TradeModel에 UIImage 배열을 추가하여 새로운 TradeModel 반환
+    public func addImages(_ uiImages: [UIImage], to trade: TradeModel) -> TradeModel {
+        var updatedImages = trade.images
+        
+        for uiImage in uiImages {
+            do {
+                let pngData = try UIImage.convertToPNG(uiImage: uiImage)
+                updatedImages.append(pngData)
+            } catch {
+                print("Failed to convert image to PNG: \(error)")
+            }
+        }
+        
+        return TradeModel(
+            id: trade.id,
+            side: trade.side,
+            price: trade.price,
+            quantity: trade.quantity,
+            fee: trade.fee,
+            images: updatedImages,
+            note: trade.note,
+            date: trade.date,
+            ticker: trade.ticker,
+            trade: trade.trade
+        )
+    }
+    
+    /// TradeModel에서 특정 인덱스의 이미지를 제거하여 새로운 TradeModel 반환
+    public func removeImage(at index: Int, from trade: TradeModel) -> TradeModel {
+        guard index >= 0 && index < trade.images.count else {
+            return trade
+        }
+        
+        var updatedImages = trade.images
+        updatedImages.remove(at: index)
+        
+        return TradeModel(
+            id: trade.id,
+            side: trade.side,
+            price: trade.price,
+            quantity: trade.quantity,
+            fee: trade.fee,
+            images: updatedImages,
+            note: trade.note,
+            date: trade.date,
+            ticker: trade.ticker,
+            trade: trade.trade
+        )
+    }
+    
+    /// TradeModel의 이미지 데이터를 UIImage 배열로 변환
+    public func getUIImages(from trade: TradeModel) -> [UIImage] {
+        return trade.images.compactMap { UIImage(from: $0) }
+    }
 }
 
 public class TradeClientTest: TradeClient {
@@ -92,6 +150,18 @@ public class TradeClientTest: TradeClient {
     }
     
     public func delete(trade: TradeModel) {
+        fatalError()
+    }
+    
+    public func addImages(_ uiImages: [UIImage], to trade: TradeModel) -> TradeModel {
+        fatalError()
+    }
+    
+    public func removeImage(at index: Int, from trade: TradeModel) -> TradeModel {
+        fatalError()
+    }
+    
+    public func getUIImages(from trade: TradeModel) -> [UIImage] {
         fatalError()
     }
 }

@@ -7,6 +7,7 @@
 
 import Foundation
 import SwiftData
+import UIKit
 
 @Model
 public class Trade {
@@ -15,7 +16,10 @@ public class Trade {
     public var price: Double = 0
     public var quantity: Double = 0
     public var fee: Double = 0
-    public var images: [Data] = []
+    
+    /// 이미지들을 외부 저장소에 저장 (큰 바이너리 데이터를 위해)
+    @Attribute(.externalStorage) public var images: [Data] = []
+    
     public var note: String = ""
     public var date: Date = Date.now
     
@@ -41,5 +45,27 @@ public class Trade {
         self.note = note
         self.date = date
         self.ticker = ticker
+    }
+}
+
+// MARK: - Trade Image Helpers
+extension Trade {
+    /// UIImage 배열을 Trade에 추가
+    /// - Parameter uiImages: 추가할 UIImage 배열
+    func addImages(_ uiImages: [UIImage]) {
+        for uiImage in uiImages {
+            do {
+                let pngData = try UIImage.convertToPNG(uiImage: uiImage)
+                self.images.append(pngData)
+            } catch {
+                print("Failed to convert image to PNG: \(error)")
+            }
+        }
+    }
+    
+    /// 저장된 이미지 데이터를 UIImage 배열로 변환
+    /// - Returns: UIImage 배열
+    func getUIImages() -> [UIImage] {
+        return images.compactMap { UIImage(from: $0) }
     }
 }

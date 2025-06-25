@@ -8,11 +8,17 @@
 import Foundation
 import ComposableArchitecture
 import SwiftData
+import UIKit
 
 public protocol TradeClient {
     func createOrUpdate(trade: TradeModel) -> TradeModel
     func fetches(ticker: Ticker?) -> [TradeModel]
     func delete(trade: TradeModel)
+    
+    // 이미지 처리 메서드
+    func addImages(_ uiImages: [UIImage], to trade: TradeModel) -> TradeModel
+    func removeImage(at index: Int, from trade: TradeModel) -> TradeModel
+    func getUIImages(from trade: TradeModel) -> [UIImage]
 }
 private struct TradeClientKey: TestDependencyKey {
     static var testValue: any TradeClient = TradeClientTest()

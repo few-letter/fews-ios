@@ -19,6 +19,7 @@ public class AppDelegate: NSObject, UIApplicationDelegate {
         FirebaseApp.configure()
         MobileAds.shared.start()
         Mixpanel.initialize(token: .MIXPANEL_TOKEN, trackAutomaticEvents: true)
+        Mixpanel.mainInstance().people.set(properties: [ "app":"Plots" ])
         return true
     }
 }

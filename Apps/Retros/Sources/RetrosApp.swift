@@ -11,6 +11,7 @@ public class AppDelegate: NSObject, UIApplicationDelegate {
                             didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil) -> Bool {
         MobileAds.shared.start()
         Mixpanel.initialize(token: .MIXPANEL_TOKEN, trackAutomaticEvents: true)
+        Mixpanel.mainInstance().people.set(properties: [ "app":"Retros" ])
         return true
     }
 }

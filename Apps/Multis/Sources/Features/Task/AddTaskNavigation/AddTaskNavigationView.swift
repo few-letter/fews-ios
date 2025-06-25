@@ -111,6 +111,7 @@ extension AddTaskNavigationView {
             titleField
             dateSelector
             categorySelector
+            timeDisplay
             // timeSelector 제거 - 타이머로만 관리
         }
     }
@@ -172,7 +173,7 @@ extension AddTaskNavigationView {
                         HStack(spacing: 4) {
                             Image(systemName: "plus")
                                 .font(.system(size: 12))
-                            Text("새 카테고리")
+                            Text("Add Category")
                                 .font(.caption)
                         }
                         .foregroundColor(.white)
@@ -210,7 +211,7 @@ extension AddTaskNavigationView {
                     Button(action: {
                         store.send(.binding(.set(\.task.category, nil)))
                     }) {
-                        Text("카테고리 없음")
+                        Text("No Category")
                             .font(.caption)
                             .foregroundColor(store.task.category == nil ? .white : .secondary)
                             .padding(.horizontal, 12)
@@ -226,6 +227,58 @@ extension AddTaskNavigationView {
             }
         }
         .padding(.vertical, 4)
+    }
+    
+    private var timeDisplay: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            Text("Time")
+                .font(.subheadline)
+                .foregroundColor(.secondary)
+            
+            HStack {
+                VStack(alignment: .leading, spacing: 4) {
+                    Text(formatTaskTime(store.task.time))
+                        .font(.body)
+                        .fontWeight(.medium)
+                        .foregroundColor(.primary)
+                    
+                    if store.task.time > 0 {
+                        Text("Time is currently recorded")
+                            .font(.caption2)
+                            .foregroundColor(.secondary)
+                    } else {
+                        Text("No time recorded")
+                            .font(.caption2)
+                            .foregroundColor(.secondary)
+                    }
+                }
+                
+                Spacer()
+                
+                if store.task.time > 0 {
+                    Button("Reset") {
+                        store.send(.resetTimeButtonTapped)
+                    }
+                    .font(.caption)
+                    .foregroundColor(.red)
+                    .padding(.horizontal, 12)
+                    .padding(.vertical, 6)
+                    .background(Color.red.opacity(0.1))
+                    .cornerRadius(6)
+                }
+            }
+        }
+        .padding(.vertical, 4)
+    }
+    
+    private func formatTaskTime(_ milliseconds: Int) -> String {
+        let totalMs = milliseconds
+        let hours = totalMs / (1000 * 60 * 60)
+        let minutes = (totalMs % (1000 * 60 * 60)) / (1000 * 60)
+        let seconds = (totalMs % (1000 * 60)) / 1000
+        let ms = (totalMs % 1000) / 10 // 10ms 단위로 2자리 표시
+        
+        return String(format: "%02d:%02d:%02d.%02d", hours, minutes, seconds, ms)
     }
     
     private func validationErrorSection(_ errorMessage: String) -> some View {

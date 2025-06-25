@@ -2,11 +2,11 @@ default_platform(:ios)
 
 # 앱 설정 (환경변수 대신 하드코딩으로 간소화)
 APPS = {
-  "Toffs" => "com.tamsadan.toolinder"
+  "Toffs" => "com.tamsadan.toolinder",
   "Plots" => "com.annapo.plotfolio",
   "Retros" => "com.annapo.kpt",
   "Multis" => "com.annapo.taskfolio",
-  "FewCuts" => "com.annapo.fewcuts", 
+  "FewCuts" => "com.annapo.fewcuts"
 }
 
 # Tuist 워크스페이스 경로
@@ -105,7 +105,12 @@ platform :ios do
     generate
     
     # 코드 사이닝 (Tuist가 기본 서명을 처리하지만 배포용 인증서 필요)
-    match(type: "appstore", app_identifier: bundle_id, readonly: true, username: "mooyoung2309@gmail.com")
+    # Multis 앱의 경우 match 건너뛰기 (OpenSSL 암호화 문제로 인해)
+    unless bundle_id == "com.annapo.taskfolio"
+      match(type: "appstore", app_identifier: bundle_id, readonly: true, username: "mooyoung2309@gmail.com")
+    else
+      UI.message("Multis 앱은 자동 코드 사이닝을 사용합니다 (match 건너뛰기)")
+    end
 
     # 매크로 활성화를 위한 추가 설정 (build lane과 동일)
     ENV["ENABLE_USER_SCRIPT_SANDBOXING"] = "NO"
@@ -114,29 +119,54 @@ platform :ios do
     sh("mkdir -p ./build")
 
     # 빌드 & 업로드 (build lane에서 성공한 설정 적용)
-    gym(
-      workspace: "#{WORKSPACE_NAME}.xcworkspace",
-      scheme: app_name,
-      configuration: "Release",
-      export_method: "app-store",
-      clean: false,  # clean 비활성화로 빌드 실패 방지
-      destination: "generic/platform=iOS",  # build lane과 동일한 destination
-      skip_package_dependencies_resolution: true,  # 패키지 의존성 스킵
-      disable_package_automatic_updates: true,  # 자동 업데이트 비활성화
-      output_directory: "./build",  # 출력 디렉토리 명시적 설정
-      output_name: app_name,
-      xcargs: "-allowProvisioningUpdates -skipMacroValidation",  # build lane과 동일한 xcargs
-      export_options: {
-        method: "app-store",
-        provisioningProfiles: {
-          bundle_id => "match AppStore #{bundle_id}"
-        },
-        compileBitcode: false,  # Bitcode 비활성화 (호환성 문제 방지)
-        uploadBitcode: false,
-        uploadSymbols: true,
-        manageAppVersionAndBuildNumber: false  # 버전 관리 비활성화
-      }
-    )
+    if bundle_id == "com.annapo.taskfolio"
+      # Multis 앱의 경우 자동 코드 사이닝 사용
+      gym(
+        workspace: "#{WORKSPACE_NAME}.xcworkspace",
+        scheme: app_name,
+        configuration: "Release",
+        export_method: "app-store",
+        clean: false,
+        destination: "generic/platform=iOS",
+        skip_package_dependencies_resolution: true,
+        disable_package_automatic_updates: true,
+        output_directory: "./build",
+        output_name: app_name,
+        xcargs: "-allowProvisioningUpdates -skipMacroValidation",
+        export_options: {
+          method: "app-store",
+          compileBitcode: false,
+          uploadBitcode: false,
+          uploadSymbols: true,
+          manageAppVersionAndBuildNumber: false
+        }
+      )
+    else
+      # 다른 앱들은 기존 match 방식 사용
+      gym(
+        workspace: "#{WORKSPACE_NAME}.xcworkspace",
+        scheme: app_name,
+        configuration: "Release",
+        export_method: "app-store",
+        clean: false,
+        destination: "generic/platform=iOS",
+        skip_package_dependencies_resolution: true,
+        disable_package_automatic_updates: true,
+        output_directory: "./build",
+        output_name: app_name,
+        xcargs: "-allowProvisioningUpdates -skipMacroValidation",
+        export_options: {
+          method: "app-store",
+          provisioningProfiles: {
+            bundle_id => "match AppStore #{bundle_id}"
+          },
+          compileBitcode: false,
+          uploadBitcode: false,
+          uploadSymbols: true,
+          manageAppVersionAndBuildNumber: false
+        }
+      )
+    end
     
     upload_to_testflight(
       ipa: "./build/#{app_name}.ipa",

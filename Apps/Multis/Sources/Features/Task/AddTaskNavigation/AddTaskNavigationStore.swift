@@ -39,6 +39,7 @@ public struct AddTaskNavigationStore {
         case cancelButtonTapped
         case saveButtonTapped
         case addCategoryButtonTapped
+        case resetTimeButtonTapped
 
         case path(StackActionOf<Path>)
         
@@ -73,6 +74,10 @@ public struct AddTaskNavigationStore {
                 
             case .addCategoryButtonTapped:
                 state.path.append(.addCategory(AddCategoryStore.State()))
+                return .none
+                
+            case .resetTimeButtonTapped:
+                state.task.time = 0
                 return .none
                 
             case .path(.element(_, action: .addCategory(.delegate(.categorySaved(let category))))):

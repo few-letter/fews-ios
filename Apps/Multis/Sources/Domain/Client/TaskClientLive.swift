@@ -99,13 +99,13 @@ public class TaskClientLive: TaskClient {
         ].map { calendar.startOfDay(for: $0) }
         
         let dateDistribution = [
-            (targetDates[0], 5), // 5 tasks on today
-            (targetDates[1], 4), // 4 tasks on 2nd
-            (targetDates[2], 6), // 6 tasks on 5th
-            (targetDates[3], 3), // 3 tasks on 10th
-            (targetDates[4], 4), // 4 tasks on 15th
-            (targetDates[5], 2), // 2 tasks on 20th
-            (targetDates[6], 3)  // 3 tasks on 25th
+            (targetDates[0], 3), // 3 tasks on today
+            (targetDates[1], 2), // 2 tasks on 2nd
+            (targetDates[2], 3), // 3 tasks on 5th
+            (targetDates[3], 2), // 2 tasks on 10th
+            (targetDates[4], 2), // 2 tasks on 15th
+            (targetDates[5], 1), // 1 task on 20th
+            (targetDates[6], 2)  // 2 tasks on 25th
         ]
         
         var categoryIndex = 0

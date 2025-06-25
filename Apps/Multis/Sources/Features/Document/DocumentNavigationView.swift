@@ -121,9 +121,8 @@ extension DocumentNavigationView {
     
     private var sortedGroupKeys: [String] {
         return store.groupedTasks.keys.sorted { key1, key2 in
-            // "no category"를 맨 아래로
-            if key1 == "no category" { return false }
-            if key2 == "no category" { return true }
+            if key1 == "No Category" { return false }
+            if key2 == "No Category" { return true }
             return key1 < key2
         }
     }

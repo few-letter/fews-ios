@@ -42,23 +42,23 @@ public class CategoryClientLive: CategoryClient {
     private func generateMockCategories() -> [CategoryModel] {
         let categories = [
             CategoryModel(
-                title: "업무",
+                title: "Work",
                 color: "#FF6B6B"
             ),
             CategoryModel(
-                title: "개인",
+                title: "Personal",
                 color: "#4ECDC4"
             ),
             CategoryModel(
-                title: "학습",
+                title: "Learning",
                 color: "#45B7D1"
             ),
             CategoryModel(
-                title: "운동",
+                title: "Exercise",
                 color: "#96CEB4"
             ),
             CategoryModel(
-                title: "기타",
+                title: "Others",
                 color: "#FECA57"
             )
         ]

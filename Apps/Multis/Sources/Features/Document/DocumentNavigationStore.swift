@@ -73,6 +73,11 @@ public struct DocumentNavigationStore {
         case stopTimer(UUID)
         case timerTick(UUID, Int)
         
+        // 백그라운드 타이머 관련
+        case appWillEnterBackground
+        case appWillEnterForeground
+        case updateBackgroundTimers
+        
         case addTaskPresentation(AddTaskPresentationStore.Action)
         case path(StackActionOf<Path>)
     }
@@ -113,6 +118,7 @@ public struct DocumentNavigationStore {
             case .startTimer(let task):
                 let timerID = TaskTimerID(taskId: task.id, date: task.date)
                 state.runningTimerIds.append(timerID)
+                
                 return .run { send in
                     while true {
                         try await _Concurrency.Task.sleep(for: .milliseconds(100))
@@ -146,6 +152,46 @@ public struct DocumentNavigationStore {
                 }
                 return .none
                 
+            // 백그라운드 타이머 관련 액션들
+            case .appWillEnterBackground:
+                // 실행 중인 타이머들의 현재 시간을 기록
+                for timerID in state.runningTimerIds {
+                    UserDefaults.standard.set(Date().timeIntervalSince1970, forKey: "timer_background_\(timerID.taskId)")
+                }
+                return .none
+                
+            case .appWillEnterForeground:
+                return .send(.updateBackgroundTimers)
+                
+            case .updateBackgroundTimers:
+                var totalElapsedTime: [UUID: Int] = [:]
+                
+                // 백그라운드에서 경과된 시간 계산
+                for timerID in state.runningTimerIds {
+                    let key = "timer_background_\(timerID.taskId)"
+                    let backgroundStartTime = UserDefaults.standard.double(forKey: key)
+                    
+                    if backgroundStartTime > 0 {
+                        let elapsedSeconds = Date().timeIntervalSince1970 - backgroundStartTime
+                        let elapsedMilliseconds = Int(elapsedSeconds * 1000)
+                        totalElapsedTime[timerID.taskId] = elapsedMilliseconds
+                        
+                        // 저장된 백그라운드 시간 삭제
+                        UserDefaults.standard.removeObject(forKey: key)
+                    }
+                }
+                
+                // 계산된 시간을 태스크에 반영
+                for (taskId, elapsedTime) in totalElapsedTime {
+                    if let taskIndex = state.tasks.firstIndex(where: { $0.id == taskId }) {
+                        state.tasks[taskIndex].time += elapsedTime
+                        let task = state.tasks[taskIndex]
+                        let _ = taskClient.createOrUpdate(taskModel: task)
+                    }
+                }
+                
+                return .none
+                
             case .addTaskPresentation(.delegate(let action)):
                 switch action {
                 case .dismiss:
@@ -164,18 +210,7 @@ public struct DocumentNavigationStore {
     }
     
     private func groupTasksByCategory(tasks: [TaskModel]) -> [String: [TaskModel]] {
-        let grouped = Dictionary(grouping: tasks) { task in
-            task.category?.title ?? "no category"
-        }
-        
-        return grouped.mapValues { tasks in
-            tasks.sorted { lhs, rhs in
-                if lhs.time != rhs.time {
-                    return lhs.time > rhs.time
-                }
-                return lhs.date > rhs.date
-            }
-        }
+        return TaskModel.groupedByCategory(tasks)
     }
     
     private func filterTasksByPeriod(tasks: [TaskModel], period: DocumentPeriod) -> [TaskModel] {

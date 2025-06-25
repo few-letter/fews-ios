@@ -57,6 +57,11 @@ public struct CalendarNavigationStore {
         case stopTimer(UUID)
         case timerTick(UUID, Int)
         
+        // 백그라운드 타이머 관련
+        case appWillEnterBackground
+        case appWillEnterForeground
+        case updateBackgroundTimers
+        
         case addTaskPresentation(AddTaskPresentationStore.Action)
         case path(StackActionOf<Path>)
     }
@@ -83,7 +88,7 @@ public struct CalendarNavigationStore {
                 }
                 
                 for (date, tasksForDate) in groupedByDate {
-                    let sortedTasks = tasksForDate.sorted()
+                    let sortedTasks = TaskModel.sortedByCategoryAndTime(tasksForDate)
                     state.tasksByDate[date] = IdentifiedArrayOf(uniqueElements: sortedTasks)
                 }
                 
@@ -148,6 +153,48 @@ public struct CalendarNavigationStore {
                 if let task = state.tasksByDate[timerID.date]?[id: taskId] {
                     let _ = taskClient.createOrUpdate(taskModel: task)
                 }
+                return .none
+                
+            // 백그라운드 타이머 관련 액션들
+            case .appWillEnterBackground:
+                // 실행 중인 타이머들의 현재 시간을 기록
+                for timerID in state.runningTimerIds {
+                    UserDefaults.standard.set(Date().timeIntervalSince1970, forKey: "timer_background_\(timerID.taskId)")
+                }
+                return .none
+                
+            case .appWillEnterForeground:
+                return .send(.updateBackgroundTimers)
+                
+            case .updateBackgroundTimers:
+                var totalElapsedTime: [UUID: Int] = [:]
+                
+                // 백그라운드에서 경과된 시간 계산
+                for timerID in state.runningTimerIds {
+                    let key = "timer_background_\(timerID.taskId)"
+                    let backgroundStartTime = UserDefaults.standard.double(forKey: key)
+                    
+                    if backgroundStartTime > 0 {
+                        let elapsedSeconds = Date().timeIntervalSince1970 - backgroundStartTime
+                        let elapsedMilliseconds = Int(elapsedSeconds * 1000)
+                        totalElapsedTime[timerID.taskId] = elapsedMilliseconds
+                        
+                        // 저장된 백그라운드 시간 삭제
+                        UserDefaults.standard.removeObject(forKey: key)
+                    }
+                }
+                
+                // 계산된 시간을 태스크에 반영
+                for (taskId, elapsedTime) in totalElapsedTime {
+                    if let timerID = state.runningTimerIds.first(where: { $0.taskId == taskId }),
+                       let tasksForDate = state.tasksByDate[timerID.date] {
+                        state.tasksByDate[timerID.date]?[id: taskId]?.time += elapsedTime
+                        if let task = state.tasksByDate[timerID.date]?[id: taskId] {
+                            let _ = taskClient.createOrUpdate(taskModel: task)
+                        }
+                    }
+                }
+                
                 return .none
                 
             case .addTaskPresentation(.delegate(let action)):

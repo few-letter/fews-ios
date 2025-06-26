@@ -2,6 +2,8 @@ import SwiftUI
 import ComposableArchitecture
 import PhotosUI
 
+import CommonFeature
+
 public struct RootView: View {
     @Bindable var store: StoreOf<RootStore>
     
@@ -10,24 +12,65 @@ public struct RootView: View {
     }
     
     public var body: some View {
-        NavigationView {
-            VStack(spacing: 24) {
-                if let selectedImage = store.selectedImage {
-                    Image(uiImage: selectedImage)
-                        .resizable()
-                        .scaledToFit()
-                        .frame(maxHeight: 200)
-                        .cornerRadius(12)
-                        .padding(.horizontal)
+        NavigationStack(
+            path: $store.scope(state: \.path, action: \.path)
+        ) {
+            mainView
+                .onAppear {
+                    store.send(.onAppear)
                 }
-                
-                if !store.extractedText.isEmpty {
-                    VStack(alignment: .leading, spacing: 12) {
-                        Text("Extracted Text")
-                            .font(.headline)
+                .navigationTitle("Capts")
+                .toolbar {
+                    ToolbarItem(placement: .navigationBarTrailing) {
+                        Button(action: {
+                            store.send(.settingButtonTapped)
+                        }) {
+                            Image(systemName: "gearshape")
+                                .imageScale(.medium)
+                        }
+                    }
+                }
+                .sheet(item: $store.scope(state: \.cleaned, action: \.cleaned)) { store in
+                    CleanedView(store: store)
+                }
+        } destination: { store in
+            switch store.case {
+            case .settings(let store):
+                SettingsView(store: store)
+            }
+        }
+    }
+}
+
+extension RootView {
+    private var mainView: some View {
+        ZStack {
+            ScrollView {
+                VStack(spacing: 24) {
+                    if let selectedImage = store.selectedImage {
+                        Image(uiImage: selectedImage)
+                            .resizable()
+                            .scaledToFit()
+                            .frame(maxHeight: 200)
+                            .cornerRadius(12)
                             .padding(.horizontal)
-                        
-                        ScrollView {
+                    }
+                    
+                    if !store.extractedText.isEmpty {
+                        VStack(alignment: .leading, spacing: 12) {
+                            HStack {
+                                Text("Extracted Text")
+                                    .font(.headline)
+                                
+                                Spacer()
+                                
+                                Button("Copy") {
+                                    UIPasteboard.general.string = store.extractedText
+                                }
+                                .font(.caption)
+                                .foregroundColor(.blue)
+                            }
+                            
                             Text(store.extractedText)
                                 .padding()
                                 .frame(maxWidth: .infinity, alignment: .leading)
@@ -35,14 +78,16 @@ public struct RootView: View {
                                 .cornerRadius(8)
                                 .textSelection(.enabled)
                         }
-                        .frame(maxHeight: 400)
                         .padding(.horizontal)
                     }
                 }
-                
+                .padding(.bottom, 120)
+            }
+            
+            VStack {
                 Spacer()
                 
-                VStack(spacing: 16) {
+                HStack(spacing: 16) {
                     PhotosPicker(
                         selection: $store.selectedItems,
                         maxSelectionCount: 1,
@@ -65,11 +110,8 @@ public struct RootView: View {
                     .disabled(store.extractedText.isEmpty || store.isLoading)
                 }
                 .padding(.horizontal)
-                .padding(.bottom, 32)
-            }
-            .navigationTitle("Capts")
-            .sheet(item: $store.scope(state: \.cleaned, action: \.cleaned)) { store in
-                CleanedView(store: store)
+                .padding(.vertical, 10)
+                .background(Color(UIColor.systemBackground))
             }
         }
     }

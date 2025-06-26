@@ -3,8 +3,15 @@ import ComposableArchitecture
 import PhotosUI
 import UIKit
 
+import CommonFeature
+
 @Reducer
 public struct RootStore {
+    @Reducer
+    public enum Path {
+        case settings(SettingsStore)
+    }
+    
     @ObservableState
     public struct State {
         public var selectedImage: UIImage?
@@ -12,6 +19,7 @@ public struct RootStore {
         public var isLoading: Bool = false
         public var selectedItems: [PhotosPickerItem] = []
         
+        public var path: StackState<Path.State> = .init()
         @Presents public var cleaned: CleanedStore.State? = nil
         
         public init() {}
@@ -19,20 +27,28 @@ public struct RootStore {
     
     public enum Action: BindableAction {
         case binding(BindingAction<State>)
+        
+        case onAppear
+        
+        case settingButtonTapped
+        
         case imageLoaded(UIImage)
         case textExtracted(String)
         case startCleaning
+        
+        case path(StackActionOf<Path>)
         case cleaned(PresentationAction<CleanedStore.Action>)
     }
     
     @Dependency(\.imageToTextClient) var imageToTextClient
+    @Dependency(\.adClient) var adClient
     
     public var body: some ReducerOf<Self> {
         BindingReducer()
         
         Reduce<State, Action> { state, action in
             switch action {
-            case .binding(\.$selectedItems):
+            case .binding(\.selectedItems):
                 guard let firstItem = state.selectedItems.first else { return .none }
                 
                 state.extractedText = ""
@@ -47,6 +63,16 @@ public struct RootStore {
                 
             case .binding:
                 return .none
+                
+            case .onAppear:
+                return .run { _ in
+                    await adClient.showOpeningAd(customAdUnitID: nil)
+                }
+                
+            case .settingButtonTapped:
+                state.path.append(.settings(.init()))
+                return .none
+                
                 
             case .imageLoaded(let image):
                 state.selectedImage = image
@@ -72,12 +98,13 @@ public struct RootStore {
                 state.cleaned = nil
                 return .none
                 
-            case .cleaned:
+            case .cleaned, .path:
                 return .none
             }
         }
         .ifLet(\.$cleaned, action: \.cleaned) {
             CleanedStore()
         }
+        .forEach(\.path, action: \.path)
     }
 }

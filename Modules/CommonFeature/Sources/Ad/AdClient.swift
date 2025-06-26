@@ -171,7 +171,7 @@ public class AdClientLive: NSObject, AdClient {
     // MARK: - Premium Management
     
     private func activatePremiumByReward() {
-        let expirationDate = Calendar.current.date(byAdding: .month, value: 1, to: Date()) ?? Date()
+        let expirationDate = Calendar.current.date(byAdding: .day, value: 7, to: Date()) ?? Date()
         userDefaults.set(expirationDate, forKey: Keys.premiumExpirationDate)
     }
     

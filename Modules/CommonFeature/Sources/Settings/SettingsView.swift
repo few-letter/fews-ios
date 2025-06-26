@@ -49,7 +49,7 @@ public struct SettingsView: View {
                                         Text("Extend ad-free period")
                                             .font(.subheadline)
                                             .foregroundColor(.primary)
-                                        Text("Watch another ad to refresh 30 days period")
+                                        Text("Watch another ad to refresh 7 days period")
                                             .font(.caption)
                                             .foregroundColor(.secondary)
                                     }
@@ -70,10 +70,10 @@ public struct SettingsView: View {
                                 Image(systemName: "play.tv")
                                     .foregroundColor(.blue)
                                 VStack(alignment: .leading, spacing: 2) {
-                                    Text("Remove ads for 30 days")
+                                    Text("Remove ads for 7 days")
                                         .font(.headline)
                                         .foregroundColor(.primary)
-                                    Text("Watch a rewarded ad to remove ads for a month")
+                                    Text("Watch a rewarded ad to remove ads for a week")
                                         .font(.caption)
                                         .foregroundColor(.secondary)
                                 }

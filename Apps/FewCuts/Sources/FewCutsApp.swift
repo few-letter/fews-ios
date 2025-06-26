@@ -6,7 +6,7 @@ import SwiftData
 struct FewCutsApp: App {
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            AIView()
         }
         .modelContainer(for: [
             

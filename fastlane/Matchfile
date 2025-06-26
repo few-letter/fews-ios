@@ -9,5 +9,6 @@ app_identifier([
   "com.annapo.fewcuts",      # FewCuts  
   "com.annapo.kpt",          # FewRetros
   "com.annapo.taskfolio",    # Multis
+  "com.annapo.capts",        # Capts
   "com.tamsadan.toolinder"   # Toff
 ])

@@ -142,8 +142,8 @@ extension DragManager {
             // 현재 위치에 있는 아이템 찾기
             if let currentItem = items.reversed().first(where: { $0.rect.contains(loc) }) {
                 // 더블 탭 조건 확인
-                if timeDifference < doubleTapTimeThreshold &&
-                   locationDistance < doubleTapDistanceThreshold &&
+                if timeDifference < doubleTapTimeThreshold,
+                   locationDistance < doubleTapDistanceThreshold,
                    let lastItem = lastTappedItem,
                    lastItem.id.id == currentItem.id.id {
                     

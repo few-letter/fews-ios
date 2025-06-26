@@ -8,6 +8,7 @@ let workspace = Workspace(
         "Apps/Retros",
         "Apps/Multis",
         "Apps/FewCuts",
+        "Apps/Capts",
         "Modules/CommonFeature",
         "Modules/DS"
     ]

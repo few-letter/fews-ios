@@ -6,7 +6,8 @@ APPS = {
   "Plots" => "com.annapo.plotfolio",
   "Retros" => "com.annapo.kpt",
   "Multis" => "com.annapo.taskfolio",
-  "FewCuts" => "com.annapo.fewcuts"
+  "Capts" => "com.annapo.capts",
+  "FewCuts" => "com.annapo.fewcuts",
 }
 
 # Tuist 워크스페이스 경로

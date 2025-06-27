@@ -11,8 +11,6 @@ public class AppDelegate: NSObject, UIApplicationDelegate {
                             didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil) -> Bool {
         FirebaseApp.configure()
         MobileAds.shared.start()
-        Mixpanel.initialize(token: .MIXPANEL_TOKEN, trackAutomaticEvents: true)
-        Mixpanel.mainInstance().people.set(properties: [ "app":"Toffs" ])
         return true
     }
 }

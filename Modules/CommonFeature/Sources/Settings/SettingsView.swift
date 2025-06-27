@@ -9,7 +9,7 @@ import SwiftUI
 import ComposableArchitecture
 
 public struct SettingsView: View {
-    public let store: StoreOf<SettingsStore>
+    @Bindable var store: StoreOf<SettingsStore>
     
     public init(store: StoreOf<SettingsStore>) {
         self.store = store
@@ -145,5 +145,6 @@ public struct SettingsView: View {
         .onAppear {
             store.send(.onAppear)
         }
+        .alert($store.scope(state: \.alert, action: \.alert))
     }
 }

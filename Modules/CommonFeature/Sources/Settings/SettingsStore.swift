@@ -16,16 +16,26 @@ public struct SettingsStore {
         public var remainingDays: Int = 0
         public var expirationDate: Date?
         public var selectedGameType: GameType? = nil
+        @Presents public var alert: AlertState<Action.Alert>?
         
         public init() {}
     }
     
-    public enum Action {
+    public enum Action: BindableAction {
+        case binding(BindingAction<State>)
+        
         case onAppear
         case watchPremiumAd
         case updatePremiumStatus
         case showGame(GameType)
         case hideGame
+        case alert(PresentationAction<Alert>)
+        
+        @CasePathable
+        public enum Alert: Equatable {
+            case error
+            case retry
+        }
     }
     
     @Dependency(\.adClient) var adClient
@@ -33,6 +43,8 @@ public struct SettingsStore {
     public init() {}
     
     public var body: some ReducerOf<Self> {
+        BindingReducer()
+        
         Reduce { state, action in
             switch action {
             case .onAppear:
@@ -40,8 +52,10 @@ public struct SettingsStore {
                 
             case .watchPremiumAd:
                 return .run { send in
-                    await adClient.showRewardedAd(customAdUnitID: nil)
+                    try await adClient.showRewardedAd(customAdUnitID: nil)
                     await send(.updatePremiumStatus)
+                } catch: { error, send in
+                    await send(.alert(.presented(.error)))
                 }
                 
             case .updatePremiumStatus:
@@ -67,7 +81,29 @@ public struct SettingsStore {
             case .hideGame:
                 state.selectedGameType = nil
                 return .none
+                
+            case .alert(.presented(.error)):
+                state.alert = AlertState(
+                    title: { TextState("Failed to Watch Ad") },
+                    actions: {
+                        ButtonState(action: .send(.none)) {
+                            TextState("OK")
+                        }
+                        ButtonState(action: .send(.retry)) {
+                            TextState("Retry")
+                        }
+                    },
+                    message: { TextState("There was a problem watching the ad.\nPlease check your network connection and try again.") }
+                )
+                return .none
+                
+            case .alert(.presented(.retry)):
+                return .send(.watchPremiumAd)
+                
+            case .alert, .binding:
+                return .none
             }
         }
+        .ifLet(\.$alert, action: \.alert)
     }
 }

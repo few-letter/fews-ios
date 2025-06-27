@@ -9,9 +9,7 @@ import ProjectDescription
 
 let project = Project(
     name: "Capts",
-    packages: [
-        .package(url: "https://github.com/ml-explore/mlx-swift", .upToNextMajor(from: "0.25.5")),
-    ],
+    packages: [],
     targets: [
         .target(
             name: "Capts",
@@ -26,8 +24,6 @@ let project = Project(
             ],
             entitlements: "Resources/Capts.entitlements",
             dependencies: [
-                .package(product: "MLX"),
-                .package(product: "MLXNN"),
                 .project(target: "CommonFeature", path: "../../Modules/CommonFeature"),
                 .sdk(name: "JavaScriptCore", type: .framework)
             ],

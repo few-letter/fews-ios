@@ -12,8 +12,8 @@ import ComposableArchitecture
 // MARK: - AdClient Protocol
 
 public protocol AdClient {
-    func showOpeningAd(customAdUnitID: String?) async
-    func showRewardedAd(customAdUnitID: String?) async
+    func showOpeningAd(customAdUnitID: String?) async -> Void
+    func showRewardedAd(customAdUnitID: String?) async throws -> Void
     func getPremiumExpirationDate() -> Date?
 }
 
@@ -70,12 +70,12 @@ public class AdClientLive: NSObject, AdClient {
     }
     
     @MainActor
-    public func showRewardedAd(customAdUnitID: String?) async {
+    public func showRewardedAd(customAdUnitID: String?) async throws {
         guard !rewardedAdIsShowing else { return }
         
         let adUnitID: String = customAdUnitID ?? .ADMOB_REWARD_AD_ID
         
-        await loadRewardedAd(adUnitID: adUnitID)
+        try await loadRewardedAd(adUnitID: adUnitID)
         await presentRewardedAd()
     }
     
@@ -132,28 +132,14 @@ public class AdClientLive: NSObject, AdClient {
     
     // MARK: - Private Rewarded Ad Methods (수정됨)
     
-    private func loadRewardedAd(adUnitID: String) async {
+    private func loadRewardedAd(adUnitID: String) async throws {
         guard !rewardedAdIsLoading else { return }
-        
         rewardedAdIsLoading = true
-        
-        do {
-            // RewardedInterstitialAd → RewardedAd로 변경
-            rewardedAd = try await RewardedAd.load(
-                with: adUnitID,
-                request: Request()  // Request() → GADRequest()로 변경
-            )
-            rewardedAd?.fullScreenContentDelegate = self
-            print("✅ Rewarded ad loaded successfully")
-        } catch {
-            print("❌ Failed to load rewarded ad: \(error.localizedDescription)")
-            
-            if let gadError = error as? RequestError {
-                print("GAD Error code: \(gadError.code)")
-                print("GAD Error description: \(gadError.localizedDescription)")
-            }
-        }
-        
+        rewardedAd = try await RewardedAd.load(
+            with: adUnitID,
+            request: Request()
+        )
+        rewardedAd?.fullScreenContentDelegate = self
         rewardedAdIsLoading = false
     }
     

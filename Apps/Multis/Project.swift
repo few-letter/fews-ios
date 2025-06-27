@@ -9,9 +9,7 @@ import ProjectDescription
 
 let project = Project(
     name: "Multis",
-    packages: [
-        .package(url: "https://github.com/mixpanel/mixpanel-swift", .upToNextMajor(from: "5.1.0"))
-    ],
+    packages: [],
     targets: [
         .target(
             name: "Multis",
@@ -26,7 +24,6 @@ let project = Project(
             ],
             entitlements: "Resources/Multis.entitlements",
             dependencies: [
-                .package(product: "Mixpanel"),
                 .project(target: "DS", path: "../../Modules/DS"),
                 .project(target: "CommonFeature", path: "../../Modules/CommonFeature"),
                 .sdk(name: "JavaScriptCore", type: .framework)

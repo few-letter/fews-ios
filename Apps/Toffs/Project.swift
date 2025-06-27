@@ -2,12 +2,7 @@ import ProjectDescription
 
 let project = Project(
     name: "Toffs",
-    packages: [
-        .package(url: "https://github.com/firebase/firebase-ios-sdk.git", .upToNextMajor(from: "10.0.0")),
-        .package(url: "https://github.com/pointfreeco/swift-composable-architecture", .upToNextMajor(from: "1.20.0")),
-        .package(url: "https://github.com/googleads/swift-package-manager-google-mobile-ads.git", .upToNextMajor(from: "12.6.0")),
-        .package(url: "https://github.com/mixpanel/mixpanel-swift", .upToNextMajor(from: "5.1.0"))
-    ],
+    packages: [],
     targets: [
         .target(
             name: "Toffs",
@@ -23,7 +18,6 @@ let project = Project(
             ],
             entitlements: "Resources/Toff.entitlements",
             dependencies: [
-                .package(product: "Mixpanel"),
                 .project(target: "DS", path: "../../Modules/DS"),
                 .project(target: "CommonFeature", path: "../../Modules/CommonFeature"),
                 .sdk(name: "JavaScriptCore", type: .framework)

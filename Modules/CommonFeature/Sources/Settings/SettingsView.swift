@@ -7,6 +7,7 @@
 
 import SwiftUI
 import ComposableArchitecture
+import StoreKit
 
 public struct SettingsView: View {
     @Bindable var store: StoreOf<SettingsStore>
@@ -126,35 +127,35 @@ public struct SettingsView: View {
                         title: "Toffs - Trading Log",
                         description: "Transform your investment data into the most intuitive 'calendar'",
                         logoName: "ToffsLogo",
-                        url: "https://apps.apple.com/kr/app/toffs-%EB%A7%A4%EB%A7%A4%EC%9D%BC%EC%A7%80/id1619745259"
+                        appID: "1619745259"
                     )
                     
                     AppStoreLink(
                         title: "Plots - Reading Log",
                         description: "Record what you've 'read and watched' in the simplest way",
                         logoName: "PlotsLogo",
-                        url: "https://apps.apple.com/kr/app/plots-%EB%8F%85%EC%84%9C-%EA%B8%B0%EB%A1%9D/id6449458459"
+                        appID: "6449458459"
                     )
                     
                     AppStoreLink(
                         title: "Retros - Reflection Diary",
                         description: "Experience continuous growth with systematic reflection",
                         logoName: "RetrosLogo",
-                        url: "https://apps.apple.com/kr/app/retros-%ED%9A%8C%EA%B3%A0-%EC%9D%BC%EA%B8%B0/id6479611984"
+                        appID: "6479611984"
                     )
                     
                     AppStoreLink(
                         title: "Multis - Todo Timer",
                         description: "Manage multiple tasks simultaneously with multi-timers",
                         logoName: "MultisLogo",
-                        url: "https://apps.apple.com/kr/app/multis-%ED%88%AC%EB%91%90-%ED%83%80%EC%9D%B4%EB%A8%B8/id6449679061"
+                        appID: "6449679061"
                     )
                     
                     AppStoreLink(
                         title: "Capts - Photo Text Extractor",
                         description: "Extract all text from photos at once with AI precision",
                         logoName: "CaptsLogo",
-                        url: "https://apps.apple.com/kr/app/capts-%EC%82%AC%EC%A7%84-%ED%85%8D%EC%8A%A4%ED%8A%B8-%EB%B3%80%ED%99%98%EA%B8%B0/id6463266155"
+                        appID: "6463266155"
                     )
                 } header: {
                     Text("Other Apps")
@@ -192,10 +193,12 @@ struct AppStoreLink: View {
     let title: String
     let description: String
     let logoName: String
-    let url: String
+    let appID: String
     
     var body: some View {
-        Link(destination: URL(string: url)!) {
+        Button(action: {
+            presentAppStore()
+        }) {
             HStack(spacing: 12) {
                 Image(logoName, bundle: .module)
                     .resizable()
@@ -227,5 +230,33 @@ struct AppStoreLink: View {
             .padding(.vertical, 2)
         }
         .buttonStyle(PlainButtonStyle())
+    }
+    
+    private func presentAppStore() {
+        guard let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+              let rootViewController = windowScene.windows.first?.rootViewController else {
+            return
+        }
+        
+        let storeViewController = SKStoreProductViewController()
+        storeViewController.delegate = AppStoreDelegate.shared
+        
+        let parameters = [SKStoreProductParameterITunesItemIdentifier: appID]
+        storeViewController.loadProduct(withParameters: parameters) { result, error in
+            if result {
+                DispatchQueue.main.async {
+                    rootViewController.present(storeViewController, animated: true)
+                }
+            }
+        }
+    }
+}
+
+// Shared delegate for SKStoreProductViewController
+class AppStoreDelegate: NSObject, SKStoreProductViewControllerDelegate {
+    static let shared = AppStoreDelegate()
+    
+    func productViewControllerDidFinish(_ viewController: SKStoreProductViewController) {
+        viewController.dismiss(animated: true)
     }
 }

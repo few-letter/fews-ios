@@ -2,6 +2,8 @@
 
 > **Few** apps in **one** repository - iOS 앱 개발 모노레포
 
+**Scalable iOS monorepo solution enabling efficient multi-app management through shared architecture, automated localization, and unified deployment pipeline.**
+
 ## 📱 앱 목록
 
 |                                                            앱 아이콘                                                             |            앱 이름             |         부제목         |                                                                App Store                                                                |
@@ -83,7 +85,8 @@ fews-ios/
 - 📊 **일관성 보장**: 모든 앱에 동일한 품질 기준과 톤앤매너 적용
 - ⚡ **원클릭 배포**: 번역부터 앱스토어 업로드까지 완전 자동화
 
-> 📋 **상세 자동화 가이드**: [metadata_appstore_translate_ko_to_other.mdc](cursor_rules_context)에서 확인
+> 📋 **현지화 자동화**: [20개국 번역 및 키워드 최적화 규칙](./.cursor/rules/metadata_appstore_translate_ko_to_other.mdc)  
+> 🔍 **품질 검증**: [App Store 메타데이터 글자수 제한 및 무결성 검증](./.cursor/rules/metadata_appstore_check_number_of_character.mdc)
 
 ## 🚀 자동화된 빌드 & 배포
 

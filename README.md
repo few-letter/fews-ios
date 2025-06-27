@@ -4,13 +4,13 @@
 
 ## 📱 앱 목록
 
-|                                                            앱 아이콘                                                             |            앱 이름             |         부제목         |                   App Store                   |
-| :------------------------------------------------------------------------------------------------------------------------------: | :----------------------------: | :--------------------: | :-------------------------------------------: |
-| <img src="Apps/Toffs/Resources/Assets.xcassets/AppIcon.appiconset/512.png" width="60" height="60" style="border-radius: 12px;">  |      **Toffs - 매매일지**      |      투자 관리 앱      | [다운로드](https://apps.apple.com/app/toffs)  |
-| <img src="Apps/Plots/Resources/Assets.xcassets/AppIcon.appiconset/512.png" width="60" height="60" style="border-radius: 12px;">  |     **Plots - 독서 기록**      |  책, 영화, 문화 기록   | [다운로드](https://apps.apple.com/app/plots)  |
-| <img src="Apps/Retros/Resources/Assets.xcassets/AppIcon.appiconset/512.png" width="60" height="60" style="border-radius: 12px;"> |     **Retros - 회고 일기**     | KPT로 체계적 성장 관리 | [다운로드](https://apps.apple.com/app/retros) |
-| <img src="Apps/Multis/Resources/Assets.xcassets/AppIcon.appiconset/512.png" width="60" height="60" style="border-radius: 12px;"> |    **Multis - 투두 타이머**    |   멀티 타이머 생산성   | [다운로드](https://apps.apple.com/app/multis) |
-| <img src="Apps/Capts/Resources/Assets.xcassets/AppIcon.appiconset/512.png" width="60" height="60" style="border-radius: 12px;">  | **Capts - 사진 텍스트 변환기** |     AI 스마트 OCR      | [다운로드](https://apps.apple.com/app/capts)  |
+|                                                            앱 아이콘                                                             |            앱 이름             |         부제목         |                                                                App Store                                                                |
+| :------------------------------------------------------------------------------------------------------------------------------: | :----------------------------: | :--------------------: | :-------------------------------------------------------------------------------------------------------------------------------------: |
+| <img src="Apps/Toffs/Resources/Assets.xcassets/AppIcon.appiconset/512.png" width="60" height="60" style="border-radius: 12px;">  |      **Toffs - 매매일지**      |      투자 관리 앱      |                    [다운로드](https://apps.apple.com/kr/app/toffs-%EB%A7%A4%EB%A7%A4%EC%9D%BC%EC%A7%80/id1619745259)                    |
+| <img src="Apps/Plots/Resources/Assets.xcassets/AppIcon.appiconset/512.png" width="60" height="60" style="border-radius: 12px;">  |     **Plots - 독서 기록**      |  책, 영화, 문화 기록   |                   [다운로드](https://apps.apple.com/kr/app/plots-%EB%8F%85%EC%84%9C-%EA%B8%B0%EB%A1%9D/id6449458459)                    |
+| <img src="Apps/Retros/Resources/Assets.xcassets/AppIcon.appiconset/512.png" width="60" height="60" style="border-radius: 12px;"> |     **Retros - 회고 일기**     | KPT로 체계적 성장 관리 |                   [다운로드](https://apps.apple.com/kr/app/retros-%ED%9A%8C%EA%B3%A0-%EC%9D%BC%EA%B8%B0/id6479611984)                   |
+| <img src="Apps/Multis/Resources/Assets.xcassets/AppIcon.appiconset/512.png" width="60" height="60" style="border-radius: 12px;"> |    **Multis - 투두 타이머**    |   멀티 타이머 생산성   |              [다운로드](https://apps.apple.com/kr/app/multis-%ED%88%AC%EB%91%90-%ED%83%80%EC%9D%B4%EB%A8%B8/id6449679061)               |
+| <img src="Apps/Capts/Resources/Assets.xcassets/AppIcon.appiconset/512.png" width="60" height="60" style="border-radius: 12px;">  | **Capts - 사진 텍스트 변환기** |     AI 스마트 OCR      | [다운로드](https://apps.apple.com/kr/app/capts-%EC%82%AC%EC%A7%84-%ED%85%8D%EC%8A%A4%ED%8A%B8-%EB%B3%80%ED%99%98%EA%B8%B0/id6463266155) |
 
 ## 🏗️ 모노레포 아키텍처
 

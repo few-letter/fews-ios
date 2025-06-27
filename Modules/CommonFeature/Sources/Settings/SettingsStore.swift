@@ -52,7 +52,7 @@ public struct SettingsStore {
                 
             case .watchPremiumAd:
                 return .run { send in
-                    try await adClient.showRewardedAd(customAdUnitID: nil)
+                    try await adClient.showRewardedAd(appID: nil)
                     await send(.updatePremiumStatus)
                 } catch: { error, send in
                     await send(.alert(.presented(.error)))

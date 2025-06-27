@@ -122,6 +122,45 @@ public struct SettingsView: View {
                 }
                 
                 Section {
+                    AppStoreLink(
+                        title: "Toffs - Trading Log",
+                        description: "Transform your investment data into the most intuitive 'calendar'",
+                        logoName: "ToffsLogo",
+                        url: "https://apps.apple.com/kr/app/toffs-%EB%A7%A4%EB%A7%A4%EC%9D%BC%EC%A7%80/id1619745259"
+                    )
+                    
+                    AppStoreLink(
+                        title: "Plots - Reading Log",
+                        description: "Record what you've 'read and watched' in the simplest way",
+                        logoName: "PlotsLogo",
+                        url: "https://apps.apple.com/kr/app/plots-%EB%8F%85%EC%84%9C-%EA%B8%B0%EB%A1%9D/id6449458459"
+                    )
+                    
+                    AppStoreLink(
+                        title: "Retros - Reflection Diary",
+                        description: "Experience continuous growth with systematic reflection",
+                        logoName: "RetrosLogo",
+                        url: "https://apps.apple.com/kr/app/retros-%ED%9A%8C%EA%B3%A0-%EC%9D%BC%EA%B8%B0/id6479611984"
+                    )
+                    
+                    AppStoreLink(
+                        title: "Multis - Todo Timer",
+                        description: "Manage multiple tasks simultaneously with multi-timers",
+                        logoName: "MultisLogo",
+                        url: "https://apps.apple.com/kr/app/multis-%ED%88%AC%EB%91%90-%ED%83%80%EC%9D%B4%EB%A8%B8/id6449679061"
+                    )
+                    
+                    AppStoreLink(
+                        title: "Capts - Photo Text Extractor",
+                        description: "Extract all text from photos at once with AI precision",
+                        logoName: "CaptsLogo",
+                        url: "https://apps.apple.com/kr/app/capts-%EC%82%AC%EC%A7%84-%ED%85%8D%EC%8A%A4%ED%8A%B8-%EB%B3%80%ED%99%98%EA%B8%B0/id6463266155"
+                    )
+                } header: {
+                    Text("Other Apps")
+                }
+                
+                Section {
                     Link("Contact", destination: .init(string: "https://discord.gg/BE7qTGBFcB")!)
                 } header: {
                     Text("Support")
@@ -146,5 +185,47 @@ public struct SettingsView: View {
             store.send(.onAppear)
         }
         .alert($store.scope(state: \.alert, action: \.alert))
+    }
+}
+
+struct AppStoreLink: View {
+    let title: String
+    let description: String
+    let logoName: String
+    let url: String
+    
+    var body: some View {
+        Link(destination: URL(string: url)!) {
+            HStack(spacing: 12) {
+                Image(logoName, bundle: .module)
+                    .resizable()
+                    .aspectRatio(contentMode: .fit)
+                    .frame(width: 40, height: 40)
+                    .clipShape(RoundedRectangle(cornerRadius: 8))
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 8)
+                            .stroke(Color.secondary.opacity(0.2), lineWidth: 0.5)
+                    )
+                
+                VStack(alignment: .leading, spacing: 2) {
+                    Text(title)
+                        .font(.headline)
+                        .foregroundColor(.primary)
+                        .lineLimit(1)
+                    Text(description)
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                        .lineLimit(2)
+                }
+                
+                Spacer()
+                
+                Image(systemName: "arrow.up.forward.app")
+                    .foregroundColor(.secondary)
+                    .font(.caption)
+            }
+            .padding(.vertical, 2)
+        }
+        .buttonStyle(PlainButtonStyle())
     }
 }

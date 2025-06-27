@@ -17,7 +17,9 @@ let project = Project(
             deploymentTargets: .iOS("18.0"),
             infoPlist: .default,
             sources: ["Sources/**"],
-            resources: [],
+            resources: [
+                .glob(pattern: "Resources/Assets.xcassets/**"),
+            ],
             dependencies: [
                 .package(product: "Mixpanel"),
                 .package(product: "FirebaseAnalytics"),

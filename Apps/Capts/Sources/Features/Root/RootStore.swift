@@ -30,7 +30,7 @@ public struct RootStore {
             case .onAppear:
                 return .run { _ in
                     await mixpanelClient.start()
-                    await adClient.showOpeningAd(customAdUnitID: nil)
+                    await adClient.showOpeningAd(appID: nil)
                 }
             case .mainTab:
                 return .none

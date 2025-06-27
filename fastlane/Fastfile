@@ -48,85 +48,197 @@ platform :ios do
     UI.message("앱을 선택하세요:")
     app_names.each_with_index { |name, i| UI.message("#{i+1}. #{name}") }
     
-    choice = UI.input("번호 선택 (1-#{app_names.length}): ").to_i
-    unless (1..app_names.length).include?(choice)
-      UI.error("잘못된 선택입니다")
+    choices_input = UI.input("번호 선택 (여러개는 콤마로 구분, 예: 1,3,5): ")
+    choices = choices_input.split(',').map(&:strip).map(&:to_i)
+    
+    # 입력값 검증
+    invalid_choices = choices.reject { |choice| (1..app_names.length).include?(choice) }
+    unless invalid_choices.empty?
+      UI.error("잘못된 선택입니다: #{invalid_choices.join(', ')}")
       next
     end
     
-    app_name = app_names[choice-1]
-    bundle_id = APPS[app_name]
-    UI.success("선택된 앱: #{app_name}")
-
-    plist_path = "Apps/#{app_name}/Resources/Info.plist"
+    selected_apps = choices.map { |choice| app_names[choice-1] }
+    UI.success("선택된 앱들: #{selected_apps.join(', ')}")
     
-    UI.message("📁 현재 작업 디렉토리: #{Dir.pwd}")
-    UI.message("📄 Info.plist 경로: #{plist_path}")
+    # 1단계: 모든 앱의 버전 정보를 미리 입력받기
+    UI.header("📝 1단계: 버전 정보 입력")
+    app_versions = {}
     
-    if !File.exist?(plist_path)
-      alternative_paths = [
-        "../Apps/#{app_name}/Resources/Info.plist",
-        "#{app_name}/Resources/Info.plist",
-        "../#{app_name}/Resources/Info.plist"
-      ]
+    selected_apps.each do |app_name|
+      plist_path = "Apps/#{app_name}/Resources/Info.plist"
       
-      alternative_paths.each do |alt_path|
-        if File.exist?(alt_path)
-          plist_path = File.expand_path(alt_path)
-          UI.message("✅ 대안 경로에서 파일 발견: #{plist_path}")
-          break
+      # plist 파일 경로 찾기
+      if !File.exist?(plist_path)
+        alternative_paths = [
+          "../Apps/#{app_name}/Resources/Info.plist",
+          "#{app_name}/Resources/Info.plist",
+          "../#{app_name}/Resources/Info.plist"
+        ]
+        
+        alternative_paths.each do |alt_path|
+          if File.exist?(alt_path)
+            plist_path = File.expand_path(alt_path)
+            break
+          end
         end
+      end
+      
+      if File.exist?(plist_path)
+        current_version = get_info_plist_value(path: plist_path, key: "CFBundleShortVersionString")
+        UI.message("#{app_name} 현재 버전: #{current_version}")
+        
+        version = UI.input("#{app_name}의 새 버전 (현재값 유지하려면 엔터): ")
+        build = Time.now.strftime("%Y%m%d%H%M%S")
+        
+        app_versions[app_name] = {
+          plist_path: plist_path,
+          version: version.empty? ? current_version : version,
+          build: build
+        }
+      else
+        UI.error("#{app_name}의 Info.plist 파일을 찾을 수 없습니다!")
+        app_versions[app_name] = nil
       end
     end
     
-    unless File.exist?(plist_path)
-      UI.error("Info.plist 파일을 찾을 수 없습니다!")
+    # 입력받은 버전 정보 확인
+    UI.header("📋 입력된 버전 정보 확인")
+    app_versions.each do |app_name, info|
+      if info
+        UI.message("#{app_name}: 버전 #{info[:version]}, 빌드 #{info[:build]}")
+      else
+        UI.error("#{app_name}: 설정 불가 (Info.plist 파일 없음)")
+      end
+    end
+    
+    confirmation = UI.confirm("위 정보로 빌드를 시작하시겠습니까?")
+    unless confirmation
+      UI.message("빌드가 취소되었습니다.")
       next
     end
     
-    current_version = get_info_plist_value(path: plist_path, key: "CFBundleShortVersionString")
-    UI.message("현재 버전: #{current_version}")
+    # 2단계: 각 앱을 순차적으로 메타데이터 업로드 + 빌드/업로드
+    UI.header("🚀 2단계: 메타데이터 업로드 및 빌드/업로드")
+    failed_metadata_apps = []
+    failed_build_apps = []
+    successful_apps = []
     
-    version = UI.input("새 버전 (현재값 유지하려면 엔터): ")
+    selected_apps.each_with_index do |app_name, index|
+      UI.header("📱 #{index + 1}/#{selected_apps.length}: #{app_name} 처리 중...")
+      
+      version_info = app_versions[app_name]
+      unless version_info
+        UI.error("❌ #{app_name}: Info.plist 파일을 찾을 수 없어 건너뜁니다.")
+        failed_build_apps << app_name
+        next
+      end
+      
+      bundle_id = APPS[app_name]
+      metadata_success = false
+      build_success = false
+      
+      # 2-1. 메타데이터 업로드
+      UI.message("📝 #{app_name} 메타데이터 업로드 중...")
+      begin
+        upload_to_app_store(
+          app_identifier: bundle_id,
+          skip_binary_upload: true,
+          skip_screenshots: true,
+          force: true,
+          metadata_path: "./fastlane/metadata/#{app_name}"
+        )
+        metadata_success = true
+        UI.success("✅ #{app_name} 메타데이터 업로드 완료")
+      rescue => error
+        failed_metadata_apps << app_name
+        UI.error("❌ #{app_name} 메타데이터 업로드 실패: #{error.message}")
+        UI.message("빌드는 계속 진행합니다...")
+      end
+      
+      # 2-2. 빌드 및 바이너리 업로드
+      UI.message("🔨 #{app_name} 빌드 및 바이너리 업로드 중...")
+      begin
+        UI.message("📁 현재 작업 디렉토리: #{Dir.pwd}")
+        UI.message("📄 Info.plist 경로: #{version_info[:plist_path]}")
+        UI.message("🔢 설정할 버전: #{version_info[:version]}, 빌드: #{version_info[:build]}")
+        
+        # 버전 정보 설정
+        set_info_plist_value(path: version_info[:plist_path], key: "CFBundleShortVersionString", value: version_info[:version])
+        set_info_plist_value(path: version_info[:plist_path], key: "CFBundleVersion", value: version_info[:build])
+        
+        clear_derived_data
+        generate
+        
+        ENV["ENABLE_USER_SCRIPT_SANDBOXING"] = "NO"
+        
+        sh("mkdir -p ./build")
+        gym(
+          workspace: "#{WORKSPACE_NAME}.xcworkspace",
+          scheme: app_name,
+          configuration: "Release",
+          export_method: "app-store",
+          clean: false,
+          destination: "generic/platform=iOS",
+          skip_package_dependencies_resolution: true,
+          disable_package_automatic_updates: true,
+          output_directory: "./build",
+          output_name: app_name,
+          xcargs: "-allowProvisioningUpdates -skipMacroValidation",
+          export_options: {
+            method: "app-store",
+            compileBitcode: false,
+            uploadBitcode: false,
+            uploadSymbols: true,
+            manageAppVersionAndBuildNumber: false
+          }
+        )
+        
+        upload_to_testflight(
+          ipa: "./build/#{app_name}.ipa",
+          skip_waiting_for_build_processing: true
+        )
+        
+        build_success = true
+        UI.success("✅ #{app_name} 빌드 및 업로드 완료")
+        
+      rescue => error
+        failed_build_apps << app_name
+        UI.error("❌ #{app_name} 빌드/업로드 실패: #{error.message}")
+        UI.message("다음 앱으로 계속 진행합니다...")
+      end
+      
+      # 전체 성공 여부 확인
+      if metadata_success && build_success
+        successful_apps << app_name
+        UI.success("🎉 #{app_name} 전체 과정 완료!")
+      end
+    end
     
-    build = Time.now.strftime("%Y%m%d%H%M%S")
-    UI.message("새 빌드 번호: #{build}")
+    # 결과 요약
+    UI.header("📊 전체 결과 요약")
     
-    set_info_plist_value(path: plist_path, key: "CFBundleShortVersionString", value: version) unless version.empty?
-    set_info_plist_value(path: plist_path, key: "CFBundleVersion", value: build)
+    if successful_apps.any?
+      UI.success("🎉 전체 과정 성공: #{successful_apps.join(', ')}")
+    end
     
-    clear_derived_data
-    generate
+    if failed_metadata_apps.any?
+      UI.error("📝 메타데이터 업로드 실패: #{failed_metadata_apps.join(', ')}")
+    end
     
-    ENV["ENABLE_USER_SCRIPT_SANDBOXING"] = "NO"
+    if failed_build_apps.any?
+      UI.error("🔨 빌드/업로드 실패: #{failed_build_apps.join(', ')}")
+    end
     
-    sh("mkdir -p ./build")
-    gym(
-      workspace: "#{WORKSPACE_NAME}.xcworkspace",
-      scheme: app_name,
-      configuration: "Release",
-      export_method: "app-store",
-      clean: false,
-      destination: "generic/platform=iOS",
-      skip_package_dependencies_resolution: true,
-      disable_package_automatic_updates: true,
-      output_directory: "./build",
-      output_name: app_name,
-      xcargs: "-allowProvisioningUpdates -skipMacroValidation",
-      export_options: {
-        method: "app-store",
-        compileBitcode: false,
-        uploadBitcode: false,
-        uploadSymbols: true,
-        manageAppVersionAndBuildNumber: false
-      }
-    )
-    
-    upload_to_testflight(
-      ipa: "./build/#{app_name}.ipa",
-      skip_waiting_for_build_processing: true
-    )
-    UI.success("#{app_name} uploaded! 🎉")
+    total_failed = (failed_metadata_apps + failed_build_apps).uniq
+    if total_failed.empty?
+      UI.success("모든 앱 처리 완료! 🚀")
+    else
+      UI.message("처리 완료: #{successful_apps.length}/#{selected_apps.length} 성공")
+      if failed_metadata_apps.any? && failed_build_apps.any?
+        UI.message("💡 일부 앱은 메타데이터만 실패하고 빌드는 성공했을 수 있습니다.")
+      end
+    end
   end
   
   desc "Reset certificates"
@@ -138,30 +250,5 @@ platform :ios do
     UI.success("Certificates reset! 🔐")
   end
   
-  desc "Upload metadata only to App Store Connect"
-  lane :upload_metadata do
-    app_names = APPS.keys
-    UI.message("앱을 선택하세요:")
-    app_names.each_with_index { |name, i| UI.message("#{i+1}. #{name}") }
-    
-    choice = UI.input("번호 선택 (1-#{app_names.length}): ").to_i
-    unless (1..app_names.length).include?(choice)
-      UI.error("잘못된 선택입니다")
-      next
-    end
-    
-    app_name = app_names[choice-1]
-    bundle_id = APPS[app_name]
-    UI.success("선택된 앱: #{app_name}")
 
-    upload_to_app_store(
-      app_identifier: bundle_id,
-      skip_binary_upload: true,
-      skip_screenshots: true,
-      force: true,
-      metadata_path: "./fastlane/metadata/#{app_name}"
-    )
-    
-    UI.success("#{app_name} 메타데이터 업로드 완료! 📝")
-  end
 end

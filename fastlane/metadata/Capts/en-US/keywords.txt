@@ -1,0 +1,1 @@
+Capts,photo text,text extract,OCR,AI organize,document scan,image text,auto recognize,text convert 

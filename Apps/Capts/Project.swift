@@ -17,7 +17,7 @@ let project = Project(
             name: "Capts",
             destinations: .iOS,
             product: .app,
-            bundleId: "com.annapo.capts",
+            bundleId: "com.folio.world.mulling.app.ios",
             deploymentTargets: .iOS("18.0"),
             infoPlist: .file(path: "Resources/Info.plist"),
             sources: ["Sources/**"],

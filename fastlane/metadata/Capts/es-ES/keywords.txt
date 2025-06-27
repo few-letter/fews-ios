@@ -1,0 +1,1 @@
+Capts,texto foto,extracción texto,OCR,organización IA,escanear documento,texto imagen 

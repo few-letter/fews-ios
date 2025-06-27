@@ -1,0 +1,1 @@
+Capts,tekst zdjęcia,wyodrębnianie tekstu,OCR,organizacja AI,skanowanie dokumentu,tekst obrazu 

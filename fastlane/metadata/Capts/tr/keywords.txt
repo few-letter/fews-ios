@@ -1,0 +1,1 @@
+Capts,fotoğraf metin,metin çıkarma,OCR,AI düzenleme,belge tarama,resim metin,otomatik tanıma 

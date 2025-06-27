@@ -1,0 +1,1 @@
+Capts,Fototext,Textextraktion,OCR,KI-Organisation,Dokumentscan,Bildtext,Automatische Erkennung 

@@ -1,0 +1,1 @@
+Capts,valokuva teksti,tekstin poiminta,OCR,AI järjestäminen,asiakirja skannaus,kuva teksti 

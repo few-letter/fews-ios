@@ -6,7 +6,7 @@ APPS = {
   "Plots" => "com.annapo.plotfolio",
   "Retros" => "com.annapo.kpt",
   "Multis" => "com.annapo.taskfolio",
-  "Capts" => "com.annapo.capts",
+  "Capts" => "com.folio.world.mulling.app.ios",
   "FewCuts" => "com.annapo.fewcuts",
 }
 

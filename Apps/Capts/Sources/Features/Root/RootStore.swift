@@ -1,110 +1,42 @@
-import SwiftUI
+//
+//  RootStore.swift
+//  Capts
+//
+//  Created by 송영모 on 6/26/25.
+//
+
 import ComposableArchitecture
-import PhotosUI
-import UIKit
 
 import CommonFeature
 
 @Reducer
 public struct RootStore {
-    @Reducer
-    public enum Path {
-        case settings(SettingsStore)
-    }
-    
     @ObservableState
     public struct State {
-        public var selectedImage: UIImage?
-        public var extractedText: String = ""
-        public var isLoading: Bool = false
-        public var selectedItems: [PhotosPickerItem] = []
-        
-        public var path: StackState<Path.State> = .init()
-        @Presents public var cleaned: CleanedStore.State? = nil
-        
-        public init() {}
+        var mainTab: MainTabStore.State = .init()
     }
     
-    public enum Action: BindableAction {
-        case binding(BindingAction<State>)
-        
+    public enum Action {
         case onAppear
-        
-        case settingButtonTapped
-        
-        case imageLoaded(UIImage)
-        case textExtracted(String)
-        case startCleaning
-        
-        case path(StackActionOf<Path>)
-        case cleaned(PresentationAction<CleanedStore.Action>)
+        case mainTab(MainTabStore.Action)
     }
     
-    @Dependency(\.imageToTextClient) var imageToTextClient
-    @Dependency(\.adClient) var adClient
+    @Dependency(\.adClient) private var adClient
     
     public var body: some ReducerOf<Self> {
-        BindingReducer()
-        
         Reduce<State, Action> { state, action in
             switch action {
-            case .binding(\.selectedItems):
-                guard let firstItem = state.selectedItems.first else { return .none }
-                
-                state.extractedText = ""
-                state.isLoading = true
-                
-                return .run { send in
-                    if let data = try? await firstItem.loadTransferable(type: Data.self),
-                       let image = UIImage(data: data) {
-                        await send(.imageLoaded(image))
-                    }
-                }
-                
-            case .binding:
-                return .none
-                
             case .onAppear:
                 return .run { _ in
                     await adClient.showOpeningAd(customAdUnitID: nil)
                 }
-                
-            case .settingButtonTapped:
-                state.path.append(.settings(.init()))
-                return .none
-                
-                
-            case .imageLoaded(let image):
-                state.selectedImage = image
-                
-                return .run { send in
-                    if let text = try? await imageToTextClient.extractText(from: image) {
-                        await send(.textExtracted(text))
-                    }
-                }
-                
-            case .textExtracted(let text):
-                state.extractedText = text
-                state.isLoading = false
-                return .none
-                
-            case .startCleaning:
-                guard !state.extractedText.isEmpty else { return .none }
-                
-                state.cleaned = CleanedStore.State(originalText: state.extractedText)
-                return .none
-                
-            case .cleaned(.presented(.delegate(.dismiss))):
-                state.cleaned = nil
-                return .none
-                
-            case .cleaned, .path:
+            case .mainTab:
                 return .none
             }
         }
-        .ifLet(\.$cleaned, action: \.cleaned) {
-            CleanedStore()
+        
+        Scope(state: \.mainTab, action: \.mainTab) {
+            MainTabStore()
         }
-        .forEach(\.path, action: \.path)
     }
 }

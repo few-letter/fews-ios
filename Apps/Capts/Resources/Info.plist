@@ -6,24 +6,22 @@
 	<string>$(ADMOB_OPENING_AD_ID)</string>
 	<key>ADMOB_REWARD_AD_ID</key>
 	<string>$(ADMOB_REWARD_AD_ID)</string>
-	<key>OPENAI_API_KEY</key>
-	<string>$(OPENAI_API_KEY)</string>
 	<key>CFBundleDisplayName</key>
 	<string>Capts</string>
 	<key>CFBundleExecutable</key>
 	<string>${EXECUTABLE_NAME}</string>
 	<key>CFBundleIdentifier</key>
-	<string>com.annapo.capts</string>
+	<string>com.folio.world.mulling.app.ios</string>
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundleName</key>
-	<string></string>
+	<string/>
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
-	<string>2.1.0</string>
+	<string>2.0.0</string>
 	<key>CFBundleVersion</key>
-	<string>20250625182124</string>
+	<string>20250626153139</string>
 	<key>GADApplicationIdentifier</key>
 	<string>$(ADMOB_APP_ID)</string>
 	<key>ITSAppUsesNonExemptEncryption</key>
@@ -39,6 +37,8 @@
 	</dict>
 	<key>NSUserTrackingUsageDescription</key>
 	<string>이 앱은 더 나은 사용자 경험을 제공하기 위해 사용자 데이터를 추적합니다.</string>
+	<key>OPENAI_API_KEY</key>
+	<string>$(OPENAI_API_KEY)</string>
 	<key>SKAdNetworkItems</key>
 	<array>
 		<dict>
@@ -245,9 +245,9 @@
 	<key>UILaunchScreen</key>
 	<dict>
 		<key>UIColorName</key>
-		<string></string>
+		<string/>
 		<key>UIImageName</key>
-		<string></string>
+		<string/>
 	</dict>
 	<key>UISupportedInterfaceOrientations</key>
 	<array>

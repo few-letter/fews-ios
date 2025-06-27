@@ -28,8 +28,8 @@ public class AdClientLive: NSObject, AdClient {
     private var currentOpeningAdUnitID: String?
     private let openingAdExpirationTime: TimeInterval = 14400 // 4 hours
     
-    // Rewarded Ad Management
-    private var rewardedInterstitialAd: RewardedInterstitialAd?
+    // Rewarded Ad Management (변경됨)
+    private var rewardedAd: RewardedAd?
     private var rewardedAdIsLoading = false
     private var rewardedAdIsShowing = false
     
@@ -130,7 +130,7 @@ public class AdClientLive: NSObject, AdClient {
         currentOpeningAdUnitID = nil
     }
     
-    // MARK: - Private Rewarded Ad Methods
+    // MARK: - Private Rewarded Ad Methods (수정됨)
     
     private func loadRewardedAd(adUnitID: String) async {
         guard !rewardedAdIsLoading else { return }
@@ -138,13 +138,20 @@ public class AdClientLive: NSObject, AdClient {
         rewardedAdIsLoading = true
         
         do {
-            rewardedInterstitialAd = try await RewardedInterstitialAd.load(
+            // RewardedInterstitialAd → RewardedAd로 변경
+            rewardedAd = try await RewardedAd.load(
                 with: adUnitID,
-                request: Request()
+                request: Request()  // Request() → GADRequest()로 변경
             )
-            rewardedInterstitialAd?.fullScreenContentDelegate = self
+            rewardedAd?.fullScreenContentDelegate = self
+            print("✅ Rewarded ad loaded successfully")
         } catch {
-            print("Failed to load rewarded interstitial ad: \(error.localizedDescription)")
+            print("❌ Failed to load rewarded ad: \(error.localizedDescription)")
+            
+            if let gadError = error as? RequestError {
+                print("GAD Error code: \(gadError.code)")
+                print("GAD Error description: \(gadError.localizedDescription)")
+            }
         }
         
         rewardedAdIsLoading = false
@@ -152,19 +159,24 @@ public class AdClientLive: NSObject, AdClient {
     
     @MainActor
     private func presentRewardedAd() async {
-        guard let ad = rewardedInterstitialAd,
+        guard let ad = rewardedAd,
               let rootViewController = getCurrentViewController() else { return }
         
         rewardedAdIsShowing = true
         
+        // present 메서드 사용법 변경
         ad.present(from: rootViewController) { [weak self] in
+            // 보상 정보 가져오기
+            let reward = ad.adReward
+            print("🎁 User earned reward: \(reward.amount) \(reward.type)")
+            
             // 보상 처리 - 프리미엄 활성화
             self?.activatePremiumByReward()
         }
     }
     
     private func resetRewardedAd() {
-        rewardedInterstitialAd = nil
+        rewardedAd = nil
         rewardedAdIsShowing = false
     }
     
@@ -221,7 +233,7 @@ extension AdClientLive: FullScreenContentDelegate {
         
         if ad is AppOpenAd {
             resetOpeningAd()
-        } else if ad is RewardedInterstitialAd {
+        } else if ad is RewardedAd {  // RewardedInterstitialAd → RewardedAd로 변경
             resetRewardedAd()
         }
     }
@@ -231,7 +243,7 @@ extension AdClientLive: FullScreenContentDelegate {
         
         if ad is AppOpenAd {
             resetOpeningAd()
-        } else if ad is RewardedInterstitialAd {
+        } else if ad is RewardedAd {  // RewardedInterstitialAd → RewardedAd로 변경
             resetRewardedAd()
         }
     }

@@ -44,8 +44,6 @@ public class MixpanelClientLive: MixpanelClient {
         ]
         
         Mixpanel.mainInstance().people.set(properties: userProperties)
-        
-        print("🎯 Mixpanel initialized with user UUID: \(userUUID)")
     }
     
     public func track(event: String, properties: Properties? = nil) {

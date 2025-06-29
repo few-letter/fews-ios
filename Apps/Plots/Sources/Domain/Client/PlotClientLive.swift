@@ -8,6 +8,7 @@
 import Foundation
 import SwiftData
 import CoreData
+import CloudKit
 
 public class PlotClientLive: PlotClient {
     private var context: ModelContext
@@ -77,12 +78,60 @@ public class PlotClientLive: PlotClient {
     }
 }
 
+// MARK: - PlotCloudManager for Migration
+class PlotCloudManager {
+    static let shared = PlotCloudManager()
+    
+    lazy var persistentContainer: NSPersistentCloudKitContainer = {
+        let container = NSPersistentCloudKitContainer(name: "plotfolio")
+        let storeDirectory = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask).last!
+        
+        let localUrl = storeDirectory.appendingPathComponent("Local.sqlite")
+        let localStoreDescription = NSPersistentStoreDescription(url: localUrl)
+        localStoreDescription.configuration = "Local"
+        
+        let cloudUrl = storeDirectory.appendingPathComponent("Cloud.sqlite")
+        let cloudStoreDescription = NSPersistentStoreDescription(url: cloudUrl)
+        cloudStoreDescription.configuration = "Cloud"
+        
+        cloudStoreDescription.cloudKitContainerOptions = NSPersistentCloudKitContainerOptions(
+            containerIdentifier: "iCloud.plotfolio"
+        )
+        
+        container.persistentStoreDescriptions = [
+            cloudStoreDescription,
+            localStoreDescription
+        ]
+        
+        container.loadPersistentStores { storeDescription, error in
+            if let error = error {
+                print("Could not load persistent stores: \(error)")
+            }
+        }
+        
+        return container
+    }()
+    
+    func fetchAllPlots() -> [NSManagedObject] {
+        let viewContext = self.persistentContainer.viewContext
+        let request = NSFetchRequest<NSManagedObject>(entityName: "Plot")
+        request.sortDescriptors = [NSSortDescriptor(key: "date", ascending: true)]
+        
+        do {
+            return try viewContext.fetch(request)
+        } catch {
+            print("Failed to fetch plots from Core Data: \(error)")
+            return []
+        }
+    }
+}
+
 // MARK: - Migration Logic
 extension PlotClientLive {
     
     private func performMigrationIfNeeded() {
-        let migrationKey = "CoreDataToSwiftDataMigrationCompleted_v2"
-        let migrationInProgressKey = "CoreDataToSwiftDataMigrationInProgress"
+        let migrationKey = "CoreDataToSwiftDataMigrationCompleted_v3"
+        let migrationInProgressKey = "CoreDataToSwiftDataMigrationInProgress_v3"
         
         // 이미 마이그레이션이 완료되었는지 확인
         if UserDefaults.standard.bool(forKey: migrationKey) {
@@ -94,11 +143,11 @@ extension PlotClientLive {
             print("Previous migration was interrupted. Retrying...")
         }
         
-        print("Starting Core Data to SwiftData migration...")
+        print("Starting Core Data to SwiftData migration using PlotCloudManager...")
         UserDefaults.standard.set(true, forKey: migrationInProgressKey)
         
         do {
-            try migrateCoreDataToSwiftData()
+            try migrateCoreDataToSwiftDataWithCloudManager()
             
             // 마이그레이션 성공
             UserDefaults.standard.set(true, forKey: migrationKey)
@@ -115,10 +164,10 @@ extension PlotClientLive {
         }
     }
     
-    private func migrateCoreDataToSwiftData() throws {
+    private func migrateCoreDataToSwiftDataWithCloudManager() throws {
         let fileManager = FileManager.default
         
-        // 기존 Core Data 스토어 위치 찾기
+        // 기존 Core Data 스토어 위치 확인
         guard let storeDirectory = fileManager.urls(for: .applicationSupportDirectory, in: .userDomainMask).last else {
             throw MigrationError.storeNotFound
         }
@@ -128,177 +177,86 @@ extension PlotClientLive {
             storeDirectory.appendingPathComponent("Local.sqlite")
         ]
         
-        var migratedAnyStore = false
-        
+        var hasAnyStore = false
         for storeURL in coreDataStoreURLs {
             if fileManager.fileExists(atPath: storeURL.path) {
+                hasAnyStore = true
                 print("Found Core Data store at: \(storeURL.path)")
-                try migratePlotData(from: storeURL)
-                migratedAnyStore = true
             }
         }
         
-        if !migratedAnyStore {
+        if !hasAnyStore {
             print("No Core Data stores found to migrate")
-        }
-    }
-    
-    private func migratePlotData(from storeURL: URL) throws {
-        // Core Data 스택 설정
-        let managedObjectModel = createCoreDataModel()
-        let persistentStoreCoordinator = NSPersistentStoreCoordinator(managedObjectModel: managedObjectModel)
-        
-        do {
-            try persistentStoreCoordinator.addPersistentStore(
-                ofType: NSSQLiteStoreType,
-                configurationName: nil,
-                at: storeURL,
-                options: [
-                    NSReadOnlyPersistentStoreOption: true,
-                    NSMigratePersistentStoresAutomaticallyOption: true,
-                    NSInferMappingModelAutomaticallyOption: true
-                ]
-            )
-        } catch {
-            print("Failed to add persistent store: \(error)")
-            throw MigrationError.storeLoadFailed(error)
+            return
         }
         
-        let managedContext = NSManagedObjectContext(concurrencyType: .privateQueueConcurrencyType)
-        managedContext.persistentStoreCoordinator = persistentStoreCoordinator
+        // PlotCloudManager를 사용하여 기존 데이터 가져오기
+        let cloudManager = PlotCloudManager.shared
+        let coreDataPlots = cloudManager.fetchAllPlots()
         
-        // Core Data에서 Plot 데이터 가져오기
-        let fetchRequest = NSFetchRequest<NSManagedObject>(entityName: "Plot")
-        fetchRequest.sortDescriptors = [NSSortDescriptor(key: "date", ascending: true)]
+        if coreDataPlots.isEmpty {
+            print("No plots found in Core Data")
+            return
+        }
+        
+        print("Found \(coreDataPlots.count) plots to migrate")
         
         var migratedCount = 0
         var errorCount = 0
         
-        try managedContext.performAndWait {
+        // 각 Plot을 SwiftData로 마이그레이션
+        for coreDataPlot in coreDataPlots {
             do {
-                let coreDataPlots = try managedContext.fetch(fetchRequest)
-                print("Found \(coreDataPlots.count) plots to migrate")
-                
-                // 배치 처리를 위한 임시 배열
-                var plotsToMigrate: [(title: String, content: String, type: Int, date: Date)] = []
-                
-                for coreDataPlot in coreDataPlots {
+                try autoreleasepool {
                     // Core Data 속성 추출
                     let title = coreDataPlot.value(forKey: "title") as? String ?? ""
                     let content = coreDataPlot.value(forKey: "content") as? String ?? ""
                     let type = coreDataPlot.value(forKey: "type") as? Int ?? 0
                     let date = coreDataPlot.value(forKey: "date") as? Date ?? Date()
                     
-                    plotsToMigrate.append((title, content, type, date))
-                }
-                
-                // SwiftData 컨텍스트에서 배치 저장
-                for plotData in plotsToMigrate {
-                    do {
-                        try autoreleasepool {
-                            // 로컬 변수로 값 캡처
-                            let titleToCheck = plotData.title
-                            let dateToCheck = plotData.date
-                            
-                            // 중복 검사
-                            let existingPlots = try self.context.fetch(FetchDescriptor<Plot>(
-                                predicate: #Predicate<Plot> { plot in
-                                    plot.title == titleToCheck && plot.date == dateToCheck
-                                }
-                            ))
-                            
-                            if existingPlots.isEmpty {
-                                // SwiftData Plot 생성
-                                let newPlot = Plot(folder: nil)
-                                newPlot.title = plotData.title
-                                newPlot.content = plotData.content
-                                newPlot.type = plotData.type
-                                newPlot.date = plotData.date
-                                
-                                self.context.insert(newPlot)
-                                migratedCount += 1
-                                
-                                // 50개마다 저장하여 메모리 관리
-                                if migratedCount % 50 == 0 {
-                                    try self.context.save()
-                                    print("Migrated \(migratedCount) plots...")
-                                }
-                            }
+                    // 중복 검사 - 로컬 변수로 값 캡처
+                    let titleToCheck = title
+                    let dateToCheck = date
+                    
+                    let existingPlots = try self.context.fetch(FetchDescriptor<Plot>(
+                        predicate: #Predicate<Plot> { plot in
+                            plot.title == titleToCheck && plot.date == dateToCheck
                         }
-                    } catch {
-                        errorCount += 1
-                        print("Failed to migrate plot '\(plotData.title)': \(error)")
+                    ))
+                    
+                    if existingPlots.isEmpty {
+                        // SwiftData Plot 생성
+                        let newPlot = Plot(folder: nil)
+                        newPlot.title = title
+                        newPlot.content = content
+                        newPlot.type = type
+                        newPlot.date = date
+                        
+                        self.context.insert(newPlot)
+                        migratedCount += 1
+                        
+                        // 50개마다 저장하여 메모리 관리
+                        if migratedCount % 50 == 0 {
+                            try self.context.save()
+                            print("Migrated \(migratedCount) plots...")
+                        }
+                    } else {
+                        print("Plot already exists: \(title)")
                     }
                 }
-                
-                // 남은 데이터 저장
-                if migratedCount % 50 != 0 {
-                    try self.context.save()
-                }
-                
             } catch {
-                throw MigrationError.fetchFailed(error)
+                errorCount += 1
+                let title = coreDataPlot.value(forKey: "title") as? String ?? "Unknown"
+                print("Failed to migrate plot '\(title)': \(error)")
             }
         }
         
+        // 남은 데이터 저장
+        if migratedCount % 50 != 0 {
+            try self.context.save()
+        }
+        
         print("Migration complete. Migrated: \(migratedCount), Errors: \(errorCount)")
-    }
-    
-    private func createCoreDataModel() -> NSManagedObjectModel {
-        let model = NSManagedObjectModel()
-        
-        // Plot Entity 생성
-        let plotEntity = NSEntityDescription()
-        plotEntity.name = "Plot"
-        plotEntity.managedObjectClassName = NSStringFromClass(NSManagedObject.self)
-        
-        // Plot 속성들 정의
-        let titleAttribute = NSAttributeDescription()
-        titleAttribute.name = "title"
-        titleAttribute.attributeType = .stringAttributeType
-        titleAttribute.isOptional = true
-        
-        let contentAttribute = NSAttributeDescription()
-        contentAttribute.name = "content"
-        contentAttribute.attributeType = .stringAttributeType
-        contentAttribute.isOptional = true
-        
-        let typeAttribute = NSAttributeDescription()
-        typeAttribute.name = "type"
-        typeAttribute.attributeType = .integer32AttributeType
-        typeAttribute.defaultValue = 0
-        typeAttribute.isOptional = false
-        
-        let dateAttribute = NSAttributeDescription()
-        dateAttribute.name = "date"
-        dateAttribute.attributeType = .dateAttributeType
-        dateAttribute.isOptional = true
-        
-        // ID 속성 추가 (Core Data에 있었을 수 있음)
-        let idAttribute = NSAttributeDescription()
-        idAttribute.name = "id"
-        idAttribute.attributeType = .UUIDAttributeType
-        idAttribute.isOptional = true
-        
-        plotEntity.properties = [idAttribute, titleAttribute, contentAttribute, typeAttribute, dateAttribute]
-        
-        // Folder Entity (관계를 위해 필요할 수 있음)
-        let folderEntity = NSEntityDescription()
-        folderEntity.name = "Folder"
-        folderEntity.managedObjectClassName = NSStringFromClass(NSManagedObject.self)
-        
-        // Folder 관계 설정
-        let folderRelationship = NSRelationshipDescription()
-        folderRelationship.name = "folder"
-        folderRelationship.destinationEntity = folderEntity
-        folderRelationship.isOptional = true
-        folderRelationship.deleteRule = .nullifyDeleteRule
-        
-        plotEntity.properties.append(folderRelationship)
-        
-        model.entities = [plotEntity, folderEntity]
-        
-        return model
     }
     
     private func backupCoreDataStores() {

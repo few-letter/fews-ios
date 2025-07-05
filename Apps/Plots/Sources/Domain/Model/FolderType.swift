@@ -5,7 +5,9 @@
 //  Created by 송영모 on 6/11/25.
 //
 
-public enum FolderType: Equatable {
+import Foundation
+
+public enum FolderType: Equatable, Identifiable {
     case temporary(name: String, plots: [Plot])
     case folder(Folder)
     

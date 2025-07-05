@@ -7,7 +7,7 @@
 
 import Foundation
 import ComposableArchitecture
-import CommonFeature
+import Feature_Common
 
 public enum MainTab: String, CaseIterable, Equatable {
     case calendars

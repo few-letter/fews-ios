@@ -18,8 +18,8 @@ let project = Project(
             ],
             entitlements: "Resources/Toff.entitlements",
             dependencies: [
-                .project(target: "DS", path: "../../Modules/DS"),
-                .project(target: "CommonFeature", path: "../../Modules/CommonFeature"),
+                
+                .project(target: "Feature_Common", path: "../../Modules/Features/Feature_Common"),
                 .sdk(name: "JavaScriptCore", type: .framework)
             ],
             settings: .settings(

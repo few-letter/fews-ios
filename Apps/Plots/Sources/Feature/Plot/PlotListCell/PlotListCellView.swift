@@ -6,18 +6,21 @@
 //
 
 import SwiftUI
-import ComposableArchitecture
 
-struct PlotListCellView: View {
-    let store: StoreOf<PlotListCellStore>
+public struct PlotListCellView: View {
+    public let plot: Plot
     
-    var body: some View {
+    public init(plot: Plot) {
+        self.plot = plot
+    }
+    
+    public var body: some View {
         VStack(alignment: .leading) {
-            Text(store.plot.title ?? "")
+            Text(plot.title ?? "")
                 .font(.headline)
                 .fontWeight(.medium)
             
-            Text(store.plot.content ?? "")
+            Text(plot.content ?? "")
                 .font(.subheadline)
                 .foregroundColor(.gray)
                 .lineLimit(1)
@@ -34,7 +37,7 @@ struct PlotListCellView: View {
                 
                 stars.overlay(
                     GeometryReader { g in
-                        let width = (store.plot.point ?? 0.0) / CGFloat(5) * g.size.width
+                        let width = (plot.point ?? 0.0) / CGFloat(5) * g.size.width
                         ZStack(alignment: .leading) {
                             Rectangle()
                                 .frame(width: width)
@@ -45,24 +48,20 @@ struct PlotListCellView: View {
                 )
                 .foregroundColor(.gray)
                 
-                Text("\(store.plot.point ?? 0.0, specifier: "%.1f")")
+                Text("\(plot.point ?? 0.0, specifier: "%.1f")")
                     .offset(.init(width: 0, height: 0.5))
                     .foregroundColor(.gray)
                     .font(.caption2)
                 
                 Spacer()
                 
-                Text(store.plot.date?.formatted(date: .abbreviated, time: .omitted) ?? "")
+                Text(plot.date?.formatted(date: .abbreviated, time: .omitted) ?? "")
                     .fontWeight(.light)
                     .font(.caption2)
                 
-                Text(PlotType.init(rawValue: store.plot.type ?? 0)?.title ?? "")
+                Text(PlotType.init(rawValue: plot.type ?? 0)?.title ?? "")
                     .font(.caption2)
             }
-        }
-        .contentShape(Rectangle())
-        .onTapGesture {
-            store.send(.tapped)
         }
     }
 }

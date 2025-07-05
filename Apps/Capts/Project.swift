@@ -24,7 +24,7 @@ let project = Project(
             ],
             entitlements: "Resources/Capts.entitlements",
             dependencies: [
-                .project(target: "CommonFeature", path: "../../Modules/CommonFeature"),
+                .project(target: "Feature_Common", path: "../../Modules/Features/Feature_Common"),
                 .sdk(name: "JavaScriptCore", type: .framework)
             ],
             settings: .settings(

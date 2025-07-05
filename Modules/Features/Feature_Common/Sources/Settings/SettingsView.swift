@@ -123,40 +123,15 @@ public struct SettingsView: View {
                 }
                 
                 Section {
-                    AppStoreLink(
-                        title: "Toffs - Trading Log",
-                        description: "Transform your investment data into the most intuitive 'calendar'",
-                        logoName: "ToffsLogo",
-                        appID: "1619745259"
-                    )
-                    
-                    AppStoreLink(
-                        title: "Plots - Reading Log",
-                        description: "Record what you've 'read and watched' in the simplest way",
-                        logoName: "PlotsLogo",
-                        appID: "6449458459"
-                    )
-                    
-                    AppStoreLink(
-                        title: "Retros - Reflection Diary",
-                        description: "Experience continuous growth with systematic reflection",
-                        logoName: "RetrosLogo",
-                        appID: "6479611984"
-                    )
-                    
-                    AppStoreLink(
-                        title: "Multis - Todo Timer",
-                        description: "Manage multiple tasks simultaneously with multi-timers",
-                        logoName: "MultisLogo",
-                        appID: "6449679061"
-                    )
-                    
-                    AppStoreLink(
-                        title: "Capts - Photo Text Extractor",
-                        description: "Extract all text from photos at once with AI precision",
-                        logoName: "CaptsLogo",
-                        appID: "6463266155"
-                    )
+                    ForEach(OtherAppName.allCases, id: \.self) { app in
+                        AppStoreLink(
+                            app: app,
+                            onTap: { 
+                                store.send(.trackAppStoreLink(appName: app))
+                                presentAppStore(appID: app.appID)
+                            }
+                        )
+                    }
                 } header: {
                     Text("Other Apps")
                 }
@@ -177,8 +152,8 @@ public struct SettingsView: View {
             switch gameType {
 //            case .appleGame:
 //                AppleGameView()
-//            case .tetrisGame:
-//                TetrisGameView()
+            case .tetris:
+                TetrisGameView()
             case .twentyFortyEight:
                 TwentyFortyEightGameView()
             }
@@ -188,52 +163,8 @@ public struct SettingsView: View {
         }
         .alert($store.scope(state: \.alert, action: \.alert))
     }
-}
-
-struct AppStoreLink: View {
-    let title: String
-    let description: String
-    let logoName: String
-    let appID: String
     
-    var body: some View {
-        Button(action: {
-            presentAppStore()
-        }) {
-            HStack(spacing: 12) {
-                Image(logoName, bundle: .module)
-                    .resizable()
-                    .aspectRatio(contentMode: .fit)
-                    .frame(width: 40, height: 40)
-                    .clipShape(RoundedRectangle(cornerRadius: 8))
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 8)
-                            .stroke(Color.secondary.opacity(0.2), lineWidth: 0.5)
-                    )
-                
-                VStack(alignment: .leading, spacing: 2) {
-                    Text(title)
-                        .font(.headline)
-                        .foregroundColor(.primary)
-                        .lineLimit(1)
-                    Text(description)
-                        .font(.caption)
-                        .foregroundColor(.secondary)
-                        .lineLimit(2)
-                }
-                
-                Spacer()
-                
-                Image(systemName: "arrow.up.forward.app")
-                    .foregroundColor(.secondary)
-                    .font(.caption)
-            }
-            .padding(.vertical, 2)
-        }
-        .buttonStyle(PlainButtonStyle())
-    }
-    
-    private func presentAppStore() {
+    private func presentAppStore(appID: String) {
         guard let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
               let rootViewController = windowScene.windows.first?.rootViewController else {
             return
@@ -250,6 +181,46 @@ struct AppStoreLink: View {
                 }
             }
         }
+    }
+}
+
+struct AppStoreLink: View {
+    let app: OtherAppName
+    let onTap: () -> Void
+    
+    var body: some View {
+        Button(action: onTap) {
+            HStack(spacing: 12) {
+                Image(app.logoName, bundle: .module)
+                    .resizable()
+                    .aspectRatio(contentMode: .fit)
+                    .frame(width: 40, height: 40)
+                    .clipShape(RoundedRectangle(cornerRadius: 8))
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 8)
+                            .stroke(Color.secondary.opacity(0.2), lineWidth: 0.5)
+                    )
+                
+                VStack(alignment: .leading, spacing: 2) {
+                    Text(app.title)
+                        .font(.headline)
+                        .foregroundColor(.primary)
+                        .lineLimit(1)
+                    Text(app.description)
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                        .lineLimit(2)
+                }
+                
+                Spacer()
+                
+                Image(systemName: "arrow.up.forward.app")
+                    .foregroundColor(.secondary)
+                    .font(.caption)
+            }
+            .padding(.vertical, 2)
+        }
+        .buttonStyle(PlainButtonStyle())
     }
 }
 

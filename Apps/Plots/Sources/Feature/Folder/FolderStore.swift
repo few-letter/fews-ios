@@ -12,16 +12,16 @@ import Foundation
 public struct FolderStore {
     @ObservableState
     public struct State: Equatable {
-        public var folderTypeListCells: IdentifiedArrayOf<FolderTypeListCellStore.State>
+        public var folderTypes: [FolderType]
         
         @Presents public var addFolder: AddFolderStore.State?
         @Presents var alert: AlertState<Action.Alert>?
         
         public init(
-            folderTypeListCells: IdentifiedArrayOf<FolderTypeListCellStore.State> = [],
+            folderTypes: [FolderType] = [],
             alert: AlertState<Action.Alert>? = nil
         ) {
-            self.folderTypeListCells = folderTypeListCells
+            self.folderTypes = folderTypes
             self.alert = alert
         }
     }
@@ -39,7 +39,8 @@ public struct FolderStore {
         case fetch
         case fetched([Folder], [Plot])
         
-        case folderTypeListCell(IdentifiedActionOf<FolderTypeListCellStore>)
+        case folderTypeListCellTapped(FolderType)
+        case folderTypeListCellDeleteTapped(FolderID)
         case addFolder(PresentationAction<AddFolderStore.Action>)
         case alert(PresentationAction<Alert>)
         
@@ -90,34 +91,31 @@ public struct FolderStore {
                 return .send(.fetched(folders, plots))
                 
             case .fetched(let folders, let plots):
-                var cells: [FolderTypeListCellStore.State] = [.init(folderType: .temporary(name: "All", plots: plots))]
-                cells += folders.map { .init(folderType: .folder($0)) }
-                state.folderTypeListCells = .init(uniqueElements: cells)
+                var folderTypes: [FolderType] = [.temporary(name: "All", plots: plots)]
+                folderTypes += folders.map { .folder($0) }
+                state.folderTypes = folderTypes
                 return .none
                 
-            case .folderTypeListCell(.element(id: let id, action: .delegate(let action))):
-                guard let folderType = state.folderTypeListCells[id: id]?.folderType else { return .none }
+            case .folderTypeListCellTapped(let folderType):
+                return .send(.delegate(.requestPlot(folderType)))
                 
-                switch action {
-                case .tapped:
-                    return .send(.delegate(.requestPlot(folderType)))
-                    
-                case .requestDelete(let folderID):
-                    state.alert = AlertState(
-                        title: {
-                            TextState("Delete Folder")
-                        },
-                        actions: {
-                            ButtonState(role: .cancel) {
-                                TextState("Cancel")
-                            }
-                            ButtonState(role: .destructive, action: .requestDelete(folderID)) {
-                                TextState("Confirm")
-                            }
-                        },
-                        message: { TextState(folderType.deleteMessage) })
-                    return .none
-                }
+            case .folderTypeListCellDeleteTapped(let folderID):
+                guard let folderType = state.folderTypes.first(where: { $0.id == folderID }) else { return .none }
+                
+                state.alert = AlertState(
+                    title: {
+                        TextState("Delete Folder")
+                    },
+                    actions: {
+                        ButtonState(role: .cancel) {
+                            TextState("Cancel")
+                        }
+                        ButtonState(role: .destructive, action: .requestDelete(folderID)) {
+                            TextState("Confirm")
+                        }
+                    },
+                    message: { TextState(folderType.deleteMessage) })
+                return .none
                 
             case .addFolder(.presented(.delegate(let action))):
                 switch action {
@@ -133,14 +131,14 @@ public struct FolderStore {
             case .alert(.presented(let action)):
                 switch action {
                 case .requestDelete(let folderID):
-                    if case let .folder(folder) = state.folderTypeListCells[id: folderID]?.folderType {
+                    if case let .folder(folder) = state.folderTypes.first(where: { $0.id == folderID }) {
                         folderClient.delete(folder: folder)
                         return .send(.fetch)
                     }
                     return .none
                 }
                 
-            case .delegate, .folderTypeListCell, .alert, .addFolder:
+            case .delegate, .alert, .addFolder:
                 return .none
             }
         }
@@ -148,8 +146,5 @@ public struct FolderStore {
             AddFolderStore()
         }
         .ifLet(\.$alert, action: \.alert)
-        .forEach(\.folderTypeListCells, action: \.folderTypeListCell) {
-            FolderTypeListCellStore()
-        }
     }
 }

@@ -7,7 +7,7 @@
 
 import SwiftUI
 import ComposableArchitecture
-import CommonFeature
+import Feature_Common
 
 public struct MainTabView: View {
     @Bindable public var store: StoreOf<MainTabStore>

@@ -9,7 +9,7 @@ import SwiftUI
 import ComposableArchitecture
 import PhotosUI
 
-import CommonFeature
+import Feature_Common
 
 public struct MainTabView: View {
     @Bindable var store: StoreOf<MainTabStore>

@@ -7,7 +7,7 @@
 
 import SwiftUI
 import ComposableArchitecture
-import CommonFeature
+import Feature_Common
 
 public struct HomeView: View {
     @Bindable var store: StoreOf<HomeStore>

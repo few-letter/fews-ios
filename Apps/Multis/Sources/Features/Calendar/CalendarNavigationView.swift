@@ -7,7 +7,7 @@
 
 import SwiftUI
 import ComposableArchitecture
-import CommonFeature
+import Feature_Common
 
 public struct CalendarNavigationView: View {
     @Bindable public var store: StoreOf<CalendarNavigationStore>

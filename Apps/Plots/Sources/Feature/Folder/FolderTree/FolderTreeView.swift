@@ -56,18 +56,37 @@ extension FolderTreeView {
     
     private var list: some View {
         List {
-            if !store.folderTypeListCells.isEmpty {
+            if !store.folderTypes.isEmpty {
                 Section("Folders") {
-                    ForEach(store.scope(state: \.folderTypeListCells, action: \.folderTypeListCell)) { store in
-                        FolderTypeListCellView(store: store)
+                    ForEach(store.folderTypes, id: \.id) { folderType in
+                        Button(action: {
+                            store.send(.folderTypeListCellTapped(folderType))
+                        }) {
+                            FolderTypeListCellView(folderType: folderType)
+                        }
+                        .buttonStyle(PlainButtonStyle())
+                        .contextMenu {
+                            if let id = folderType.id {
+                                Button(role: .destructive, action: {
+                                    store.send(.folderTypeListCellDeleteTapped(id))
+                                }) {
+                                    Label("Delete Folder", systemImage: "trash")
+                                }
+                            }
+                        }
                     }
                 }
             }
             
-            if !store.plotListCells.isEmpty {
+            if !store.plots.isEmpty {
                 Section("Memos") {
-                    ForEach(store.scope(state: \.plotListCells, action: \.plotListCell)) { store in
-                        PlotListCellView(store: store)
+                    ForEach(store.plots, id: \.id) { plot in
+                        Button(action: {
+                            store.send(.plotListCellTapped(plot))
+                        }) {
+                            PlotListCellView(plot: plot)
+                        }
+                        .buttonStyle(PlainButtonStyle())
                     }
                     .onDelete { store.send(.delete($0)) }
                 }

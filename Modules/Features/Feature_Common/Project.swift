@@ -1,11 +1,11 @@
 import ProjectDescription
 
 let project = Project(
-    name: "CommonFeature",
+    name: "Feature_Common",
     packages: [],
     targets: [
         .target(
-            name: "CommonFeature",
+            name: "Feature_Common",
             destinations: .iOS,
             product: .framework,
             bundleId: "com.annapo.few.feature",
@@ -16,11 +16,7 @@ let project = Project(
                 .glob(pattern: "Resources/Assets.xcassets/**"),
             ],
             dependencies: [
-                // External dependencies from Package.swift
-                .external(name: "Mixpanel"),
-                .external(name: "FirebaseAnalytics"),
-                .external(name: "ComposableArchitecture"),
-                .external(name: "GoogleMobileAds"),
+                .project(target: "Shared_ThirdPartyLibs", path: "../../Shared/Shared_ThirdPartyLibs"),
                 .sdk(name: "JavaScriptCore", type: .framework)
             ],
             settings: .settings(

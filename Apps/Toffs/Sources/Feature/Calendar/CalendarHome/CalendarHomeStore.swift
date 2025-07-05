@@ -8,7 +8,7 @@
 import Foundation
 import ComposableArchitecture
 
-import CommonFeature
+import Feature_Common
 
 @Reducer
 public struct CalendarHomeStore {

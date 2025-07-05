@@ -6,7 +6,7 @@
 //
 
 import ComposableArchitecture
-import CommonFeature
+import Feature_Common
 
 public enum RootScene: Hashable {
     case home

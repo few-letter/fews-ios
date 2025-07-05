@@ -56,8 +56,22 @@ extension FolderView {
     
     private var list: some View {
         List {
-            ForEach(store.scope(state: \.folderTypeListCells, action: \.folderTypeListCell)) { store in
-                FolderTypeListCellView(store: store)
+            ForEach(store.folderTypes, id: \.id) { folderType in
+                Button(action: {
+                    store.send(.folderTypeListCellTapped(folderType))
+                }) {
+                    FolderTypeListCellView(folderType: folderType)
+                }
+                .buttonStyle(PlainButtonStyle())
+                .contextMenu {
+                    if let id = folderType.id {
+                        Button(role: .destructive, action: {
+                            store.send(.folderTypeListCellDeleteTapped(id))
+                        }) {
+                            Label("Delete Folder", systemImage: "trash")
+                        }
+                    }
+                }
             }
         }
         .refreshable {

@@ -8,6 +8,54 @@
 import Foundation
 import ComposableArchitecture
 
+public enum OtherAppName: String, CaseIterable, Hashable {
+    case toffs = "Toffs"
+    case plots = "Plots"
+    case retros = "Retros"
+    case multis = "Multis"
+    case capts = "Capts"
+    
+    public var title: String {
+        switch self {
+        case .toffs: return "Toffs - Trading Log"
+        case .plots: return "Plots - Reading Log"
+        case .retros: return "Retros - Reflection Diary"
+        case .multis: return "Multis - Todo Timer"
+        case .capts: return "Capts - Photo Text Extractor"
+        }
+    }
+    
+    public var description: String {
+        switch self {
+        case .toffs: return "Transform your investment data into the most intuitive 'calendar'"
+        case .plots: return "Record what you've 'read and watched' in the simplest way"
+        case .retros: return "Experience continuous growth with systematic reflection"
+        case .multis: return "Manage multiple tasks simultaneously with multi-timers"
+        case .capts: return "Extract all text from photos at once with AI precision"
+        }
+    }
+    
+    public var logoName: String {
+        switch self {
+        case .toffs: return "ToffsLogo"
+        case .plots: return "PlotsLogo"
+        case .retros: return "RetrosLogo"
+        case .multis: return "MultisLogo"
+        case .capts: return "CaptsLogo"
+        }
+    }
+    
+    public var appID: String {
+        switch self {
+        case .toffs: return "1619745259"
+        case .plots: return "6449458459"
+        case .retros: return "6479611984"
+        case .multis: return "6449679061"
+        case .capts: return "6463266155"
+        }
+    }
+}
+
 @Reducer
 public struct SettingsStore {
     @ObservableState
@@ -29,6 +77,7 @@ public struct SettingsStore {
         case updatePremiumStatus
         case showGame(GameType)
         case hideGame
+        case trackAppStoreLink(appName: OtherAppName)
         case alert(PresentationAction<Alert>)
         
         @CasePathable
@@ -80,12 +129,18 @@ public struct SettingsStore {
                 return .none
                 
             case .showGame(let gameType):
-                analyticsClient.track(event: "show_game_button_tapped", properties: nil)
+                analyticsClient.track(event: "show_game_button_tapped", properties: ["gameType": gameType.rawValue])
                 state.selectedGameType = gameType
                 return .none
                 
             case .hideGame:
                 state.selectedGameType = nil
+                return .none
+                
+            case .trackAppStoreLink(let appName):
+                analyticsClient.track(event: "other_app_link_tapped", properties: [
+                    "app_name": appName.rawValue
+                ])
                 return .none
                 
             case .alert(.presented(.error)):

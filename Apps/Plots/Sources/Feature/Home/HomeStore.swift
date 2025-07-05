@@ -8,7 +8,7 @@
 import ComposableArchitecture
 import Foundation
 import SwiftData
-import CommonFeature
+import Feature_Common
 
 @Reducer
 public struct HomeStore {

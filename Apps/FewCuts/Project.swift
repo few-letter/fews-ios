@@ -16,12 +16,7 @@ let project = Project(
                 .glob(pattern: "Resources/GoogleService-Info.plist")
             ],
             dependencies: [
-                // External dependencies from Package.swift
-                .external(name: "FirebaseAuth"),
-                .external(name: "FirebaseFirestore"),
-                .external(name: "ComposableArchitecture"),
-                .external(name: "MLX"),
-                .external(name: "MLXNN")
+                .project(target: "Shared_ThirdPartyLibs", path: "../../Modules/Shared/Shared_ThirdPartyLibs")
             ],
             settings: .settings(
                 base: [

@@ -10,7 +10,7 @@ import ComposableArchitecture
 import PhotosUI
 import UIKit
 
-import CommonFeature
+import Feature_Common
 
 @Reducer
 public struct MainTabStore {

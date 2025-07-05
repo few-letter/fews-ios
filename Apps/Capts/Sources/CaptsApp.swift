@@ -4,7 +4,7 @@ import AppTrackingTransparency
 import ComposableArchitecture
 import FirebaseCore
 import GoogleMobileAds
-import CommonFeature
+import Feature_Common
 
 public class AppDelegate: NSObject, UIApplicationDelegate {
     public func application(_ application: UIApplication,

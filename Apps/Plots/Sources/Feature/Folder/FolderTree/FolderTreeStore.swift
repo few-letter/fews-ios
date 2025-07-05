@@ -14,8 +14,8 @@ public struct FolderTreeStore {
     public struct State: Equatable {
         public let folderType: FolderType
         
-        public var folderTypeListCells: IdentifiedArrayOf<FolderTypeListCellStore.State>
-        public var plotListCells: IdentifiedArrayOf<PlotListCellStore.State>
+        public var folderTypes: [FolderType]
+        public var plots: [Plot]
         @Presents public var addFolder: AddFolderStore.State?
         @Presents public var alert: AlertState<Action.Alert>?
         
@@ -25,15 +25,13 @@ public struct FolderTreeStore {
             self.folderType = folderType
             
             if let folders = folderType.folder?.folders  {
-                self.folderTypeListCells = .init(uniqueElements: folders.map { folder in
-                    return .init(folderType: .folder(folder))
-                })
+                self.folderTypes = folders.map { folder in
+                    return .folder(folder)
+                }
             } else {
-                self.folderTypeListCells = []
+                self.folderTypes = []
             }
-            self.plotListCells = .init(uniqueElements: folderType.plots.map { plot in
-                return .init(plot: plot)
-            })
+            self.plots = folderType.plots
         }
     }
     
@@ -50,8 +48,9 @@ public struct FolderTreeStore {
         case fetch
         case fetched([Folder], [Plot])
         
-        case folderTypeListCell(IdentifiedActionOf<FolderTypeListCellStore>)
-        case plotListCell(IdentifiedActionOf<PlotListCellStore>)
+        case folderTypeListCellTapped(FolderType)
+        case folderTypeListCellDeleteTapped(FolderID)
+        case plotListCellTapped(Plot)
         case addFolder(PresentationAction<AddFolderStore.Action>)
         case alert(PresentationAction<Alert>)
         
@@ -91,9 +90,9 @@ public struct FolderTreeStore {
                 return .send(.delegate(.requestAddPlot(plot)))
                 
             case let .delete(indexSet):
-                for index in indexSet {
-                    let cell = state.plotListCells.remove(at: index)
-                    plotClient.delete(plot: cell.plot)
+                let plotsToDelete = indexSet.map { state.plots[$0] }
+                for plot in plotsToDelete {
+                    plotClient.delete(plot: plot)
                 }
                 return .send(.refresh)
                 
@@ -109,50 +108,36 @@ public struct FolderTreeStore {
                 return .send(.fetched(folders, plots))
                 
             case .fetched(let folders, let plots):
-                state.plotListCells = .init(
-                    uniqueElements: plots.map { plot in
-                        return .init(plot: plot)
-                })
-                state.folderTypeListCells = .init(
-                    uniqueElements: folders.map { folder in
-                        return .init(folderType: .folder(folder))
-                    }
+                state.plots = plots
+                state.folderTypes = folders.map { folder in
+                    return .folder(folder)
+                }
+                return .none
+                
+            case .folderTypeListCellTapped(let folderType):
+                return .send(.delegate(.requestFolderTree(folderType)))
+                
+            case .folderTypeListCellDeleteTapped(let folderID):
+                guard let folderType = state.folderTypes.first(where: { $0.id == folderID }) else { return .none }
+                
+                state.alert = AlertState(
+                    title: {
+                        TextState("Delete Folder")
+                    },
+                    actions: {
+                        ButtonState(role: .cancel) {
+                            TextState("Cancel")
+                        }
+                        ButtonState(role: .destructive, action: .requestDelete(folderID)) {
+                            TextState("Confirm")
+                        }
+                    },
+                    message: { TextState(folderType.deleteMessage) }
                 )
                 return .none
                 
-            case .folderTypeListCell(.element(id: let id, action: .delegate(let action))):
-                guard let folderType = state.folderTypeListCells[id: id]?.folderType else { return .none }
-                
-                switch action {
-                case .tapped:
-                    return .send(.delegate(.requestFolderTree(folderType)))
-                    
-                case .requestDelete(let folderID):
-                    state.alert = AlertState(
-                        title: {
-                            TextState("Delete Folder")
-                        },
-                        actions: {
-                            ButtonState(role: .cancel) {
-                                TextState("Cancel")
-                            }
-                            ButtonState(role: .destructive, action: .requestDelete(folderID)) {
-                                TextState("Confirm")
-                            }
-                        },
-                        message: { TextState(folderType.deleteMessage) }
-                    )
-                    return .none
-                }
-                
-            case .plotListCell(.element(id: let id, action: .delegate(let action))):
-                switch action {
-                case .tapped:
-                    if let plot = state.plotListCells[id: id]?.plot {
-                        return .send(.delegate(.requestAddPlot(plot)))
-                    }
-                }
-                return .none
+            case .plotListCellTapped(let plot):
+                return .send(.delegate(.requestAddPlot(plot)))
                 
             case .addFolder(.presented(.delegate(let action))):
                 switch action {
@@ -168,14 +153,14 @@ public struct FolderTreeStore {
             case .alert(.presented(let action)):
                 switch action {
                 case .requestDelete(let folderID):
-                    if case let .folder(folder) = state.folderTypeListCells[id: folderID]?.folderType {
+                    if case let .folder(folder) = state.folderTypes.first(where: { $0.id == folderID }) {
                         folderClient.delete(folder: folder)
                         return .send(.fetch)
                     }
                     return .none
                 }
                 
-            case .plotListCell, .delegate, .folderTypeListCell, .alert, .addFolder:
+            case .delegate, .alert, .addFolder:
                 return .none
             }
         }
@@ -184,11 +169,5 @@ public struct FolderTreeStore {
             AddFolderStore()
         }
         .ifLet(\.$alert, action: \.alert)
-        .forEach(\.plotListCells, action: \.plotListCell) {
-            PlotListCellStore()
-        }
-        .forEach(\.folderTypeListCells, action: \.folderTypeListCell) {
-            FolderTypeListCellStore()
-        }
     }
 }

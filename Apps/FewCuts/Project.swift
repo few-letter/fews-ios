@@ -2,11 +2,7 @@ import ProjectDescription
 
 let project = Project(
     name: "FewCuts",
-    packages: [
-        .package(url: "https://github.com/firebase/firebase-ios-sdk.git", .upToNextMajor(from: "10.0.0")),
-        .package(url: "https://github.com/pointfreeco/swift-composable-architecture", .upToNextMajor(from: "1.20.0")),
-        .package(url: "https://github.com/ml-explore/mlx-swift", .upToNextMajor(from: "0.18.0"))
-    ],
+    packages: [],
     targets: [
         .target(
             name: "FewCuts",
@@ -20,23 +16,23 @@ let project = Project(
                 .glob(pattern: "Resources/GoogleService-Info.plist")
             ],
             dependencies: [
-                .package(product: "FirebaseAuth"),
-                .package(product: "FirebaseFirestore"),
-                .package(product: "ComposableArchitecture"),
-                .package(product: "MLX"),
-                .package(product: "MLXNN")
+                // External dependencies from Package.swift
+                .external(name: "FirebaseAuth"),
+                .external(name: "FirebaseFirestore"),
+                .external(name: "ComposableArchitecture"),
+                .external(name: "MLX"),
+                .external(name: "MLXNN")
             ],
             settings: .settings(
-                base: SettingsDictionary()
-                    .merging([
-                        "DEVELOPMENT_TEAM": "X64MATB2CC",
-                        "CODE_SIGN_STYLE": "Automatic",
-                        "PRODUCT_BUNDLE_IDENTIFIER": "com.annapo.fewcuts",
-                        "OTHER_LDFLAGS": [
-                            "-Xlinker", "-interposable"
-                        ],
-                        "ENABLE_BITCODE": false
-                    ])
+                base: [
+                    "DEVELOPMENT_TEAM": "X64MATB2CC",
+                    "CODE_SIGN_STYLE": "Automatic",
+                    "PRODUCT_BUNDLE_IDENTIFIER": "com.annapo.fewcuts",
+                    "OTHER_LDFLAGS": [
+                        "$(inherited)", "-ObjC", "-Xlinker", "-interposable"
+                    ],
+                    "ENABLE_BITCODE": false
+                ]
             )
         ),
         .target(

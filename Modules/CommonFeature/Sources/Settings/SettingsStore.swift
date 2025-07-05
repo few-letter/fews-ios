@@ -39,6 +39,7 @@ public struct SettingsStore {
     }
     
     @Dependency(\.adClient) var adClient
+    @Dependency(\.analyticsClient) var analyticsClient
     
     public init() {}
     
@@ -48,13 +49,17 @@ public struct SettingsStore {
         Reduce { state, action in
             switch action {
             case .onAppear:
+                analyticsClient.track(event: "settings_onAppear", properties: nil)
                 return .send(.updatePremiumStatus)
                 
             case .watchPremiumAd:
+                analyticsClient.track(event: "watch_premium_ad_button_tapped", properties: nil)
                 return .run { send in
                     try await adClient.showRewardedAd(appID: nil)
+                    analyticsClient.track(event: "watch_premium_ad_success", properties: nil)
                     await send(.updatePremiumStatus)
                 } catch: { error, send in
+                    analyticsClient.track(event: "watch_premium_ad_failure", properties: nil)
                     await send(.alert(.presented(.error)))
                 }
                 
@@ -75,6 +80,7 @@ public struct SettingsStore {
                 return .none
                 
             case .showGame(let gameType):
+                analyticsClient.track(event: "show_game_button_tapped", properties: nil)
                 state.selectedGameType = gameType
                 return .none
                 

@@ -27,14 +27,14 @@ public struct RootStore {
     }
     
     @Dependency(\.adClient) private var adClient
-    @Dependency(\.mixpanelClient) private var mixpanelClient
+    @Dependency(\.analyticsClient) private var analyticsClient
     
     public var body: some ReducerOf<Self> {
         Reduce<State, Action> { state, action in
             switch action {
             case .onAppear:
                 return .run { _ in
-                    await mixpanelClient.start()
+                    await analyticsClient.start()
                     await adClient.showOpeningAd(appID: nil)
                 }
             case .home:

@@ -3,249 +3,164 @@ description: Fastlane App Store 메타데이터 글자수 제한 규칙
 globs: 
 alwaysApply: false
 ---
-# Fastlane App Store 메타데이터 글자수 제한 규칙
+# Fastlane 메타데이터 검증 가이드
 
-## 📋 Apple App Store 글자수 제한
-Apple App Store Connect에서 각 메타데이터 파일별로 글자수 제한이 있습니다:
+## 📊 Apple App Store 글자수 제한
 
-- **name.txt**: 최대 30자 (앱 이름)
-- **subtitle.txt**: 최대 30자 (부제목)
-- **keywords.txt**: 최대 100자 (키워드, 쉼표 포함)
-- **description.txt**: 최대 4,000자 (앱 설명)
+| 파일명 | 제한 | 설명 |
+|--------|------|------|
+| `name.txt` | 30자 | 앱 이름 |
+| `subtitle.txt` | 30자 | 부제목 |
+| `keywords.txt` | 100자 | 키워드 (쉼표 포함) |
+| `description.txt` | 4,000자 | 앱 설명 |
 
-## 📁 기준 파일 구조 확인
+> ⚠️ **중요**: 바이트가 아닌 **문자 수** 기준입니다 (한글 1글자 = 1문자)
 
-### 한국어(ko/) 폴더 필수 파일 목록
-모든 번역의 기준이 되는 ko/ 폴더에는 다음 8개 파일이 있어야 합니다:
+## 📁 필수 파일 목록 (8개)
 
-1. `name.txt` - 앱 이름
-2. `subtitle.txt` - 부제목  
-3. `description.txt` - 앱 설명
-4. `keywords.txt` - 키워드
-5. `release_notes.txt` - 릴리즈 노트
-6. `privacy_url.txt` - 개인정보 URL
-7. `marketing_url.txt` - 마케팅 URL
-8. `support_url.txt` - 지원 URL
+기준 언어 폴더(`ko/`)에 다음 파일들이 모두 있어야 합니다:
 
-### ko/ 폴더 파일 개수 확인 명령어
+```
+name.txt, subtitle.txt, description.txt, keywords.txt
+release_notes.txt, privacy_url.txt, marketing_url.txt, support_url.txt
+```
+
+## 🔧 통합 검증 스크립트
+
+프로젝트 루트에서 실행하세요:
+
 ```bash
-echo "=== 한국어(ko/) 폴더 파일 개수 확인 ==="
-ko_files=$(find fastlane/metadata/{AppName}/ko -name "*.txt" | wc -l)
-echo "ko/ 폴더 내 .txt 파일 개수: $ko_files개"
-if [ $ko_files -ne 8 ]; then
-    echo "❌ 경고: 필수 파일 8개가 모두 존재하지 않습니다!"
-    echo "현재 파일 목록:"
-    ls -la fastlane/metadata/{AppName}/ko/
-else
-    echo "✅ 필수 파일 8개가 모두 존재합니다."
+#!/bin/bash
+# validate_metadata.sh
+
+APP_NAME=${1:-"Capts"}  # 기본값: Capts, 다른 앱명 전달 가능
+METADATA_PATH="fastlane/metadata/$APP_NAME"
+
+echo "🔍 $APP_NAME 메타데이터 검증 시작..."
+
+# 1. 기준 폴더(ko) 파일 개수 확인
+ko_count=$(find "$METADATA_PATH/ko" -name "*.txt" 2>/dev/null | wc -l)
+echo "📁 ko/ 폴더 파일: $ko_count개 (필요: 8개)"
+
+if [ $ko_count -ne 8 ]; then
+    echo "❌ 필수 파일이 부족합니다!"
+    echo "누락 가능성 있는 파일들:"
+    echo "name.txt subtitle.txt description.txt keywords.txt release_notes.txt privacy_url.txt marketing_url.txt support_url.txt"
+    exit 1
 fi
-```
 
-## 📁 빈 파일 확인 및 검증
+# 2. 빈 파일 확인
+empty_files=$(find "$METADATA_PATH" -name "*.txt" -exec sh -c '[ ! -s "$1" ] && echo "$1"' _ {} \; 2>/dev/null)
+if [ -n "$empty_files" ]; then
+    echo "❌ 빈 파일 발견:"
+    echo "$empty_files"
+else
+    echo "✅ 빈 파일 없음"
+fi
 
-### 한국어 기준 폴더 빈 파일 확인
-```bash
-echo "=== 한국어(ko/) 폴더 빈 파일 확인 ==="
-find fastlane/metadata/{AppName}/ko -name "*.txt" -exec sh -c '
-    if [ ! -s "$1" ]; then
-        echo "❌ 빈 파일: $1"
+# 3. 글자수 제한 확인 (멀티바이트 안전)
+echo "📝 글자수 제한 확인..."
+violations=$(find "$METADATA_PATH" -name "*.txt" -exec sh -c '
+    if [ -s "$1" ]; then
+        chars=$(python3 -c "with open(\"$1\") as f: print(len(f.read().strip()))" 2>/dev/null || echo "0")
+        filename=$(basename "$1")
+        case "$filename" in
+            name.txt|subtitle.txt)
+                if [ "$chars" -gt 30 ]; then
+                    echo "$1: $chars/30 chars ❌"
+                fi
+                ;;
+            keywords.txt)
+                if [ "$chars" -gt 100 ]; then
+                    echo "$1: $chars/100 chars ❌"
+                fi
+                ;;
+        esac
     fi
-' _ {} \;
-echo "✅ 빈 파일 확인 완료"
-```
+' _ {} \; 2>/dev/null)
 
-### 전체 언어 폴더 빈 파일 확인
-```bash
-echo "=== 전체 언어 폴더 빈 파일 확인 ==="
-find fastlane/metadata/{AppName} -name "*.txt" -exec sh -c '
-    if [ ! -s "$1" ]; then
-        echo "❌ 빈 파일: $1"
-    fi
-' _ {} \;
-echo "✅ 전체 빈 파일 확인 완료"
-```
+if [ -n "$violations" ]; then
+    echo "❌ 글자수 초과:"
+    echo "$violations"
+else
+    echo "✅ 모든 파일이 글자수 제한 내"
+fi
 
-### 언어별 파일 개수 비교 확인
-```bash
-echo "=== 언어별 파일 개수 비교 ==="
-ko_count=$(find fastlane/metadata/{AppName}/ko -name "*.txt" | wc -l)
-echo "기준(ko/): $ko_count개 파일"
-
-for lang_dir in fastlane/metadata/{AppName}/*/; do
-    if [ "$(basename "$lang_dir")" != "ko" ]; then
+# 4. 언어별 파일 개수 비교
+echo "🌐 언어별 파일 개수 확인..."
+for lang_dir in "$METADATA_PATH"/*; do
+    if [ -d "$lang_dir" ]; then
         lang=$(basename "$lang_dir")
         lang_count=$(find "$lang_dir" -name "*.txt" | wc -l)
-        if [ $lang_count -ne $ko_count ]; then
-            echo "❌ $lang: $lang_count개 (기준과 다름)"
-        else
-            echo "✅ $lang: $lang_count개"
+        if [ "$lang" != "ko" ] && [ $lang_count -ne $ko_count ]; then
+            echo "❌ $lang: $lang_count개 (기준: $ko_count개)"
         fi
     fi
 done
+
+echo "✅ 검증 완료!"
 ```
 
-## 🔍 글자수 검증 명령어
+## 🚀 사용법
 
-### 통합 검증 명령어 (권장)
-파일 존재 여부, 빈 파일, 글자수 제한을 모두 확인:
-
+### 1. 스크립트 실행
 ```bash
-echo "=== 통합 메타데이터 검증 ==="
+# 기본 (Capts 앱)
+bash validate_metadata.sh
 
-# 1. 파일 개수 확인
-ko_files=$(find fastlane/metadata/{AppName}/ko -name "*.txt" | wc -l)
-echo "1️⃣ ko/ 폴더 파일 개수: $ko_files개 (필요: 8개)"
-
-# 2. 빈 파일 확인
-echo "2️⃣ 빈 파일 확인:"
-empty_files=$(find fastlane/metadata/{AppName} -name "*.txt" -exec sh -c '[ ! -s "$1" ] && echo "$1"' _ {} \;)
-if [ -z "$empty_files" ]; then
-    echo "✅ 빈 파일 없음"
-else
-    echo "❌ 빈 파일 발견:"
-    echo "$empty_files"
-fi
-
-# 3. 글자수 제한 확인
-echo "3️⃣ 글자수 제한 확인:"
-find fastlane/metadata/{AppName} -name "*.txt" -exec sh -c '
-    chars=$(wc -c < "$1")
-    filename=$(basename "$1")
-    if ([ "$filename" = "name.txt" ] && [ $chars -gt 30 ]) || \
-       ([ "$filename" = "subtitle.txt" ] && [ $chars -gt 30 ]) || \
-       ([ "$filename" = "keywords.txt" ] && [ $chars -gt 100 ]); then
-        echo "❌ $1: $chars chars (제한 초과)"
-        echo "Content: $(cat "$1")"
-        echo "---"
-    fi
-' _ {} \;
-
-echo "✅ 통합 검증 완료"
+# 다른 앱
+bash validate_metadata.sh Plots
+bash validate_metadata.sh Multis
 ```
 
-### 개별 파일 유형별 검증 명령어
-
-#### name.txt (앱 이름) 검증
+### 2. 빠른 글자수 확인
 ```bash
-find fastlane/metadata/{AppName} -name "name.txt" -exec sh -c '
-    chars=$(wc -c < "$1")
-    if [ $chars -gt 30 ]; then
-        echo "❌ $1: $chars chars"
-        echo "Content: $(cat "$1")"
-        echo "---"
-    fi
-' _ {} \;
+# 특정 파일 글자수 확인
+python3 -c "with open('fastlane/metadata/Capts/ko/name.txt') as f: print(f'글자수: {len(f.read().strip())}')"
+
+# 현재 폴더의 모든 txt 파일 글자수
+find . -name "*.txt" -exec python3 -c "
+import sys
+with open(sys.argv[1]) as f: 
+    content = f.read().strip()
+    print(f'{sys.argv[1]}: {len(content)} chars')
+" {} \;
 ```
 
-#### subtitle.txt (부제목) 검증
+## 🛠️ 문제 해결
+
+### 글자수 초과 시 수정 전략
+
+**name.txt (30자 제한)**
+- ❌ `Plots - 책 읽기 일기장` (11자)
+- ✅ `Plots - 독서일기` (9자)
+
+**subtitle.txt (30자 제한)**
+- ❌ `책, 영화, 문화생활을 기록하는 앱` (17자)
+- ✅ `책, 영화, 문화 기록` (10자)
+
+**keywords.txt (100자 제한)**
+- 중요도 순으로 키워드 선별
+- 쉼표와 공백도 글자수에 포함됨 주의
+
+### 빠른 파일 생성
 ```bash
-find fastlane/metadata/{AppName} -name "subtitle.txt" -exec sh -c '
-    chars=$(wc -c < "$1")
-    if [ $chars -gt 30 ]; then
-        echo "❌ $1: $chars chars"
-        echo "Content: $(cat "$1")"
-        echo "---"
-    fi
-' _ {} \;
+# 누락된 파일 생성 (빈 파일)
+touch fastlane/metadata/{AppName}/ko/{name,subtitle,description,keywords,release_notes,privacy_url,marketing_url,support_url}.txt
 ```
 
-#### keywords.txt (키워드) 검증
-```bash
-find fastlane/metadata/{AppName} -name "keywords.txt" -exec sh -c '
-    chars=$(wc -c < "$1")
-    if [ $chars -gt 100 ]; then
-        echo "❌ $1: $chars chars"
-        echo "Content: $(cat "$1")"
-        echo "---"
-    fi
-' _ {} \;
-```
+## 📋 체크리스트
 
-## 📊 검증 결과 해석
+번역 작업 전:
+- [ ] ko/ 폴더에 8개 파일 모두 존재
+- [ ] 모든 파일에 내용 있음 (빈 파일 없음)
+- [ ] 글자수 제한 준수
 
-### ✅ 성공 시
-- 파일 개수: ko/ 폴더에 8개 파일 존재
-- 빈 파일: 없음
-- 글자수: 아무 출력 없음 (모든 파일이 제한 범위 내)
+번역 작업 후:
+- [ ] 모든 언어 폴더에 동일한 파일 개수
+- [ ] 빈 파일 없음
+- [ ] 글자수 제한 준수
 
-### ❌ 실패 시
-- 파일 개수 부족: 누락된 파일 확인 및 생성 필요
-- 빈 파일 존재: 해당 파일에 내용 추가 필요
-- 글자수 초과: 초과한 파일들이 "❌" 표시와 함께 출력됨
-
-## 🛠️ 문제 해결 방법
-
-### 1. 파일 개수 부족 시
-```bash
-# 누락된 파일 확인
-echo "필수 파일 목록:"
-echo "name.txt subtitle.txt description.txt keywords.txt release_notes.txt privacy_url.txt marketing_url.txt support_url.txt" | tr ' ' '\n'
-
-echo "현재 존재하는 파일:"
-ls fastlane/metadata/{AppName}/ko/
-```
-
-### 2. 빈 파일 해결 시
-- ko/ 폴더의 빈 파일: 직접 내용 작성
-- 다른 언어 폴더의 빈 파일: ko/ 폴더에서 번역하여 추가
-
-### 3. 글자수 초과 시 대응 방법
-
-#### name.txt 수정 전략
-- 브랜드명은 유지하고 부가 설명 제거
-- 예: `Plots - 책 읽기 일기장` → `Plots - 독서일기`
-
-#### subtitle.txt 수정 전략  
-- 핵심 기능만 간결하게 표현
-- 불필요한 조사나 연결어 제거
-- 예: `책, 영화, 문화생활 기록` → `책, 영화, 문화 기록`
-
-#### keywords.txt 수정 전략
-- 가장 중요한 키워드만 선별
-- 중복되는 의미의 키워드 제거
-- 쉼표와 공백도 글자수에 포함됨을 주의
-
-#### 멀티바이트 문자 주의사항
-- 힌디어, 아랍어, 한자 등은 바이트 수가 많이 차지
-- 실제 표시되는 글자수보다 바이트 수가 훨씬 클 수 있음
-- 더 간결한 표현으로 수정 필요
-
-## 📝 사용 예시
-
-### Capts 앱 전체 검증
-```bash
-# 통합 검증
-echo "=== Capts 앱 메타데이터 통합 검증 ==="
-ko_files=$(find fastlane/metadata/Capts/ko -name "*.txt" | wc -l)
-echo "1️⃣ ko/ 폴더 파일 개수: $ko_files개 (필요: 8개)"
-
-empty_files=$(find fastlane/metadata/Capts -name "*.txt" -exec sh -c '[ ! -s "$1" ] && echo "$1"' _ {} \;)
-if [ -z "$empty_files" ]; then
-    echo "✅ 빈 파일 없음"
-else
-    echo "❌ 빈 파일 발견:"
-    echo "$empty_files"
-fi
-
-find fastlane/metadata/Capts -name "*.txt" -exec sh -c '
-    chars=$(wc -c < "$1")
-    filename=$(basename "$1")
-    if ([ "$filename" = "name.txt" ] && [ $chars -gt 30 ]) || \
-       ([ "$filename" = "subtitle.txt" ] && [ $chars -gt 30 ]) || \
-       ([ "$filename" = "keywords.txt" ] && [ $chars -gt 100 ]); then
-        echo "❌ $1: $chars chars"
-    fi
-' _ {} \;
-```
-
-### 다른 앱 검증 시
-`{AppName}` 부분을 실제 앱 이름으로 변경:
-- `Multis`, `Retros`, `Toffs`, `Plots` 등
-
-## ⚠️ 주의사항
-- 번역 작업 전 반드시 ko/ 폴더의 파일 완성도 확인
-- 모든 파일이 존재하고 내용이 있는지 검증 후 번역 시작
-- Fastlane 업로드 전 반드시 전체 검증 수행
-- 번역 작업 후에는 모든 언어에 대해 검증 필요
-- 글자수 제한을 초과하면 App Store Connect 업로드 실패
-- `wc -c` 명령어는 바이트 수를 계산하므로 멀티바이트 문자 주의
+Fastlane 업로드 전:
+- [ ] 전체 검증 스크립트 실행
+- [ ] 모든 검증 통과

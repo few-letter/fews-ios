@@ -70,7 +70,7 @@ public struct MainTabStore {
     public init() {}
     
     @Dependency(\.adClient) private var adClient
-    @Dependency(\.mixpanelClient) private var mixpanelClient
+    @Dependency(\.analyticsClient) private var analyticsClient
 
     public var body: some ReducerOf<Self> {
         BindingReducer()
@@ -95,7 +95,7 @@ public struct MainTabStore {
             switch action {
             case .onAppear:
                 return .run { _ in
-                    await mixpanelClient.start()
+                    await analyticsClient.start()
                     await adClient.showOpeningAd(appID: nil)
                 }
                 

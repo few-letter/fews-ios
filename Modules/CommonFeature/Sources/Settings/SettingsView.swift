@@ -162,7 +162,8 @@ public struct SettingsView: View {
                 }
                 
                 Section {
-                    Link("Contact", destination: .init(string: "https://discord.gg/BE7qTGBFcB")!)
+                    Link("Discord Inquiry", destination: .init(string: "https://discord.gg/BE7qTGBFcB")!)
+                    Link("KakaoTalk Inquiry", destination: .init(string: "https://open.kakao.com/o/soO95nEh")!)
                 } header: {
                     Text("Support")
                 }

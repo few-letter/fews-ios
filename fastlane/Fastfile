@@ -118,8 +118,8 @@ platform :ios do
       next
     end
     
-    # 2단계: 각 앱을 순차적으로 메타데이터 업로드 + 빌드/업로드
-    UI.header("🚀 2단계: 메타데이터 업로드 및 빌드/업로드")
+    # 2단계: 각 앱을 순차적으로 빌드/업로드 + 메타데이터 업로드
+    UI.header("🚀 2단계: 빌드/업로드 및 메타데이터 업로드")
     failed_metadata_apps = []
     failed_build_apps = []
     successful_apps = []
@@ -135,28 +135,10 @@ platform :ios do
       end
       
       bundle_id = APPS[app_name]
-      metadata_success = false
       build_success = false
+      metadata_success = false
       
-      # 2-1. 메타데이터 업로드
-      UI.message("📝 #{app_name} 메타데이터 업로드 중...")
-      begin
-        upload_to_app_store(
-          app_identifier: bundle_id,
-          skip_binary_upload: true,
-          skip_screenshots: true,
-          force: true,
-          metadata_path: "./fastlane/metadata/#{app_name}"
-        )
-        metadata_success = true
-        UI.success("✅ #{app_name} 메타데이터 업로드 완료")
-      rescue => error
-        failed_metadata_apps << app_name
-        UI.error("❌ #{app_name} 메타데이터 업로드 실패: #{error.message}")
-        UI.message("빌드는 계속 진행합니다...")
-      end
-      
-      # 2-2. 빌드 및 바이너리 업로드
+      # 2-1. 빌드 및 바이너리 업로드 (먼저 실행)
       UI.message("🔨 #{app_name} 빌드 및 바이너리 업로드 중...")
       begin
         UI.message("📁 현재 작업 디렉토리: #{Dir.pwd}")
@@ -205,13 +187,34 @@ platform :ios do
       rescue => error
         failed_build_apps << app_name
         UI.error("❌ #{app_name} 빌드/업로드 실패: #{error.message}")
-        UI.message("다음 앱으로 계속 진행합니다...")
+        UI.message("메타데이터 업로드는 건너뛰고 다음 앱으로 진행합니다...")
+        next
+      end
+      
+      # 2-2. 메타데이터 업로드 (빌드 성공 후 실행)
+      UI.message("📝 #{app_name} 메타데이터 업로드 중...")
+      begin
+        upload_to_app_store(
+          app_identifier: bundle_id,
+          skip_binary_upload: true,
+          skip_screenshots: true,
+          force: true,
+          metadata_path: "./fastlane/metadata/#{app_name}"
+        )
+        metadata_success = true
+        UI.success("✅ #{app_name} 메타데이터 업로드 완료")
+      rescue => error
+        failed_metadata_apps << app_name
+        UI.error("❌ #{app_name} 메타데이터 업로드 실패: #{error.message}")
+        UI.message("빌드는 이미 성공했으므로 TestFlight에서 확인 가능합니다.")
       end
       
       # 전체 성공 여부 확인
-      if metadata_success && build_success
+      if build_success && metadata_success
         successful_apps << app_name
         UI.success("🎉 #{app_name} 전체 과정 완료!")
+      elsif build_success
+        UI.message("⚠️ #{app_name} 빌드는 성공했지만 메타데이터 업로드 실패")
       end
     end
     
@@ -222,22 +225,22 @@ platform :ios do
       UI.success("🎉 전체 과정 성공: #{successful_apps.join(', ')}")
     end
     
-    if failed_metadata_apps.any?
-      UI.error("📝 메타데이터 업로드 실패: #{failed_metadata_apps.join(', ')}")
+    # 빌드는 성공했지만 메타데이터만 실패한 앱들
+    build_only_success = failed_metadata_apps - failed_build_apps
+    if build_only_success.any?
+      UI.message("⚠️ 빌드 성공 + 메타데이터 실패: #{build_only_success.join(', ')}")
+      UI.message("💡 이 앱들은 TestFlight에서 확인할 수 있습니다.")
     end
     
     if failed_build_apps.any?
       UI.error("🔨 빌드/업로드 실패: #{failed_build_apps.join(', ')}")
     end
     
-    total_failed = (failed_metadata_apps + failed_build_apps).uniq
-    if total_failed.empty?
-      UI.success("모든 앱 처리 완료! 🚀")
+    total_build_success = selected_apps.length - failed_build_apps.length
+    if failed_build_apps.empty?
+      UI.success("모든 앱 빌드 완료! 🚀")
     else
-      UI.message("처리 완료: #{successful_apps.length}/#{selected_apps.length} 성공")
-      if failed_metadata_apps.any? && failed_build_apps.any?
-        UI.message("💡 일부 앱은 메타데이터만 실패하고 빌드는 성공했을 수 있습니다.")
-      end
+      UI.message("빌드 완료: #{total_build_success}/#{selected_apps.length} 성공")
     end
   end
   
@@ -318,10 +321,9 @@ platform :ios do
       next
     end
     
-    # 2단계: 각 앱을 순차적으로 빌드 + 메타데이터 업로드 + App Store 제출
-    UI.header("🚀 2단계: 빌드 및 App Store 제출")
-    failed_metadata_apps = []
-    failed_build_apps = []
+    # 2단계: 각 앱을 순차적으로 빌드 + 통합 App Store 제출 (메타데이터 포함)
+    UI.header("🚀 2단계: 빌드 및 App Store 제출 (메타데이터 통합)")
+    failed_apps = []
     successful_apps = []
     
     selected_apps.each_with_index do |app_name, index|
@@ -330,34 +332,14 @@ platform :ios do
       version_info = app_versions[app_name]
       unless version_info
         UI.error("❌ #{app_name}: Info.plist 파일을 찾을 수 없어 건너뜁니다.")
-        failed_build_apps << app_name
+        failed_apps << app_name
         next
       end
       
       bundle_id = APPS[app_name]
-      metadata_success = false
-      build_success = false
       
-      # 1. 메타데이터 업로드
-      UI.message("📝 #{app_name} 메타데이터 업로드 중...")
-      begin
-        upload_to_app_store(
-          app_identifier: bundle_id,
-          skip_binary_upload: true,
-          skip_screenshots: true,
-          force: true,
-          metadata_path: "./fastlane/metadata/#{app_name}"
-        )
-        metadata_success = true
-        UI.success("✅ #{app_name} 메타데이터 업로드 완료")
-      rescue => error
-        failed_metadata_apps << app_name
-        UI.error("❌ #{app_name} 메타데이터 업로드 실패: #{error.message}")
-        UI.message("빌드 및 제출은 계속 진행합니다...")
-      end
-      
-      # 2. 빌드 및 App Store 제출
-      UI.message("🔨 #{app_name} 빌드 및 App Store 제출 중...")
+      # 빌드 및 통합 App Store 제출 (메타데이터 포함)
+      UI.message("🔨 #{app_name} 빌드 및 App Store 제출 중 (메타데이터 포함)...")
       begin
         UI.message("📁 현재 작업 디렉토리: #{Dir.pwd}")
         UI.message("📄 Info.plist 경로: #{version_info[:plist_path]}")
@@ -394,34 +376,29 @@ platform :ios do
           }
         )
         
+        # 빌드와 메타데이터를 한 번에 App Store에 제출
         upload_to_app_store(
           ipa: "./build/#{app_name}.ipa",
           submit_for_review: true,
           automatic_release: true,
           force: true, # HTML 미리보기 건너뛰기
-          skip_metadata: true, # 메타데이터는 위에서 이미 업로드했음
           skip_screenshots: true, # 스크린샷 업데이트 건너뛰기
           run_precheck_before_submit: true, # 제출 전 사전 검사 실행
           ignore_language_directory_validation: true,
+          metadata_path: "./fastlane/metadata/#{app_name}",
           submission_information: { 
             export_compliance_uses_encryption: false,
             add_id_info_uses_idfa: false 
           }
         )
         
-        build_success = true
+        successful_apps << app_name
         UI.success("✅ #{app_name} 빌드 및 App Store 제출 완료!")
         
       rescue => error
-        failed_build_apps << app_name
+        failed_apps << app_name
         UI.error("❌ #{app_name} 빌드/제출 실패: #{error.message}")
         UI.message("다음 앱으로 계속 진행합니다...")
-      end
-      
-      # 전체 성공 여부 확인
-      if metadata_success && build_success
-        successful_apps << app_name
-        UI.success("🎉 #{app_name} 전체 과정 완료!")
       end
     end
     
@@ -433,23 +410,15 @@ platform :ios do
       UI.message("💡 App Store Connect에서 심사 상태를 확인하세요.")
     end
     
-    if failed_metadata_apps.any?
-      UI.error("📝 메타데이터 업로드 실패: #{failed_metadata_apps.join(', ')}")
+    if failed_apps.any?
+      UI.error("❌ 빌드/제출 실패: #{failed_apps.join(', ')}")
     end
     
-    if failed_build_apps.any?
-      UI.error("🔨 빌드/제출 실패: #{failed_build_apps.join(', ')}")
-    end
-    
-    total_failed = (failed_metadata_apps + failed_build_apps).uniq
-    if total_failed.empty?
+    if failed_apps.empty?
       UI.success("모든 앱 App Store 제출 완료! 🚀")
       UI.message("📱 App Store Connect에서 심사 진행 상황을 확인할 수 있습니다.")
     else
       UI.message("제출 완료: #{successful_apps.length}/#{selected_apps.length} 성공")
-      if failed_metadata_apps.any? && failed_build_apps.any?
-        UI.message("💡 일부 앱은 메타데이터만 실패하고 빌드/제출은 성공했을 수 있습니다.")
-      end
     end
   end
 

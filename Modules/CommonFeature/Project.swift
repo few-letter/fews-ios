@@ -2,12 +2,7 @@ import ProjectDescription
 
 let project = Project(
     name: "CommonFeature",
-    packages: [
-        .package(url: "https://github.com/firebase/firebase-ios-sdk.git", .upToNextMajor(from: "10.0.0")),
-        .package(url: "https://github.com/pointfreeco/swift-composable-architecture", .upToNextMajor(from: "1.20.0")),
-        .package(url: "https://github.com/googleads/swift-package-manager-google-mobile-ads.git", .upToNextMajor(from: "12.6.0")),
-        .package(url: "https://github.com/mixpanel/mixpanel-swift", .upToNextMajor(from: "5.1.0"))
-    ],
+    packages: [],
     targets: [
         .target(
             name: "CommonFeature",
@@ -21,10 +16,11 @@ let project = Project(
                 .glob(pattern: "Resources/Assets.xcassets/**"),
             ],
             dependencies: [
-                .package(product: "Mixpanel"),
-                .package(product: "FirebaseAnalytics"),
-                .package(product: "ComposableArchitecture"),
-                .package(product: "GoogleMobileAds"),
+                // External dependencies from Package.swift
+                .external(name: "Mixpanel"),
+                .external(name: "FirebaseAnalytics"),
+                .external(name: "ComposableArchitecture"),
+                .external(name: "GoogleMobileAds"),
                 .sdk(name: "JavaScriptCore", type: .framework)
             ],
             settings: .settings(

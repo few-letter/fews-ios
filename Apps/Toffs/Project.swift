@@ -31,7 +31,7 @@ let project = Project(
                         name: "Debug",
                         settings: SettingsDictionary()
                             .automaticCodeSigning(devTeam: "X64MATB2CC"),
-                        xcconfig: .path("Resources/Debug.xcconfig"),
+                        xcconfig: .path("Resources/Debug.xcconfig")
                     ),
                     .release(
                         name: "Release",

@@ -11,14 +11,14 @@ import ComposableArchitecture
 
 // MARK: - MixpanelClient Protocol
 
-public protocol MixpanelClient {
+public protocol AnalyticsClient {
     func start() async -> Void
     func track(event: String, properties: Properties?) -> Void
 }
 
 // MARK: - Live Implementation
 
-public class MixpanelClientLive: MixpanelClient {
+public class MixpanelClientLive: AnalyticsClient {
     private let userDefaults: UserDefaults
     
     private enum Keys {
@@ -75,7 +75,7 @@ public class MixpanelClientLive: MixpanelClient {
 
 // MARK: - Test Implementation
 
-public class MixpanelClientTest: MixpanelClient {
+public class MixpanelClientTest: AnalyticsClient {
     public init() {}
     
     public func start() async {
@@ -89,15 +89,15 @@ public class MixpanelClientTest: MixpanelClient {
 
 // MARK: - Dependency
 
-private struct MixpanelClientKey: DependencyKey {
-    static let liveValue: any MixpanelClient = MixpanelClientLive()
-    static let testValue: any MixpanelClient = MixpanelClientTest()
+private struct AnalyticsClientKey: DependencyKey {
+    static let liveValue: any AnalyticsClient = MixpanelClientLive()
+    static let testValue: any AnalyticsClient = MixpanelClientTest()
 }
 
 extension DependencyValues {
-    public var mixpanelClient: any MixpanelClient {
-        get { self[MixpanelClientKey.self] }
-        set { self[MixpanelClientKey.self] = newValue }
+    public var analyticsClient: any AnalyticsClient {
+        get { self[AnalyticsClientKey.self] }
+        set { self[AnalyticsClientKey.self] = newValue }
     }
 }
 

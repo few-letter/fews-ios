@@ -15,7 +15,7 @@ public struct FolderTreeStore {
         public let folderType: FolderType
         
         public var folderTypes: [FolderType]
-        public var plots: [Plot]
+        public var plots: [PlotModel]
         @Presents public var addFolder: AddFolderStore.State?
         @Presents public var alert: AlertState<Action.Alert>?
         
@@ -26,7 +26,7 @@ public struct FolderTreeStore {
             
             if let folders = folderType.folder?.folders  {
                 self.folderTypes = folders.map { folder in
-                    return .folder(folder)
+                    return .folder(.init(from: folder))
                 }
             } else {
                 self.folderTypes = []
@@ -35,29 +35,30 @@ public struct FolderTreeStore {
         }
     }
     
-    public enum Action: BindableAction, Equatable {
+    public enum Action: BindableAction {
         case binding(BindingAction<State>)
         
         case onAppear
         
-        case addFolderButtonTapped(Folder)
+        case addFolderButtonTapped(FolderModel)
         case addPlotButtonTapped
+        case editFolderButtonTapped(FolderModel)
         case delete(IndexSet)
         case refresh
         
         case fetch
-        case fetched([Folder], [Plot])
+        case fetched([FolderModel], [PlotModel])
         
         case folderTypeListCellTapped(FolderType)
         case folderTypeListCellDeleteTapped(FolderID)
-        case plotListCellTapped(Plot)
+        case plotListCellTapped(PlotModel)
         case addFolder(PresentationAction<AddFolderStore.Action>)
         case alert(PresentationAction<Alert>)
         
         case delegate(Delegate)
         
         public enum Delegate: Equatable {
-            case requestAddPlot(Plot)
+            case requestAddPlot(PlotModel)
             case requestFolderTree(FolderType)
         }
         
@@ -82,12 +83,17 @@ public struct FolderTreeStore {
                 return .send(.fetch)
                 
             case .addFolderButtonTapped(let folder):
-                state.addFolder = .init(parentFolder: folder, name: "")
+                state.addFolder = .init(folder: .init(parentFolder: folder.folder))
                 return .none
                 
             case .addPlotButtonTapped:
-                let plot = plotClient.create(folder: state.folderType.folder)
+                let newPlot = PlotModel.init(folder: state.folderType.folder?.folder)
+                let plot = plotClient.createOrUpdate(plot: newPlot)
                 return .send(.delegate(.requestAddPlot(plot)))
+                
+            case .editFolderButtonTapped(let folder):
+                state.addFolder = .init(folder: folder)
+                return .none
                 
             case let .delete(indexSet):
                 let plotsToDelete = indexSet.map { state.plots[$0] }
@@ -100,8 +106,8 @@ public struct FolderTreeStore {
                 return .send(.fetch)
                 
             case .fetch:
-                let plots: [Plot] = plotClient.fetches(folder: state.folderType.folder)
-                var folders: [Folder] = []
+                let plots: [PlotModel] = plotClient.fetches(folder: state.folderType.folder)
+                var folders: [FolderModel] = []
                 if let folder = state.folderType.folder {
                     folders = folderClient.fetches(parentFolder: folder)
                 }
@@ -141,11 +147,10 @@ public struct FolderTreeStore {
                 
             case .addFolder(.presented(.delegate(let action))):
                 switch action {
-                case .confirm(let folder, let name):
-                    let _ = folderClient.create(parentFolder: folder, name: name)
+                case .requestConfirm:
                     state.addFolder = nil
                     return .send(.fetch)
-                case .dismiss:
+                case .requestCancel:
                     state.addFolder = nil
                     return .none
                 }

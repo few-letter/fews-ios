@@ -16,22 +16,81 @@ public class PlotClientLive: PlotClient {
     
     public init(context: ModelContext) {
         self.context = context
+        self.context.autosaveEnabled = false
+        
         // 백그라운드에서 마이그레이션 실행
         migrationQueue.async { [weak self] in
             self?.performMigrationIfNeeded()
         }
+        
+        createMockDataIfNeeded()
     }
     
-    public func create(folder: Folder?) -> Plot {
-        let plot = Plot(folder: folder)
-        save(plot: plot)
-        return plot
+    private func createMockDataIfNeeded() {
+        // Mock 데이터 생성 로직
+        do {
+            let descriptor = FetchDescriptor<Plot>()
+            let existingPlots = try context.fetch(descriptor)
+            
+            if existingPlots.isEmpty {
+                // Mock 데이터 생성
+                let mockPlot = Plot(
+                    content: "샘플 내용",
+                    date: Date(),
+                    point: 8.5,
+                    title: "첫 번째 플롯",
+                    type: 0,
+                    folder: nil
+                )
+                
+                context.insert(mockPlot)
+                try context.save()
+            }
+        } catch {
+            print("Failed to create mock data: \(error)")
+        }
     }
     
-    public func fetches(folder: Folder?) -> [Plot] {
+    public func createOrUpdate(plot: PlotModel) -> PlotModel {
+        do {
+            let swiftDataPlot: Plot
+            
+            if let existingPlot = plot.plot {
+                // 기존 객체 업데이트 - updateSwiftData() 메서드 사용
+                plot.updateSwiftData()
+                swiftDataPlot = existingPlot
+            } else {
+                // 새 객체 생성
+                swiftDataPlot = plot.toSwiftDataPlot()
+                context.insert(swiftDataPlot)
+            }
+            
+            try context.save()
+            
+            return PlotModel(from: swiftDataPlot)
+        } catch {
+            print("Failed to createOrUpdate plot: \(error)")
+            return plot
+        }
+    }
+    
+    public func fetches() -> [PlotModel] {
+        do {
+            let descriptor = FetchDescriptor<Plot>(
+                sortBy: [.init(\.date)]
+            )
+            let result = try context.fetch(descriptor)
+            return result.map { PlotModel(from: $0) }
+        } catch {
+            print("Failed to fetch plots: \(error)")
+            return []
+        }
+    }
+    
+    public func fetches(folder: FolderModel?) -> [PlotModel] {
         do {
             var descriptor: FetchDescriptor<Plot>
-            if let folderID = folder?.id {
+            if let folderID = folder?.folder?.id {
                 descriptor = FetchDescriptor<Plot>(
                     predicate: #Predicate { plot in
                         plot.folder?.id == folderID
@@ -40,40 +99,28 @@ public class PlotClientLive: PlotClient {
                 )
             } else {
                 descriptor = FetchDescriptor<Plot>(
+                    predicate: #Predicate { plot in
+                        plot.folder == nil
+                    },
                     sortBy: [.init(\.date)]
                 )
             }
             let result = try context.fetch(descriptor)
-            return result
+            return result.map { PlotModel(from: $0) }
         } catch {
             print("Failed to fetch plots: \(error)")
             return []
         }
     }
     
-    public func update(plot: Plot) -> Void {
+    public func delete(plot: PlotModel) {
         do {
-            try context.save()
+            if let existingPlot = plot.plot {
+                context.delete(existingPlot)
+                try context.save()
+            }
         } catch {
-            print("Plot update failed: \(error)")
-        }
-    }
-    
-    public func delete(plot: Plot) -> Void {
-        do {
-            context.delete(plot)
-            try context.save()
-        } catch {
-            print("Plot delete failed: \(error)")
-        }
-    }
-    
-    private func save(plot: Plot) {
-        do {
-            context.insert(plot)
-            try context.save()
-        } catch {
-            print("Plot save failed: \(error)")
+            print("Failed to delete plot: \(error)")
         }
     }
 }
@@ -199,68 +246,33 @@ extension PlotClientLive {
             return
         }
         
-        print("Found \(coreDataPlots.count) plots to migrate")
-        
-        var migratedCount = 0
-        var errorCount = 0
-        
-        // 각 Plot을 SwiftData로 마이그레이션
+        // CoreData 데이터를 SwiftData로 마이그레이션
         for coreDataPlot in coreDataPlots {
-            do {
-                try autoreleasepool {
-                    // Core Data 속성 추출
-                    let title = coreDataPlot.value(forKey: "title") as? String ?? ""
-                    let content = coreDataPlot.value(forKey: "content") as? String ?? ""
-                    let type = coreDataPlot.value(forKey: "type") as? Int ?? 0
-                    let date = coreDataPlot.value(forKey: "date") as? Date ?? Date()
-                    
-                    // 중복 검사 - 로컬 변수로 값 캡처
-                    let titleToCheck = title
-                    let dateToCheck = date
-                    
-                    let existingPlots = try self.context.fetch(FetchDescriptor<Plot>(
-                        predicate: #Predicate<Plot> { plot in
-                            plot.title == titleToCheck && plot.date == dateToCheck
-                        }
-                    ))
-                    
-                    if existingPlots.isEmpty {
-                        // SwiftData Plot 생성
-                        let newPlot = Plot(folder: nil)
-                        newPlot.title = title
-                        newPlot.content = content
-                        newPlot.type = type
-                        newPlot.date = date
-                        
-                        self.context.insert(newPlot)
-                        migratedCount += 1
-                        
-                        // 50개마다 저장하여 메모리 관리
-                        if migratedCount % 50 == 0 {
-                            try self.context.save()
-                            print("Migrated \(migratedCount) plots...")
-                        }
-                    } else {
-                        print("Plot already exists: \(title)")
-                    }
-                }
-            } catch {
-                errorCount += 1
-                let title = coreDataPlot.value(forKey: "title") as? String ?? "Unknown"
-                print("Failed to migrate plot '\(title)': \(error)")
-            }
+            let title = coreDataPlot.value(forKey: "title") as? String ?? ""
+            let content = coreDataPlot.value(forKey: "content") as? String ?? ""
+            let date = coreDataPlot.value(forKey: "date") as? Date ?? Date()
+            let point = coreDataPlot.value(forKey: "point") as? Double ?? 0.0
+            let type = coreDataPlot.value(forKey: "type") as? Int ?? 0
+            
+            let newPlot = Plot(
+                content: content,
+                date: date,
+                point: point,
+                title: title,
+                type: type,
+                folder: nil
+            )
+            
+            context.insert(newPlot)
         }
         
-        // 남은 데이터 저장
-        if migratedCount % 50 != 0 {
-            try self.context.save()
-        }
-        
-        print("Migration complete. Migrated: \(migratedCount), Errors: \(errorCount)")
+        try context.save()
+        print("Successfully migrated \(coreDataPlots.count) plots to SwiftData")
     }
     
     private func backupCoreDataStores() {
         let fileManager = FileManager.default
+        
         guard let storeDirectory = fileManager.urls(for: .applicationSupportDirectory, in: .userDomainMask).last else {
             return
         }
@@ -268,19 +280,20 @@ extension PlotClientLive {
         let backupDirectory = storeDirectory.appendingPathComponent("CoreDataBackup")
         
         do {
-            try fileManager.createDirectory(at: backupDirectory, withIntermediateDirectories: true)
+            if !fileManager.fileExists(atPath: backupDirectory.path) {
+                try fileManager.createDirectory(at: backupDirectory, withIntermediateDirectories: true)
+            }
             
-            let coreDataFiles = [
-                "Cloud.sqlite", "Cloud.sqlite-shm", "Cloud.sqlite-wal",
-                "Local.sqlite", "Local.sqlite-shm", "Local.sqlite-wal"
+            let coreDataStoreURLs = [
+                storeDirectory.appendingPathComponent("Cloud.sqlite"),
+                storeDirectory.appendingPathComponent("Local.sqlite")
             ]
             
-            for fileName in coreDataFiles {
-                let sourceURL = storeDirectory.appendingPathComponent(fileName)
-                if fileManager.fileExists(atPath: sourceURL.path) {
-                    let destinationURL = backupDirectory.appendingPathComponent(fileName)
-                    try fileManager.moveItem(at: sourceURL, to: destinationURL)
-                    print("Backed up: \(fileName)")
+            for storeURL in coreDataStoreURLs {
+                if fileManager.fileExists(atPath: storeURL.path) {
+                    let backupURL = backupDirectory.appendingPathComponent(storeURL.lastPathComponent)
+                    try fileManager.copyItem(at: storeURL, to: backupURL)
+                    print("Backed up Core Data store to: \(backupURL.path)")
                 }
             }
         } catch {
@@ -289,42 +302,9 @@ extension PlotClientLive {
     }
 }
 
-// MARK: - Migration Errors
-enum MigrationError: Error, LocalizedError {
-    case fetchFailed(Error)
-    case saveFailed(Error)
+enum MigrationError: Error {
     case storeNotFound
-    case storeLoadFailed(Error)
-    
-    var errorDescription: String? {
-        switch self {
-        case .fetchFailed(let error):
-            return "Failed to fetch Core Data: \(error.localizedDescription)"
-        case .saveFailed(let error):
-            return "Failed to save SwiftData: \(error.localizedDescription)"
-        case .storeNotFound:
-            return "Core Data store not found"
-        case .storeLoadFailed(let error):
-            return "Failed to load Core Data store: \(error.localizedDescription)"
-        }
-    }
+    case migrationFailed
 }
 
-// MARK: - Test Implementation
-public class PlotClientTest: PlotClient {
-    public func create(folder: Folder?) -> Plot {
-        fatalError()
-    }
-    
-    public func fetches(folder: Folder?) -> [Plot] {
-        fatalError()
-    }
-    
-    public func update(plot: Plot) {
-        fatalError()
-    }
-    
-    public func delete(plot: Plot) {
-        fatalError()
-    }
-}
+

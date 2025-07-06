@@ -6,10 +6,11 @@
 //
 
 import Foundation
+import SwiftData
 
-public enum FolderType: Equatable, Identifiable {
-    case temporary(name: String, plots: [Plot])
-    case folder(Folder)
+public enum FolderType: Identifiable {
+    case temporary(name: String, plots: [PlotModel])
+    case folder(FolderModel)
     
     public var id: FolderID? {
         switch self {
@@ -18,17 +19,17 @@ public enum FolderType: Equatable, Identifiable {
         }
     }
     
-    public var folder: Folder? {
+    public var folder: FolderModel? {
         switch self {
         case .temporary: return nil
         case .folder(let folder): return folder
         }
     }
     
-    public var plots: [Plot] {
+    public var plots: [PlotModel] {
         switch self {
         case .temporary(_, let plots): return plots
-        case .folder(let folder): return folder.plots ?? []
+        case .folder(let folder): return folder.folder?.plots?.compactMap { .init(from: $0) } ?? []
         }
     }
     
@@ -41,6 +42,20 @@ public enum FolderType: Equatable, Identifiable {
     
     public var count: Int {
         self.plots.count
+    }
+}
+
+// MARK: - Equatable
+extension FolderType: Equatable {
+    public static func == (lhs: FolderType, rhs: FolderType) -> Bool {
+        switch (lhs, rhs) {
+        case (.temporary(let lName, let lPlots), .temporary(let rName, let rPlots)):
+            return lName == rName && lPlots == rPlots
+        case (.folder(let lFolder), .folder(let rFolder)):
+            return lFolder.id == rFolder.id
+        default:
+            return false
+        }
     }
 }
 
@@ -63,39 +78,34 @@ extension FolderType {
             
             if memosCount > 0 {
                 let memoText = memosCount == 1 ? "memo" : "memos"
-                items.append("\(memosCount) \(memoText)")
+                items.append("its \(memosCount) \(memoText)")
             }
             
-            if items.count == 1 {
-                return items[0] + " will be deleted."
-            } else if items.count == 2 {
-                return items[0] + " and " + items[1] + " will be deleted."
-            } else {
-                let firstPart = items.dropLast().joined(separator: ", ")
-                let lastPart = items.last!
-                return firstPart + ", and " + lastPart + " will be deleted."
-            }
+            let itemsText = items.joined(separator: ", ")
+            return "Are you sure you want to delete \(itemsText)?"
         }
     }
-    
-    private var childCount: Int {
+}
+
+extension FolderType {
+    public var childCount: Int {
         switch self {
         case .temporary:
             return 0
         case .folder(let folder):
-            let subfolders = folder.folders ?? []
-            return subfolders.count + subfolders.map { FolderType.folder($0).childCount }.reduce(0, +)
+            let subfolders = folder.folders
+            return subfolders.count + subfolders.map { FolderType.folder(FolderModel(from: $0)).childCount }.reduce(0, +)
         }
     }
-    
+
     private var totalPlotsCount: Int {
         switch self {
         case .temporary(_, let plots):
             return plots.count
         case .folder(let folder):
-            let subfolders = folder.folders ?? []
-            let subfoldersPlots = subfolders.map { FolderType.folder($0).totalPlotsCount }.reduce(0, +)
-            return (folder.plots?.count ?? 0) + subfoldersPlots
+            let subfolders = folder.folders
+            let subfoldersPlots = subfolders.map { FolderType.folder(FolderModel(from: $0)).totalPlotsCount }.reduce(0, +)
+            return (folder.folder?.plots?.count ?? 0) + subfoldersPlots
         }
     }
 }

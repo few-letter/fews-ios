@@ -7,6 +7,7 @@
 
 import ComposableArchitecture
 import Foundation
+import SwiftData
 
 @Reducer
 public struct FolderStore {
@@ -15,84 +16,85 @@ public struct FolderStore {
         public var folderTypes: [FolderType]
         
         @Presents public var addFolder: AddFolderStore.State?
-        @Presents var alert: AlertState<Action.Alert>?
+        @Presents public var alert: AlertState<Action.AlertAction>?
         
         public init(
-            folderTypes: [FolderType] = [],
-            alert: AlertState<Action.Alert>? = nil
+            folderTypes: [FolderType] = []
         ) {
             self.folderTypes = folderTypes
-            self.alert = alert
         }
     }
     
-    public enum Action: BindableAction, Equatable {
-        case binding(BindingAction<State>)
-        
+    public enum Action {
         case onAppear
         
         case settingButtonTapped
         case addFolderButtonTapped
         case addPlotButtonTapped
+        case editFolderButtonTapped(FolderModel)
         case refresh
         
         case fetch
-        case fetched([Folder], [Plot])
+        case fetched([FolderModel], [PlotModel])
         
         case folderTypeListCellTapped(FolderType)
         case folderTypeListCellDeleteTapped(FolderID)
         case addFolder(PresentationAction<AddFolderStore.Action>)
-        case alert(PresentationAction<Alert>)
+        case alert(PresentationAction<AlertAction>)
         
-        case delegate(Delegate)
-        
-        public enum Delegate: Equatable {
-            case requestSetting
-            case requestPlot(FolderType)
-            case requestAddPlot
+        public enum AlertAction: Equatable {
+            case requestDelete(FolderID)
         }
         
-        @CasePathable
-        public enum Alert: Equatable {
+        case delegate(Delegate)
+        public enum Delegate {
+            case requestPlot(FolderType)
+            case requestAddPlot
             case requestDelete(FolderID)
         }
     }
     
-    @Dependency(\.plotClient) var plotClient
+    public init() {}
+    
     @Dependency(\.folderClient) var folderClient
+    @Dependency(\.plotClient) var plotClient
     
     public var body: some ReducerOf<Self> {
-        BindingReducer()
-        
-        Reduce<State, Action> { state, action in
+        Reduce { state, action in
             switch action {
-            case .binding:
-                return .none
-                
             case .onAppear:
                 return .send(.fetch)
                 
             case .settingButtonTapped:
-                return .send(.delegate(.requestSetting))
+                return .none
                 
             case .addFolderButtonTapped:
-                state.addFolder = .init(parentFolder: nil, name: "")
+                state.addFolder = .init(folder: .init())
                 return .none
                 
             case .addPlotButtonTapped:
                 return .send(.delegate(.requestAddPlot))
                 
+            case .editFolderButtonTapped(let folder):
+                state.addFolder = .init(folder: folder)
+                return .none
+                
             case .refresh:
                 return .send(.fetch)
                 
             case .fetch:
-                let folders: [Folder] = folderClient.fetchRoots()
-                let plots: [Plot] = plotClient.fetches(folder: nil)
-                return .send(.fetched(folders, plots))
+                let rootFolders = folderClient.fetches(parentFolder: nil)
+                let plots = plotClient.fetches()
+                return .run { send in
+                    await send(.fetched(rootFolders, plots))
+                }
                 
             case .fetched(let folders, let plots):
-                var folderTypes: [FolderType] = [.temporary(name: "All", plots: plots)]
-                folderTypes += folders.map { .folder($0) }
+                let folderModels = folders
+                let plotModels = plots
+                
+                var folderTypes: [FolderType] = [.temporary(name: "All", plots: plotModels)]
+                folderTypes += folderModels.map { .folder($0) }
                 state.folderTypes = folderTypes
                 return .none
                 
@@ -102,41 +104,31 @@ public struct FolderStore {
             case .folderTypeListCellDeleteTapped(let folderID):
                 guard let folderType = state.folderTypes.first(where: { $0.id == folderID }) else { return .none }
                 
-                state.alert = AlertState(
+                state.alert = .init(
                     title: {
                         TextState("Delete Folder")
                     },
                     actions: {
-                        ButtonState(role: .cancel) {
-                            TextState("Cancel")
-                        }
                         ButtonState(role: .destructive, action: .requestDelete(folderID)) {
-                            TextState("Confirm")
+                            TextState("Delete")
                         }
                     },
                     message: { TextState(folderType.deleteMessage) })
+                
                 return .none
                 
             case .addFolder(.presented(.delegate(let action))):
                 switch action {
-                case .confirm(let folder, let name):
-                    let _ = folderClient.create(parentFolder: folder, name: name)
+                case .requestConfirm:
                     state.addFolder = nil
                     return .send(.fetch)
-                case .dismiss:
+                case .requestCancel:
                     state.addFolder = nil
                     return .none
                 }
                 
-            case .alert(.presented(let action)):
-                switch action {
-                case .requestDelete(let folderID):
-                    if case let .folder(folder) = state.folderTypes.first(where: { $0.id == folderID }) {
-                        folderClient.delete(folder: folder)
-                        return .send(.fetch)
-                    }
-                    return .none
-                }
+            case .alert(.presented(.requestDelete(let folderID))):
+                return .send(.delegate(.requestDelete(folderID)))
                 
             case .delegate, .alert, .addFolder:
                 return .none

@@ -72,23 +72,26 @@ public struct HomeStore {
                 
             case .folder(.delegate(let action)):
                 switch action {
-                case .requestSetting:
-                    state.path.append(.settings(.init()))
                 case .requestPlot(let folderType):
                     state.path.append(.folderTree(.init(folderType: folderType)))
+                    return .none
                 case .requestAddPlot:
-                    let plot = plotClient.create(folder: nil)
-                    state.path.append(.addPlot(.init(plot: plot)))
+                    let newPlot = PlotModel()
+                    state.path.append(.addPlot(.init(plot: newPlot)))
+                    return .none
+                case .requestDelete(let folderID):
+                    return .none
                 }
-                return .none
                 
             case .path, .folder:
                 return .none
             }
         }
+        
         Scope(state: \.folder, action: \.folder) {
             FolderStore()
         }
+        
         .forEach(\.path, action: \.path)
     }
 }

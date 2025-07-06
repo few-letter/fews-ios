@@ -10,19 +10,38 @@ import ComposableArchitecture
 import SwiftData
 
 public protocol PlotClient {
-    func create(folder: Folder?) -> Plot
-    func fetches(folder: Folder?) -> [Plot]
-    func update(plot: Plot) -> Void
-    func delete(plot: Plot) -> Void
+    @discardableResult
+    func createOrUpdate(plot: PlotModel) -> PlotModel
+    func fetches() -> [PlotModel]
+    func fetches(folder: FolderModel?) -> [PlotModel]
+    func delete(plot: PlotModel)
 }
 
-private struct PlotClientKey: DependencyKey {
-    static let liveValue: any PlotClient = PlotClientTest()
+private struct PlotClientKey: TestDependencyKey {
+    static var testValue: any PlotClient = PlotClientTest()
 }
 
 extension DependencyValues {
     var plotClient: any PlotClient {
         get { self[PlotClientKey.self] }
         set { self[PlotClientKey.self] = newValue }
+    }
+}
+
+public struct PlotClientTest: PlotClient {
+    public func createOrUpdate(plot: PlotModel) -> PlotModel {
+        return plot
+    }
+    
+    public func fetches() -> [PlotModel] {
+        return []
+    }
+    
+    public func fetches(folder: FolderModel?) -> [PlotModel] {
+        return []
+    }
+    
+    public func delete(plot: PlotModel) {
+        // Test implementation
     }
 }

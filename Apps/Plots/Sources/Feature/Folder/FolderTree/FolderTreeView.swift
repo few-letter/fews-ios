@@ -66,11 +66,16 @@ extension FolderTreeView {
                         }
                         .buttonStyle(PlainButtonStyle())
                         .contextMenu {
-                            if let id = folderType.id {
+                            if let folder = folderType.folder {
                                 Button(role: .destructive, action: {
-                                    store.send(.folderTypeListCellDeleteTapped(id))
+                                    store.send(.folderTypeListCellDeleteTapped(folder.id))
                                 }) {
                                     Label("Delete Folder", systemImage: "trash")
+                                }
+                                Button {
+                                    store.send(.editFolderButtonTapped(folder))
+                                } label: {
+                                    Label("Edit Folder", systemImage: "pencil")
                                 }
                             }
                         }

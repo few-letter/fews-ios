@@ -6,75 +6,57 @@
 //
 
 import Foundation
+import SwiftData
 import ComposableArchitecture
 
 @Reducer
 public struct AddPlotStore {
     @ObservableState
     public struct State: Equatable {
-        var plot: Plot
+        public var plot: PlotModel
         
-        var point: Double
-        var date: Date
-        var type: Int
-        
-        public init(plot: Plot) {
+        public init(plot: PlotModel) {
             self.plot = plot
-            self.point = plot.point ?? .init()
-            self.date = plot.date ?? .init()
-            self.type = plot.type ?? .init()
         }
     }
     
     public enum Action: BindableAction, Equatable {
         case binding(BindingAction<State>)
+        case onAppear
         
-        case titleChanged(String)
-        case contentChanged(String)
-        case dateChanged(Date)
-        case typeChanged(Int)
-        case pointChanged(Double)
+        case confirmButtonTapped
+        case cancelButtonTapped
         
-        case saveRequest
+        case delegate(Delegate)
+        public enum Delegate: Equatable {
+            case requestConfirm
+            case requestCancel
+        }
     }
     
-    @Dependency(\.plotClient) var plotClient
+    public init() {}
+    
+    @Dependency(\.plotClient) private var plotClient
     
     public var body: some ReducerOf<Self> {
         BindingReducer()
         
-        Reduce<State, Action> { state, action in
+        Reduce { state, action in
             switch action {
             case .binding:
+                plotClient.createOrUpdate(plot: state.plot)
+                return .none
+            case .onAppear:
                 return .none
                 
-            case let .titleChanged(title):
-                state.plot.title = title
-                return .send(.saveRequest)
+            case .confirmButtonTapped:
+                plotClient.createOrUpdate(plot: state.plot)
+                return .send(.delegate(.requestConfirm))
                 
-            case let .contentChanged(content):
-                state.plot.content = content
-                return .send(.saveRequest)
+            case .cancelButtonTapped:
+                return .send(.delegate(.requestCancel))
                 
-            case let .dateChanged(date):
-                state.plot.date = date
-                state.date = date
-                return .send(.saveRequest)
-                
-            case let .typeChanged(type):
-                state.plot.type = type
-                state.type = type
-                return .send(.saveRequest)
-                
-            case let .pointChanged(point):
-                state.plot.point = point
-                state.point = point
-                return .send(.saveRequest)
-                
-            case .saveRequest:
-                if state.plot.title?.isEmpty == false || state.plot.content?.isEmpty == false {
-                    plotClient.update(plot: state.plot)
-                }
+            case .delegate:
                 return .none
             }
         }

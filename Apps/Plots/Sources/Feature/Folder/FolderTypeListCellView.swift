@@ -35,4 +35,4 @@ public struct FolderTypeListCellView: View {
         }
         .padding(.vertical, 4)
     }
-}
+} 

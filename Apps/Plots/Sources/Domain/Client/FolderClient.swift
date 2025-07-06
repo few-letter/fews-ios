@@ -10,20 +10,33 @@ import ComposableArchitecture
 import SwiftData
 
 public protocol FolderClient {
-    func create(parentFolder: Folder?, name: String) -> Folder
-    func fetchRoots() -> [Folder]
-    func fetches(parentFolder: Folder) -> [Folder]
-    func update(folder: Folder) -> Void
-    func delete(folder: Folder) -> Void
+    @discardableResult
+    func createOrUpdate(folder: FolderModel) -> FolderModel
+    func fetches(parentFolder: FolderModel?) -> [FolderModel]
+    func delete(folder: FolderModel)
 }
 
-private struct FolderClientKey: DependencyKey {
-    static let liveValue: any FolderClient = FolderClientTest()
+private struct FolderClientKey: TestDependencyKey {
+    static var testValue: any FolderClient = FolderClientTest()
 }
 
 extension DependencyValues {
     var folderClient: any FolderClient {
         get { self[FolderClientKey.self] }
         set { self[FolderClientKey.self] = newValue }
+    }
+}
+
+public struct FolderClientTest: FolderClient {
+    public func createOrUpdate(folder: FolderModel) -> FolderModel {
+        return folder
+    }
+    
+    public func fetches(parentFolder: FolderModel?) -> [FolderModel] {
+        return []
+    }
+    
+    public func delete(folder: FolderModel) {
+        // Test implementation
     }
 }

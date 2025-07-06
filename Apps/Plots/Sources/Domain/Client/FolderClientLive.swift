@@ -13,97 +13,98 @@ public class FolderClientLive: FolderClient {
     
     public init(context: ModelContext) {
         self.context = context
+        self.context.autosaveEnabled = false
+        
+        createMockDataIfNeeded()
     }
     
-    public func create(parentFolder: Folder?, name: String) -> Folder {
-        let folder = Folder(name: name)
-        folder.parentFolder = parentFolder
-        if let parentFolder = parentFolder {
-            parentFolder.folders?.append(folder)
-        }
-        self.save(folder)
-        return folder
-    }
-    
-    public func fetchRoots() -> [Folder] {
+    private func createMockDataIfNeeded() {
+        // Mock 데이터 생성 로직
         do {
-            let descriptor: FetchDescriptor<Folder> = .init(
-                sortBy: [.init(\.createdDate)]
-            )
-            let result = try context.fetch(descriptor)
-            return result.filter { $0.parentFolder == nil }
-        } catch {
-            return []
-        }
-    }
-    
-    public func fetches(parentFolder: Folder) -> [Folder] {
-        do {
-            var descriptor: FetchDescriptor<Folder>
+            let descriptor = FetchDescriptor<Folder>()
+            let existingFolders = try context.fetch(descriptor)
             
-            if let parentFolderID = parentFolder.id {
-                descriptor = .init(
+            if existingFolders.isEmpty {
+                // Mock 데이터 생성
+                let rootFolder = Folder(
+                    id: UUID().uuidString,
+                    name: "루트 폴더",
+                    createdDate: Date()
+                )
+                
+                let subFolder = Folder(
+                    id: UUID().uuidString,
+                    name: "서브 폴더",
+                    createdDate: Date()
+                )
+                
+                subFolder.parentFolder = rootFolder
+                rootFolder.folders?.append(subFolder)
+                
+                context.insert(rootFolder)
+                context.insert(subFolder)
+                try context.save()
+            }
+        } catch {
+            print("Failed to create mock data: \(error)")
+        }
+    }
+    
+    public func createOrUpdate(folder: FolderModel) -> FolderModel {
+        do {
+            let swiftDataFolder: Folder
+            if let existingFolder = folder.folder {
+                folder.updateSwiftData()
+                swiftDataFolder = existingFolder
+            } else {
+                swiftDataFolder = folder.toSwiftDataFolder()
+                swiftDataFolder.parentFolder = folder.parentFolder
+                context.insert(swiftDataFolder)
+            }
+            try context.save()
+            
+            return FolderModel(from: swiftDataFolder)
+        } catch {
+            print("Failed to createOrUpdate folder: \(error)")
+            return folder
+        }
+    }
+    
+    public func fetches(parentFolder: FolderModel?) -> [FolderModel] {
+        do {
+            let descriptor: FetchDescriptor<Folder>
+            if let parentFolderID = parentFolder?.folder?.id {
+                descriptor = FetchDescriptor<Folder>(
                     predicate: #Predicate { folder in
                         folder.parentFolder?.id == parentFolderID
                     },
                     sortBy: [.init(\.createdDate)]
                 )
             } else {
-                descriptor = .init(
+                descriptor = FetchDescriptor<Folder>(
+                    predicate: #Predicate { folder in
+                        folder.parentFolder == nil
+                    },
                     sortBy: [.init(\.createdDate)]
                 )
             }
+            
             let result = try context.fetch(descriptor)
-            return result
+            return result.map { FolderModel(from: $0) }
         } catch {
+            print("Failed to fetch folders: \(error)")
             return []
         }
     }
     
-    public func update(folder: Folder) -> Void {
+    public func delete(folder: FolderModel) {
         do {
-            try context.save()
-            print("Successfully updated folder: \(folder.name ?? "Unknown")")
+            if let existingFolder = folder.folder {
+                context.delete(existingFolder)
+                try context.save()
+            }
         } catch {
-            print("Failed to update folder: \(error)")
+            print("Failed to delete folder: \(error)")
         }
-    }
-    
-    public func delete(folder: Folder) -> Void {
-        do {
-            context.delete(folder)
-            try context.save()
-        } catch {
-        }
-    }
-    
-    public func save(_ folder: Folder) {
-        do {
-            context.insert(folder)
-            try context.save()
-        } catch {
-        }
-    }
-}
-
-public class FolderClientTest: FolderClient {
-    public func create(parentFolder: Folder?, name: String) -> Folder {
-        fatalError()
-    }
-    
-    public func fetchRoots() -> [Folder] {
-        fatalError()
-    }
-    
-    public func fetches(parentFolder: Folder) -> [Folder] {
-        fatalError()
-    }
-    
-    public func update(folder: Folder) {
-        fatalError()
-    }
-    
-    public func delete(folder: Folder) {
-        fatalError()
     }
 }

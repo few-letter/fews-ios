@@ -6,51 +6,52 @@
 //
 
 import Foundation
+import SwiftData
 import ComposableArchitecture
 
 @Reducer
 public struct AddFolderStore {
     @ObservableState
     public struct State: Equatable {
-        public var parentFolder: Folder?
-        public var name: String
+        public var folder: FolderModel
         
-        public init(parentFolder: Folder?, name: String) {
-            self.parentFolder = parentFolder
-            self.name = name
+        public init(folder: FolderModel) {
+            self.folder = folder
         }
     }
     
-    public enum Action: BindableAction, Equatable {
-        case binding(BindingAction<State>)
-        case onAppear
+    public enum Action {
+        case setName(String)
         
-        case confirm
-        case cancel
+        case confirmButtonTapped
+        case cancelButtonTapped
         
         case delegate(Delegate)
-        
-        public enum Delegate: Equatable {
-            case confirm(Folder?, String)
-            case dismiss
+        public enum Delegate {
+            case requestConfirm
+            case requestCancel
         }
     }
     
+    public init() {}
+    
+    @Dependency(\.folderClient) private var folderClient
+    
     public var body: some ReducerOf<Self> {
-        BindingReducer()
-        
-        Reduce<State, Action> { state, action in
+        Reduce { state, action in
             switch action {
-            case .onAppear:
+            case .setName(let name):
+                state.folder.name = name
                 return .none
                 
-            case .confirm:
-                return .send(.delegate(.confirm(state.parentFolder, state.name)))
+            case .confirmButtonTapped:
+                folderClient.createOrUpdate(folder: state.folder)
+                return .send(.delegate(.requestConfirm))
                 
-            case .cancel:
-                return .send(.delegate(.dismiss))
+            case .cancelButtonTapped:
+                return .send(.delegate(.requestCancel))
                 
-            case .delegate, .binding:
+            case .delegate:
                 return .none
             }
         }

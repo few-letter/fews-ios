@@ -14,7 +14,7 @@ public struct AddFolderView: View {
     public var body: some View {
         NavigationView {
             VStack(spacing: 20) {
-                TextField("Name", text: $store.name)
+                TextField("Name", text: .init(get: { store.folder.name }, set: { store.send(.setName($0)) }))
                     .textFieldStyle(RoundedBorderTextFieldStyle())
                     .padding(.horizontal)
                 
@@ -26,15 +26,15 @@ public struct AddFolderView: View {
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
                     Button("Cancel") {
-                        store.send(.cancel)
+                        store.send(.cancelButtonTapped)
                     }
                 }
                 
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Button("Done") {
-                        store.send(.confirm)
+                        store.send(.confirmButtonTapped)
                     }
-                    .disabled(store.name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
+                    .disabled(store.folder.name.isEmpty)
                 }
             }
         }

@@ -9,7 +9,7 @@ import SwiftUI
 import ComposableArchitecture
 
 public struct AddPlotView: View {
-    public let store: StoreOf<AddPlotStore>
+    @Bindable public var store: StoreOf<AddPlotStore>
     
     @Environment(\.colorScheme) var colorScheme
     @State private var calendarId: UUID = UUID()
@@ -40,10 +40,7 @@ public struct AddPlotView: View {
                             .fill(Color.clear)
                             .frame(height: 20)
                         
-                        TextEditor(text: Binding(
-                            get: { store.plot.content ?? "" },
-                            set: { store.send(.contentChanged($0)) }
-                        ))
+                        TextEditor(text: $store.plot.content)
                         .font(.body)
                         .frame(minHeight: 400)
                         .padding(.horizontal)
@@ -65,7 +62,7 @@ public struct AddPlotView: View {
             }
         }
         .navigationBarTitleDisplayMode(.inline)
-        .onChange(of: store.date) {
+        .onChange(of: store.plot.date) {
             calendarId = UUID()
         }
     }
@@ -90,11 +87,11 @@ public struct AddPlotView: View {
     
     private var stickyHeaderView: some View {
         HStack {
-            Text(store.plot.title?.isEmpty == false ? store.plot.title! : "Title")
+            Text(store.plot.title.isEmpty ? "Title" : store.plot.title)
                 .font(.headline)
                 .fontWeight(.semibold)
                 .lineLimit(1)
-                .foregroundColor(store.plot.title?.isEmpty == false ? .primary : .secondary)
+                .foregroundColor(store.plot.title.isEmpty ? .secondary : .primary)
             
             Spacer()
             
@@ -102,12 +99,12 @@ public struct AddPlotView: View {
                 Image(systemName: "star.fill")
                     .foregroundColor(.yellow)
                     .font(.caption)
-                Text("\(store.point, specifier: "%.1f")")
+                Text("\(store.plot.point, specifier: "%.1f")")
                     .font(.caption)
                     .fontWeight(.medium)
             }
             
-            if let plotType = PlotType.allCases.first(where: { $0.rawValue == store.type }) {
+            if let plotType = PlotType.allCases.first(where: { $0.rawValue == store.plot.type }) {
                 Text(plotType.title)
                     .font(.caption)
                     .fontWeight(.medium)
@@ -124,22 +121,16 @@ public struct AddPlotView: View {
     }
     
     private var titleField: some View {
-        TextField(
-            "Title",
-            text: Binding(
-                get: { store.plot.title ?? "" },
-                set: { store.send(.titleChanged($0)) }
-            )
-        )
-        .font(.title3)
-        .fontWeight(.semibold)
-        .padding(.bottom, 20)
+        TextField("Title", text: $store.plot.title)
+            .font(.title3)
+            .fontWeight(.semibold)
+            .padding(.bottom, 20)
     }
     
     private var plotControls: some View {
         HStack(spacing: 10) {
             starRatingView
-            Text("\(store.point, specifier: "%.1f")")
+            Text("\(store.plot.point, specifier: "%.1f")")
                 .font(.subheadline)
                 .fontWeight(.semibold)
             resetButton
@@ -149,14 +140,16 @@ public struct AddPlotView: View {
     
     private var starRatingView: some View {
         StarRatingView(
-            point: store.point,
-            onPointChanged: { store.send(.pointChanged($0)) }
+            point: store.plot.point,
+            onPointChanged: { point in
+                store.send(.binding(.set(\.plot.point, point)))
+            }
         )
     }
     
     private var resetButton: some View {
         Button(action: {
-            store.send(.pointChanged(0), animation: .default)
+            store.send(.binding(.set(\.plot.point, 0)), animation: .default)
         }, label: {
             Image(systemName: "arrow.counterclockwise")
                 .imageScale(.small)
@@ -167,10 +160,7 @@ public struct AddPlotView: View {
     private var datePicker: some View {
         DatePicker(
             "",
-            selection: Binding(
-                get: { store.date },
-                set: { store.send(.dateChanged($0)) }
-            ),
+            selection: $store.plot.date,
             displayedComponents: [.date]
         )
         .id(calendarId)
@@ -182,10 +172,10 @@ public struct AddPlotView: View {
                 HStack {
                     Button(
                         action: {
-                            store.send(.typeChanged(type.rawValue), animation: .default)
+                            store.send(.binding(.set(\.plot.type, type.rawValue)), animation: .default)
                         },
                         label: {
-                            Image(systemName: store.type == type.rawValue ? "circle.fill" : "circle")
+                            Image(systemName: store.plot.type == type.rawValue ? "circle.fill" : "circle")
                                 .imageScale(.small)
                                 .font(.footnote)
                                 .foregroundColor(Color(.label))

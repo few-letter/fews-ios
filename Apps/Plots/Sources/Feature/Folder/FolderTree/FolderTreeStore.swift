@@ -106,10 +106,14 @@ public struct FolderTreeStore {
                 return .send(.fetch)
                 
             case .fetch:
-                let plots: [PlotModel] = plotClient.fetches(folder: state.folderType.folder)
-                var folders: [FolderModel] = []
+                let plots: [PlotModel]
+                let folders: [FolderModel]
                 if let folder = state.folderType.folder {
+                    plots = plotClient.fetches(folder: folder)
                     folders = folderClient.fetches(parentFolder: folder)
+                } else {
+                    plots = plotClient.fetches()
+                    folders = []
                 }
                 return .send(.fetched(folders, plots))
                 

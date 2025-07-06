@@ -79,6 +79,9 @@ public struct HomeStore {
                     let newPlot = PlotModel()
                     state.path.append(.addPlot(.init(plot: newPlot)))
                     return .none
+                case .requestSettings:
+                    state.path.append(.settings(.init()))
+                    return .none
                 case .requestDelete(let folderID):
                     return .none
                 }

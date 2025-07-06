@@ -50,6 +50,7 @@ public struct FolderStore {
         public enum Delegate {
             case requestPlot(FolderType)
             case requestAddPlot
+            case requestSettings
             case requestDelete(FolderID)
         }
     }
@@ -66,7 +67,7 @@ public struct FolderStore {
                 return .send(.fetch)
                 
             case .settingButtonTapped:
-                return .none
+                return .send(.delegate(.requestSettings))
                 
             case .addFolderButtonTapped:
                 state.addFolder = .init(folder: .init())

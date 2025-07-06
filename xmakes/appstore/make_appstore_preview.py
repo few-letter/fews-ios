@@ -197,7 +197,7 @@ class AppStorePreviewGenerator:
             
             text_center_x = phone_x + (new_width // 2)
             
-            max_text_width = bg_width - 200
+            max_text_width = bg_width - 40
             text_lines = self.wrap_text(config.text, max_text_width, self.font_manager.get_title_font())
             
             line_height = self.font_size_title + 20
@@ -217,7 +217,8 @@ class AppStorePreviewGenerator:
                 
                 draw.text((line_x, line_y), line, font=self.font_manager.get_title_font(), fill=(0, 0, 0))
             
-            filename = f"{Path(config.filename).stem}_{self.fastlane_device_identifier}_{idx:02d}.jpg"
+            # Fastlane 파일명 형식으로 생성: {순번}_{기기식별자}_{순번}.png (0 패딩)
+            filename = f"{idx:02d}_{self.fastlane_device_identifier}_{idx}.png"
             output_path = Path(output_dir) / filename
             saved_path = self._save_image(work_image, str(output_path))
             generated_files.append(saved_path)
@@ -234,7 +235,11 @@ class AppStorePreviewGenerator:
                 rgb_image.paste(image, mask=image.split()[3])
                 image = rgb_image
             
-            image.save(output_path, format='JPEG', quality=95, dpi=(300, 300))
+            # PNG 형식으로 저장 (FastLane 표준)
+            if output_path.endswith('.png'):
+                image.save(output_path, format='PNG', dpi=(300, 300))
+            else:
+                image.save(output_path, format='JPEG', quality=95, dpi=(300, 300))
             print(f"Image saved: {output_path}")
             return output_path
         except Exception as e:

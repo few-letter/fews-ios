@@ -31,6 +31,30 @@ Upload to TestFlight
 
 Build and submit to App Store for review
 
+### ios generate_screenshots
+
+```sh
+[bundle exec] fastlane ios generate_screenshots
+```
+
+Generate screenshots for App Store
+
+### ios upload_appstore_info
+
+```sh
+[bundle exec] fastlane ios upload_appstore_info
+```
+
+Upload App Store info (metadata + screenshots upload only)
+
+### ios full_upload
+
+```sh
+[bundle exec] fastlane ios full_upload
+```
+
+Generate screenshots and upload App Store info (combined)
+
 ### ios reset
 
 ```sh

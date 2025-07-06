@@ -199,6 +199,7 @@ platform :ios do
           skip_binary_upload: true,
           skip_screenshots: true,
           force: true,
+          ignore_language_directory_validation: true,
           metadata_path: "./fastlane/metadata/#{app_name}"
         )
         metadata_success = true
@@ -422,6 +423,385 @@ platform :ios do
     end
   end
 
+
+  
+
+
+  desc "Generate screenshots and upload App Store info (combined)"
+  lane :full_upload do
+    app_names = APPS.keys
+    UI.message("전체 프로세스를 실행할 앱을 선택하세요:")
+    app_names.each_with_index { |name, i| UI.message("#{i+1}. #{name}") }
+    
+    choices_input = UI.input("번호 선택 (여러개는 콤마로 구분, 예: 1,3,5): ")
+    choices = choices_input.split(',').map(&:strip).map(&:to_i)
+    
+    # 입력값 검증
+    invalid_choices = choices.reject { |choice| (1..app_names.length).include?(choice) }
+    unless invalid_choices.empty?
+      UI.error("잘못된 선택입니다: #{invalid_choices.join(', ')}")
+      next
+    end
+    
+    selected_apps = choices.map { |choice| app_names[choice-1] }
+    UI.success("선택된 앱들: #{selected_apps.join(', ')}")
+    
+    UI.header("🚀 전체 프로세스 시작")
+    UI.message("1️⃣ 스크린샷 생성 → 2️⃣ App Store 업로드")
+    
+    # 단계 1: 스크린샷 생성
+    UI.header("🎯 1단계: 스크린샷 생성")
+    screenshot_failed_apps = []
+    
+    selected_apps.each_with_index do |app_name, index|
+      UI.header("📱 #{index + 1}/#{selected_apps.length}: #{app_name} 스크린샷 생성 중...")
+      
+      begin
+        # 스크린샷 생성 로직
+        UI.message("🎨 #{app_name} 앱스토어 프리뷰 이미지 생성 중...")
+        
+        # 현재 디렉토리 저장
+        original_dir = Dir.pwd
+        UI.message("📁 현재 디렉토리: #{original_dir}")
+        
+        # 절대 경로로 xmakes 디렉토리 찾기
+        xmakes_dir = File.expand_path("../xmakes", original_dir)
+        UI.message("📁 xmakes 디렉토리: #{xmakes_dir}")
+        
+        unless Dir.exist?(xmakes_dir)
+          UI.error("xmakes 폴더를 찾을 수 없습니다: #{xmakes_dir}")
+          screenshot_failed_apps << app_name
+          next
+        end
+        
+        # Python 가상환경 확인
+        venv_python = File.join(xmakes_dir, "venv", "bin", "python")
+        unless File.exist?(venv_python)
+          UI.message("⚠️  가상환경을 찾을 수 없습니다. 가상환경을 먼저 설정하세요.")
+          UI.message("cd xmakes && python3 setup_venv.py")
+          screenshot_failed_apps << app_name
+          next
+        end
+        
+        # appstore 프리뷰 생성 실행
+        Dir.chdir(File.join(xmakes_dir, "appstore")) do
+          UI.message("📁 작업 디렉토리 변경: #{Dir.pwd}")
+          
+          # 기존 output 폴더 정리
+          output_dir = "output"
+          sh("rm -rf #{output_dir}") if Dir.exist?(output_dir)
+          
+          # 프리뷰 생성 실행
+          sh("#{venv_python} run_appstore_preview.py")
+          
+          # 생성된 이미지를 fastlane/screenshots 폴더로 복사
+          UI.message("📁 #{app_name} 스크린샷을 fastlane/screenshots 폴더로 복사 중...")
+          
+          # 현재는 plots 앱만 지원
+          app_name_lower = app_name.downcase
+          if app_name_lower == "plots"
+            source_dir = File.join("output", "plots")
+          else
+            UI.message("⚠️  현재 #{app_name}은 지원되지 않습니다. Plots 앱만 지원됩니다.")
+            screenshot_failed_apps << app_name
+            next
+          end
+          
+          # 절대 경로로 screenshots 폴더 설정
+          screenshots_base_dir = File.join(original_dir, "screenshots")
+          UI.message("📁 대상 스크린샷 폴더: #{screenshots_base_dir}")
+          
+          unless Dir.exist?(source_dir)
+            UI.error("생성된 스크린샷을 찾을 수 없습니다: #{source_dir}")
+            screenshot_failed_apps << app_name
+            next
+          end
+          
+          # 기존 앱 스크린샷 폴더 삭제
+          target_app_dir = File.join(screenshots_base_dir, app_name)
+          if Dir.exist?(target_app_dir)
+            UI.message("🗑️  기존 #{app_name} 스크린샷 폴더 삭제 중...")
+            sh("rm -rf '#{target_app_dir}'")
+          end
+          
+          # 각 디바이스 타입별로 복사
+          ["iphone", "ipad"].each do |device_type|
+            device_source = File.join(source_dir, device_type)
+            next unless Dir.exist?(device_source)
+            
+            # 언어별 폴더 순회
+            Dir.glob(File.join(device_source, "*")).each do |lang_dir|
+              next unless File.directory?(lang_dir)
+              
+              lang_code = File.basename(lang_dir)
+              
+              # 대상 폴더 설정
+              target_lang_dir = File.join(target_app_dir, lang_code)
+              
+              # 기존 스크린샷 폴더가 없으면 생성
+              unless Dir.exist?(target_lang_dir)
+                UI.message("📁 디렉토리 생성: #{target_lang_dir}")
+                sh("mkdir -p '#{target_lang_dir}'")
+              end
+              
+              # 스크린샷 파일 복사 (jpg, png 모두 지원)
+              screenshot_files = Dir.glob(File.join(lang_dir, "*.{jpg,png,jpeg}"))
+              if screenshot_files.any?
+                screenshot_files.each do |screenshot_file|
+                  filename = File.basename(screenshot_file)
+                  target_file = File.join(target_lang_dir, filename)
+                  
+                  # 파일 복사
+                  sh("cp '#{screenshot_file}' '#{target_file}'")
+                  UI.message("📸 복사 완료: #{filename} → #{app_name}/#{lang_code}/")
+                end
+              else
+                UI.message("⚠️  #{lang_code} 폴더에 스크린샷이 없습니다.")
+              end
+            end
+          end
+        end
+        
+        UI.success("✅ #{app_name} 스크린샷 생성 및 복사 완료!")
+        
+      rescue => error
+        screenshot_failed_apps << app_name
+        UI.error("❌ #{app_name} 스크린샷 생성 실패: #{error.message}")
+      end
+    end
+    
+    # 단계 2: App Store 업로드
+    UI.header("🎯 2단계: App Store 업로드")
+    
+    # 1단계: 버전 정보 자동 설정
+    UI.header("📝 2-1: 버전 정보 자동 설정")
+    app_info = {}
+    
+    selected_apps.each do |app_name|
+      plist_path = "Apps/#{app_name}/Resources/Info.plist"
+      
+      # plist 파일 경로 찾기
+      if !File.exist?(plist_path)
+        alternative_paths = [
+          "../Apps/#{app_name}/Resources/Info.plist",
+          "#{app_name}/Resources/Info.plist",
+          "../#{app_name}/Resources/Info.plist"
+        ]
+        
+        alternative_paths.each do |alt_path|
+          if File.exist?(alt_path)
+            plist_path = File.expand_path(alt_path)
+            break
+          end
+        end
+      end
+      
+      if File.exist?(plist_path)
+        current_version = get_info_plist_value(path: plist_path, key: "CFBundleShortVersionString")
+        current_build = get_info_plist_value(path: plist_path, key: "CFBundleVersion")
+        
+        # 자동 설정: 버전은 현재값 유지, 빌드는 타임스탬프로 자동 설정
+        version = current_version
+        build = Time.now.strftime("%Y%m%d%H%M%S")
+        
+        UI.message("#{app_name} 설정 - 버전: #{version}, 빌드: #{build} (이전: #{current_build})")
+        
+        app_info[app_name] = {
+          plist_path: plist_path,
+          version: version,
+          build: build,
+          current_version: current_version,
+          current_build: current_build
+        }
+      else
+        UI.error("#{app_name}의 Info.plist 파일을 찾을 수 없습니다!")
+        app_info[app_name] = nil
+      end
+    end
+    
+    # 2단계: 메타데이터 및 스크린샷 업로드
+    UI.header("📝 2-2: 메타데이터 및 스크린샷 업로드")
+    failed_apps = []
+    successful_apps = []
+    
+    selected_apps.each_with_index do |app_name, index|
+      UI.header("📱 #{index + 1}/#{selected_apps.length}: #{app_name} 업로드 중...")
+      
+      info = app_info[app_name]
+      unless info
+        UI.error("❌ #{app_name}: Info.plist 파일을 찾을 수 없어 건너뜁니다.")
+        failed_apps << app_name
+        next
+      end
+      
+      bundle_id = APPS[app_name]
+      
+      # 스크린샷 폴더 및 실제 스크린샷 파일 존재 확인
+      screenshots_path = "./screenshots/#{app_name}"
+      has_screenshots = false
+      screenshot_count = 0
+      
+      # 지원되는 언어 코드 (Fastlane 공식 문서 기준)
+      supported_languages = %w[
+        ar-SA ca cs da de-DE el en-AU en-CA en-GB en-US es-ES es-MX fi fr-CA fr-FR 
+        he hi hr hu id it ja ko ms nl-NL no pl pt-BR pt-PT ro ru sk sv th tr uk vi zh-Hans zh-Hant
+      ]
+      
+      if Dir.exist?(screenshots_path)
+        # 실제 스크린샷 파일 개수 확인 (jpg, png 파일)
+        screenshot_files = Dir.glob("#{screenshots_path}/**/*.{jpg,png,jpeg}")
+        screenshot_count = screenshot_files.length
+        has_screenshots = screenshot_count > 0
+        
+        if has_screenshots
+          UI.message("📸 #{app_name} 스크린샷 파일 발견: #{screenshot_count}개")
+          
+          # 언어별 스크린샷 폴더 검증
+          lang_dirs = Dir.glob("#{screenshots_path}/*/").map { |dir| File.basename(dir) }
+          valid_langs = lang_dirs.select { |lang| supported_languages.include?(lang) }
+          invalid_langs = lang_dirs - valid_langs
+          
+          if valid_langs.any?
+            UI.message("✅ 유효한 언어 폴더: #{valid_langs.join(', ')}")
+          end
+          
+          if invalid_langs.any?
+            UI.message("⚠️  알 수 없는 언어 폴더 (계속 진행): #{invalid_langs.join(', ')}")
+          end
+        else
+          UI.message("📁 #{app_name} 스크린샷 폴더는 있지만 이미지 파일이 없습니다.")
+        end
+      else
+        UI.message("📁 #{app_name} 스크린샷 폴더가 존재하지 않습니다.")
+      end
+      
+      begin
+        # 빌드 번호 업데이트
+        if info[:build] != info[:current_build]
+          UI.message("🔢 #{app_name} 빌드 번호 업데이트: #{info[:current_build]} → #{info[:build]}")
+          set_info_plist_value(path: info[:plist_path], key: "CFBundleVersion", value: info[:build])
+        end
+        
+        # 버전 업데이트 (필요한 경우)
+        if info[:version] != info[:current_version]
+          UI.message("🔢 #{app_name} 버전 업데이트: #{info[:current_version]} → #{info[:version]}")
+          set_info_plist_value(path: info[:plist_path], key: "CFBundleShortVersionString", value: info[:version])
+        end
+        
+        # 메타데이터 폴더 존재 확인
+        metadata_folder = "./metadata/#{app_name}"
+        unless Dir.exist?(metadata_folder)
+          UI.error("❌ #{app_name} 메타데이터 폴더가 존재하지 않습니다: #{metadata_folder}")
+          failed_apps << app_name
+          next
+        end
+        
+        # 메타데이터 및 스크린샷 업로드
+        if has_screenshots
+          UI.message("📝 #{app_name} 메타데이터 및 스크린샷 업로드 중...")
+        else
+          UI.message("📝 #{app_name} 메타데이터 업로드 중 (스크린샷 없음)...")
+        end
+        
+        # FastLane 표준 방식으로 업로드
+        UI.message("🔍 앱 ID: #{bundle_id}")
+        UI.message("🔍 메타데이터 경로: ./metadata/#{app_name}")
+        UI.message("🔍 스크린샷 경로: #{has_screenshots ? "./screenshots/#{app_name}" : '없음'}")
+        
+        # 스크린샷 관련 옵션 설정
+        upload_options = {
+          app_identifier: bundle_id,
+          skip_binary_upload: true,
+          skip_screenshots: !has_screenshots,
+          force: true, # HTML 미리보기 건너뛰기
+          metadata_path: "./metadata/#{app_name}",
+          screenshots_path: "./fastlane/screenshots/#{app_name}/",
+          app_version: info[:version],
+          run_precheck_before_submit: false,
+          # 언어 디렉토리 검증 무시 (잘못된 언어 코드가 있어도 계속 진행)
+          ignore_language_directory_validation: true,
+          # 인앱구매 사전검사 포함
+          precheck_include_in_app_purchases: true,
+          # 사전검사 기본 규칙 레벨
+          precheck_default_rule_level: :warn
+        }
+        
+        # 스크린샷이 있는 경우에만 스크린샷 관련 옵션 추가
+        if has_screenshots
+          upload_options[:screenshots_path] = "./fastlane/screenshots/#{app_name}/"
+          # 스크린샷이 실제로 있을 때만 overwrite_screenshots 사용
+          upload_options[:overwrite_screenshots] = true
+          # 스크린샷 처리 타임아웃 설정 (기본 1시간)
+          upload_options[:screenshot_processing_timeout] = 3600
+          UI.message("🔄 기존 스크린샷을 새 스크린샷으로 교체합니다.")
+        else
+          UI.message("⚠️  스크린샷이 없어 overwrite_screenshots 옵션을 사용하지 않습니다.")
+        end
+        
+        # App Store Connect 업로드 실행
+        UI.message("🚀 App Store Connect에 업로드 중...")
+        upload_to_app_store(upload_options)
+        
+        successful_apps << app_name
+        UI.success("✅ #{app_name} 업로드 완료!")
+        
+        # 성공 후 요약 정보
+        if has_screenshots
+          UI.message("📸 #{screenshot_count}개 스크린샷 업로드됨")
+        end
+        UI.message("📝 메타데이터 업로드됨")
+        UI.message("💡 App Store Connect에서 변경사항을 확인하세요")
+        
+      rescue => error
+        failed_apps << app_name
+        UI.error("❌ #{app_name} 업로드 실패: #{error.message}")
+        
+        # 에러 타입별 가이드 제공
+        error_message = error.message.downcase
+        if error_message.include?("invalid") && error_message.include?("language")
+          UI.message("💡 언어 폴더 이름을 확인하세요. 지원되는 형식: ko, en-US, ja, zh-Hans 등")
+        elsif error_message.include?("screenshot")
+          UI.message("💡 스크린샷 파일 형식과 크기를 확인하세요. PNG 권장")
+        elsif error_message.include?("metadata")
+          UI.message("💡 메타데이터 폴더 구조를 확인하세요: ./metadata/#{app_name}/")
+        elsif error_message.include?("timeout")
+          UI.message("💡 네트워크 연결을 확인하거나 나중에 다시 시도하세요")
+        end
+        
+        UI.message("다음 앱으로 계속 진행합니다...")
+      end
+    end
+    
+    # 결과 요약
+    UI.header("📊 전체 프로세스 결과 요약")
+    
+    # 스크린샷 생성 결과
+    successful_screenshot_apps = selected_apps - screenshot_failed_apps
+    if successful_screenshot_apps.any?
+      UI.success("✅ 스크린샷 생성 성공: #{successful_screenshot_apps.join(', ')}")
+    end
+    
+    if screenshot_failed_apps.any?
+      UI.error("❌ 스크린샷 생성 실패: #{screenshot_failed_apps.join(', ')}")
+    end
+    
+    # 업로드 결과
+    if successful_apps.any?
+      UI.success("🎉 업로드 성공: #{successful_apps.join(', ')}")
+      UI.message("💡 App Store Connect에서 변경사항을 확인하세요.")
+      UI.message("🔗 https://appstoreconnect.apple.com/")
+    end
+    
+    if failed_apps.any?
+      UI.error("❌ 업로드 실패: #{failed_apps.join(', ')}")
+      UI.message("💡 에러 메시지를 확인하고 문제를 해결한 후 다시 시도하세요.")
+    end
+    
+    UI.header("🎉 전체 프로세스 완료!")
+    UI.message("📱 App Store Connect에서 변경사항을 확인하세요.")
+    UI.message("🔗 https://appstoreconnect.apple.com/")
+  end
+
   desc "Reset certificates"
   lane :reset do
     ["development", "appstore"].each do |type|
@@ -431,5 +811,6 @@ platform :ios do
     UI.success("Certificates reset! 🔐")
   end
   
+
 
 end

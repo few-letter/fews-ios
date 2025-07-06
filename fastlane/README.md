@@ -21,7 +21,7 @@ For _fastlane_ installation instructions, see [Installing _fastlane_](https://do
 [bundle exec] fastlane ios upload
 ```
 
-Upload to TestFlight
+TestFlight에 앱을 빌드하고 업로드합니다.
 
 ### ios submit_to_appstore
 
@@ -29,23 +29,7 @@ Upload to TestFlight
 [bundle exec] fastlane ios submit_to_appstore
 ```
 
-Build and submit to App Store for review
-
-### ios generate_screenshots
-
-```sh
-[bundle exec] fastlane ios generate_screenshots
-```
-
-Generate screenshots for App Store
-
-### ios upload_appstore_info
-
-```sh
-[bundle exec] fastlane ios upload_appstore_info
-```
-
-Upload App Store info (metadata + screenshots upload only)
+App Store에 리뷰를 위해 앱을 빌드하고 제출합니다.
 
 ### ios full_upload
 
@@ -53,7 +37,7 @@ Upload App Store info (metadata + screenshots upload only)
 [bundle exec] fastlane ios full_upload
 ```
 
-Generate screenshots and upload App Store info (combined)
+스크린샷 생성부터 메타데이터 업로드까지 전체 과정을 실행합니다.
 
 ### ios reset
 
@@ -61,7 +45,7 @@ Generate screenshots and upload App Store info (combined)
 [bundle exec] fastlane ios reset
 ```
 
-Reset certificates
+인증서를 초기화합니다.
 
 ----
 

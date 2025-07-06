@@ -75,9 +75,8 @@ public struct HomeStore {
                 case .requestPlot(let folderType):
                     state.path.append(.folderTree(.init(folderType: folderType)))
                     return .none
-                case .requestAddPlot:
-                    let newPlot = PlotModel()
-                    state.path.append(.addPlot(.init(plot: newPlot)))
+                case .requestAddPlot(let plot):
+                    state.path.append(.addPlot(.init(plot: plot)))
                     return .none
                 case .requestSettings:
                     state.path.append(.settings(.init()))

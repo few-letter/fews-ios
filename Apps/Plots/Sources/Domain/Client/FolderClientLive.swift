@@ -28,13 +28,13 @@ public class FolderClientLive: FolderClient {
                 // Mock 데이터 생성
                 let rootFolder = Folder(
                     id: UUID().uuidString,
-                    name: "루트 폴더",
+                    name: "root folder",
                     createdDate: Date()
                 )
                 
                 let subFolder = Folder(
                     id: UUID().uuidString,
-                    name: "서브 폴더",
+                    name: "sub folder",
                     createdDate: Date()
                 )
                 

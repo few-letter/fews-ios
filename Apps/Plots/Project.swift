@@ -13,12 +13,13 @@ let project = Project(
             sources: ["Sources/**"],
             resources: [
                 .glob(pattern: "Resources/Assets.xcassets/**"),
-                .glob(pattern: "Resources/GoogleService-Info.plist")
+                .glob(pattern: "Resources/GoogleService-Info.plist"),
             ],
             entitlements: "Resources/Plots.entitlements",
             dependencies: [
                 .project(target: "Shared_ThirdPartyLibs", path: "../../Modules/Shared/Shared_ThirdPartyLibs"),
                 .project(target: "Feature_Common", path: "../../Modules/Features/Feature_Common"),
+                .project(target: "LegacyPlots", path: "Legacy"),
                 .sdk(name: "JavaScriptCore", type: .framework)
             ],
             settings: .settings(

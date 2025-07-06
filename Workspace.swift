@@ -6,6 +6,7 @@ let workspace = Workspace(
         "Apps/Toffs",
         "Apps/Plots",
         "Apps/Retros",
+        "Apps/Plots/Legacy",
         "Apps/Multis",
         "Apps/Capts",
         "Apps/Times",

@@ -125,3 +125,5 @@ master.key
 *.env
 fastlane/api_key.json
 *.xcconfig
+*.ttf
+*.otf

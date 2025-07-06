@@ -1,0 +1,200 @@
+{
+  "app_name": "toffs",
+  "output_base_dir": "output",
+  "devices": {
+    "iphone": {
+      "background_image": "iphone_background.jpg",
+      "phone_y_offset": 180,
+      "text_y_offset": -120,
+      "fastlane_device_identifier": "iPhone6s",
+      "scale_factor": 0.8,
+      "font_size_title": 100,
+      "font_size_body": 32,
+      "fallback_font_path": "NotoSansKR-Regular.otf",
+      "screenshots": [
+        { "filename": "iphone_01.png" },
+        { "filename": "iphone_02.png" },
+        { "filename": "iphone_03.png" },
+        { "filename": "iphone_04.png" }
+      ]
+    },
+    "ipad": {
+      "background_image": "ipad_background.jpg",
+      "phone_y_offset": -20,
+      "text_y_offset": -200,
+      "fastlane_device_identifier": "ipadPro129",
+      "scale_factor": 1.8,
+      "font_size_title": 128,
+      "font_size_body": 32,
+      "fallback_font_path": "NotoSansKR-Regular.otf",
+      "screenshots": [
+        { "filename": "ipad_01.png" },
+        { "filename": "ipad_02.png" },
+        { "filename": "ipad_03.png" },
+        { "filename": "ipad_04.png" }
+      ]
+    }
+  },
+  "localization": {
+    "ko": {
+      "screenshot_texts": [
+        "캘린더로 매매일지를 관리하세요",
+        "가격, 수량, 사진과 메모를 기록할 수 있습니다",
+        "작성한 매매일지를 통계로 자동 변환합니다",
+        "모든 히스토리를 확인할 수 있습니다"
+      ]
+    },
+    "en-US": {
+      "screenshot_texts": [
+        "Manage your trading journal with calendar",
+        "You can record price, quantity, photos and notes",
+        "Automatically converts your trading journal to statistics",
+        "You can check all your trading history"
+      ]
+    },
+    "ja": {
+      "screenshot_texts": [
+        "カレンダーで売買日記を管理しましょう",
+        "価格、数量、写真、メモを記録できます",
+        "作成した売買日記を統計に自動変換します",
+        "すべての履歴を確認できます"
+      ]
+    },
+    "zh-Hans": {
+      "screenshot_texts": [
+        "使用日历管理您的交易日志",
+        "您可以记录价格、数量、照片和备注",
+        "自动将您的交易日志转换为统计数据",
+        "您可以查看所有交易历史"
+      ]
+    },
+    "zh-Hant": {
+      "screenshot_texts": [
+        "使用日曆管理您的交易日誌",
+        "您可以記錄價格、數量、照片和備註",
+        "自動將您的交易日誌轉換為統計資料",
+        "您可以查看所有交易歷史"
+      ]
+    },
+    "de-DE": {
+      "screenshot_texts": [
+        "Verwalten Sie Ihr Handelstagebuch mit Kalender",
+        "Sie können Preise, Mengen, Fotos und Notizen aufzeichnen",
+        "Wandelt Ihr Handelstagebuch automatisch in Statistiken um",
+        "Sie können Ihre gesamte Handelshistorie einsehen"
+      ]
+    },
+    "fr-FR": {
+      "screenshot_texts": [
+        "Gérez votre journal de trading avec un calendrier",
+        "Vous pouvez enregistrer les prix, quantités, photos et notes",
+        "Convertit automatiquement votre journal de trading en statistiques",
+        "Vous pouvez consulter tout votre historique de trading"
+      ]
+    },
+    "es-ES": {
+      "screenshot_texts": [
+        "Administra tu diario de trading con calendario",
+        "Puedes registrar precios, cantidades, fotos y notas",
+        "Convierte automáticamente tu diario de trading en estadísticas",
+        "Puedes revisar todo tu historial de trading"
+      ]
+    },
+    "it": {
+      "screenshot_texts": [
+        "Gestisci il tuo diario di trading con il calendario",
+        "Puoi registrare prezzi, quantità, foto e note",
+        "Converte automaticamente il tuo diario di trading in statistiche",
+        "Puoi controllare tutta la tua cronologia di trading"
+      ]
+    },
+    "pt-BR": {
+      "screenshot_texts": [
+        "Gerencie seu diário de trading com calendário",
+        "Você pode registrar preços, quantidades, fotos e notas",
+        "Converte automaticamente seu diário de trading em estatísticas",
+        "Você pode verificar todo seu histórico de trading"
+      ]
+    },
+    "ru": {
+      "screenshot_texts": [
+        "Управляйте торговым дневником с помощью календаря",
+        "Вы можете записывать цены, количества, фотографии и заметки",
+        "Автоматически преобразует ваш торговый дневник в статистику",
+        "Вы можете проверить всю историю торговли"
+      ]
+    },
+    "ar-SA": {
+      "screenshot_texts": [
+        "إدارة يومياتك التجارية باستخدام التقويم",
+        "يمكنك تسجيل الأسعار والكميات والصور والملاحظات",
+        "يحول يومياتك التجارية تلقائياً إلى إحصائيات",
+        "يمكنك مراجعة كل تاريخ تداولك"
+      ]
+    },
+    "hi": {
+      "screenshot_texts": [
+        "कैलेंडर के साथ अपनी ट्रेडिंग डायरी को प्रबंधित करें",
+        "आप कीमत, मात्रा, फोटो और नोट्स रिकॉर्ड कर सकते हैं",
+        "आपकी ट्रेडिंग डायरी को स्वचालित रूप से आंकड़ों में परिवर्तित करता है",
+        "आप अपना सारा ट्रेडिंग इतिहास देख सकते हैं"
+      ]
+    },
+    "tr": {
+      "screenshot_texts": [
+        "Takvim ile alım-satım günlüğünüzü yönetin",
+        "Fiyat, miktar, fotoğraf ve notları kaydedebilirsiniz",
+        "Alım-satım günlüğünüzü otomatik olarak istatistiklere dönüştürür",
+        "Tüm alım-satım geçmişinizi kontrol edebilirsiniz"
+      ]
+    },
+    "pl": {
+      "screenshot_texts": [
+        "Zarządzaj swoim dziennikiem handlowym za pomocą kalendarza",
+        "Możesz rejestrować ceny, ilości, zdjęcia i notatki",
+        "Automatycznie przekształca twój dziennik handlowy w statystyki",
+        "Możesz sprawdzić całą swoją historię handlową"
+      ]
+    },
+    "nl-NL": {
+      "screenshot_texts": [
+        "Beheer uw handelslogboek met kalender",
+        "U kunt prijzen, hoeveelheden, foto's en notities registreren",
+        "Converteert uw handelslogboek automatisch naar statistieken",
+        "U kunt uw complete handelsgeschiedenis bekijken"
+      ]
+    },
+    "sv": {
+      "screenshot_texts": [
+        "Hantera din handelsdagbok med kalender",
+        "Du kan registrera priser, kvantiteter, foton och anteckningar",
+        "Konverterar automatiskt din handelsdagbok till statistik",
+        "Du kan kontrollera hela din handelshistorik"
+      ]
+    },
+    "da": {
+      "screenshot_texts": [
+        "Administrer din handelsdagbog med kalender",
+        "Du kan registrere priser, mængder, billeder og noter",
+        "Konverterer automatisk din handelsdagbog til statistik",
+        "Du kan tjekke hele din handelshistorik"
+      ]
+    },
+    "fi": {
+      "screenshot_texts": [
+        "Hallitse kaupankäyntipäiväkirjaasi kalenterilla",
+        "Voit tallentaa hinnat, määrät, kuvat ja muistiinpanot",
+        "Muuntaa kaupankäyntipäiväkirjasi automaattisesti tilastoiksi",
+        "Voit tarkistaa koko kaupankäyntihistoriasi"
+      ]
+    },
+    "no": {
+      "screenshot_texts": [
+        "Administrer handelsdagboken din med kalender",
+        "Du kan registrere priser, mengder, bilder og notater",
+        "Konverterer automatisk handelsdagboken din til statistikk",
+        "Du kan sjekke hele handelshistorikken din"
+      ]
+    }
+  }
+}

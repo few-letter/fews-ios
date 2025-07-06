@@ -49,7 +49,7 @@ public struct FolderStore {
         case delegate(Delegate)
         public enum Delegate {
             case requestPlot(FolderType)
-            case requestAddPlot
+            case requestAddPlot(PlotModel)
             case requestSettings
             case requestDelete(FolderID)
         }
@@ -74,7 +74,8 @@ public struct FolderStore {
                 return .none
                 
             case .addPlotButtonTapped:
-                return .send(.delegate(.requestAddPlot))
+                let newPlot = plotClient.createOrUpdate(plot: .init())
+                return .send(.delegate(.requestAddPlot(newPlot)))
                 
             case .editFolderButtonTapped(let folder):
                 state.addFolder = .init(folder: folder)

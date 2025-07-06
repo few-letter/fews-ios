@@ -9,6 +9,7 @@ import Foundation
 import SwiftData
 import CoreData
 import CloudKit
+import LegacyPlots
 
 public class PlotClientLive: PlotClient {
     private var context: ModelContext
@@ -35,10 +36,10 @@ public class PlotClientLive: PlotClient {
             if existingPlots.isEmpty {
                 // Mock 데이터 생성
                 let mockPlot = Plot(
-                    content: "샘플 내용",
+                    content: "sample",
                     date: Date(),
-                    point: 8.5,
-                    title: "첫 번째 플롯",
+                    point: 3.5,
+                    title: "first plots",
                     type: 0,
                     folder: nil
                 )
@@ -126,59 +127,14 @@ public class PlotClientLive: PlotClient {
 }
 
 // MARK: - PlotCloudManager for Migration
-class PlotCloudManager {
-    static let shared = PlotCloudManager()
-    
-    lazy var persistentContainer: NSPersistentCloudKitContainer = {
-        let container = NSPersistentCloudKitContainer(name: "plotfolio")
-        let storeDirectory = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask).last!
-        
-        let localUrl = storeDirectory.appendingPathComponent("Local.sqlite")
-        let localStoreDescription = NSPersistentStoreDescription(url: localUrl)
-        localStoreDescription.configuration = "Local"
-        
-        let cloudUrl = storeDirectory.appendingPathComponent("Cloud.sqlite")
-        let cloudStoreDescription = NSPersistentStoreDescription(url: cloudUrl)
-        cloudStoreDescription.configuration = "Cloud"
-        
-        cloudStoreDescription.cloudKitContainerOptions = NSPersistentCloudKitContainerOptions(
-            containerIdentifier: "iCloud.plotfolio"
-        )
-        
-        container.persistentStoreDescriptions = [
-            cloudStoreDescription,
-            localStoreDescription
-        ]
-        
-        container.loadPersistentStores { storeDescription, error in
-            if let error = error {
-                print("Could not load persistent stores: \(error)")
-            }
-        }
-        
-        return container
-    }()
-    
-    func fetchAllPlots() -> [NSManagedObject] {
-        let viewContext = self.persistentContainer.viewContext
-        let request = NSFetchRequest<NSManagedObject>(entityName: "Plot")
-        request.sortDescriptors = [NSSortDescriptor(key: "date", ascending: true)]
-        
-        do {
-            return try viewContext.fetch(request)
-        } catch {
-            print("Failed to fetch plots from Core Data: \(error)")
-            return []
-        }
-    }
-}
+// PlotCloudManager는 이제 LegacyPlots 모듈에서 import됩니다.
 
 // MARK: - Migration Logic
 extension PlotClientLive {
     
     private func performMigrationIfNeeded() {
-        let migrationKey = "CoreDataToSwiftDataMigrationCompleted_v3"
-        let migrationInProgressKey = "CoreDataToSwiftDataMigrationInProgress_v3"
+        let migrationKey = "CoreDataToSwiftDataMigrationCompleted_v5"
+        let migrationInProgressKey = "CoreDataToSwiftDataMigrationInProgress_v5"
         
         // 이미 마이그레이션이 완료되었는지 확인
         if UserDefaults.standard.bool(forKey: migrationKey) {
@@ -221,7 +177,8 @@ extension PlotClientLive {
         
         let coreDataStoreURLs = [
             storeDirectory.appendingPathComponent("Cloud.sqlite"),
-            storeDirectory.appendingPathComponent("Local.sqlite")
+            storeDirectory.appendingPathComponent("Local.sqlite"),
+            storeDirectory.appendingPathComponent("plotfolio.sqlite") // 기본 구성 스토어도 확인
         ]
         
         var hasAnyStore = false
@@ -238,36 +195,103 @@ extension PlotClientLive {
         }
         
         // PlotCloudManager를 사용하여 기존 데이터 가져오기
+        print("Initializing CloudManager for migration...")
         let cloudManager = PlotCloudManager.shared
-        let coreDataPlots = cloudManager.fetchAllPlots()
         
-        if coreDataPlots.isEmpty {
-            print("No plots found in Core Data")
-            return
-        }
-        
-        // CoreData 데이터를 SwiftData로 마이그레이션
-        for coreDataPlot in coreDataPlots {
-            let title = coreDataPlot.value(forKey: "title") as? String ?? ""
-            let content = coreDataPlot.value(forKey: "content") as? String ?? ""
-            let date = coreDataPlot.value(forKey: "date") as? Date ?? Date()
-            let point = coreDataPlot.value(forKey: "point") as? Double ?? 0.0
-            let type = coreDataPlot.value(forKey: "type") as? Int ?? 0
+        do {
+            let coreDataPlots = cloudManager.fetch()
             
-            let newPlot = Plot(
-                content: content,
-                date: date,
-                point: point,
-                title: title,
-                type: type,
-                folder: nil
-            )
+            if coreDataPlots.isEmpty {
+                print("No plots found in Core Data - migration completed (empty)")
+                return
+            }
             
-            context.insert(newPlot)
+            print("Found \(coreDataPlots.count) plots in Core Data to migrate")
+            
+            // SwiftData에서 기존 데이터 확인
+            let existingPlotsDescriptor = FetchDescriptor<Plot>()
+            let existingPlots = try context.fetch(existingPlotsDescriptor)
+            print("Found \(existingPlots.count) existing plots in SwiftData")
+            
+            // 기존 데이터와 비교하여 중복 확인을 위한 Set 생성
+            var existingPlotKeys = Set<String>()
+            for existingPlot in existingPlots {
+                let key = createPlotKey(title: existingPlot.title ?? "", 
+                                      content: existingPlot.content ?? "", 
+                                      date: existingPlot.date ?? Date(), 
+                                      point: existingPlot.point ?? 0.0,
+                                      type: existingPlot.type ?? 0)
+                existingPlotKeys.insert(key)
+            }
+            
+            // CoreData 데이터를 SwiftData로 마이그레이션 (중복 제외)
+            var migratedCount = 0
+            var skippedCount = 0
+            
+            for coreDataPlot in coreDataPlots {
+                let title = coreDataPlot.value(forKey: "title") as? String ?? ""
+                let content = coreDataPlot.value(forKey: "content") as? String ?? ""
+                let date = coreDataPlot.value(forKey: "date") as? Date ?? Date()
+                let point = coreDataPlot.value(forKey: "point") as? Double ?? 0.0
+                let type = coreDataPlot.value(forKey: "type") as? Int ?? 0
+                
+                // 중복 체크
+                let plotKey = createPlotKey(title: title, content: content, date: date, point: point, type: type)
+                
+                if existingPlotKeys.contains(plotKey) {
+                    skippedCount += 1
+                    continue // 이미 존재하는 데이터는 건너뛰기
+                }
+                
+                let newPlot = Plot(
+                    content: content,
+                    date: date,
+                    point: point,
+                    title: title,
+                    type: type,
+                    folder: nil
+                )
+                
+                context.insert(newPlot)
+                existingPlotKeys.insert(plotKey) // 새로 추가된 키도 Set에 추가
+                migratedCount += 1
+                
+                if migratedCount % 10 == 0 {
+                    print("Migrated \(migratedCount)/\(coreDataPlots.count - skippedCount) new plots...")
+                }
+            }
+            
+            print("Migration summary:")
+            print("- Total Core Data plots: \(coreDataPlots.count)")
+            print("- Existing SwiftData plots: \(existingPlots.count)")
+            print("- Skipped (duplicates): \(skippedCount)")
+            print("- Newly migrated: \(migratedCount)")
+            
+            if migratedCount > 0 {
+                print("Saving migrated data to SwiftData...")
+                try context.save()
+                print("✅ Successfully migrated \(migratedCount) new plots to SwiftData")
+            } else {
+                print("✅ No new plots to migrate - all data already exists")
+            }
+            
+        } catch {
+            print("Error during migration: \(error)")
+            throw error
         }
+    }
+    
+    // 플롯 데이터의 고유 키를 생성하는 메서드
+    private func createPlotKey(title: String, content: String, date: Date, point: Double, type: Int) -> String {
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
+        let dateString = dateFormatter.string(from: date)
         
-        try context.save()
-        print("Successfully migrated \(coreDataPlots.count) plots to SwiftData")
+        // 제목, 내용, 날짜, 점수, 타입을 조합하여 고유 키 생성
+        let key = "\(title)|\(content)|\(dateString)|\(point)|\(type)"
+        
+        // 긴 키를 짧게 만들기 위해 해시 사용
+        return String(key.hashValue)
     }
     
     private func backupCoreDataStores() {
@@ -286,15 +310,30 @@ extension PlotClientLive {
             
             let coreDataStoreURLs = [
                 storeDirectory.appendingPathComponent("Cloud.sqlite"),
-                storeDirectory.appendingPathComponent("Local.sqlite")
+                storeDirectory.appendingPathComponent("Local.sqlite"),
+                storeDirectory.appendingPathComponent("plotfolio.sqlite")
             ]
             
+            var backedUpCount = 0
             for storeURL in coreDataStoreURLs {
                 if fileManager.fileExists(atPath: storeURL.path) {
                     let backupURL = backupDirectory.appendingPathComponent(storeURL.lastPathComponent)
+                    
+                    // 기존 백업 파일이 있으면 삭제
+                    if fileManager.fileExists(atPath: backupURL.path) {
+                        try fileManager.removeItem(at: backupURL)
+                    }
+                    
                     try fileManager.copyItem(at: storeURL, to: backupURL)
-                    print("Backed up Core Data store to: \(backupURL.path)")
+                    print("Backed up Core Data store: \(storeURL.lastPathComponent)")
+                    backedUpCount += 1
                 }
+            }
+            
+            if backedUpCount > 0 {
+                print("Successfully backed up \(backedUpCount) Core Data store file(s)")
+            } else {
+                print("No Core Data store files found to backup")
             }
         } catch {
             print("Failed to backup Core Data stores: \(error)")
@@ -302,9 +341,6 @@ extension PlotClientLive {
     }
 }
 
-enum MigrationError: Error {
-    case storeNotFound
-    case migrationFailed
-}
+// MigrationError는 이제 LegacyPlots 모듈에서 import됩니다.
 
 

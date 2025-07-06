@@ -8,6 +8,7 @@
 import SwiftUI
 import ComposableArchitecture
 import Feature_Common
+import LegacyPlots
 
 public struct HomeView: View {
     @Bindable var store: StoreOf<HomeStore>

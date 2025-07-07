@@ -41,9 +41,9 @@
         "글이 길어지면 스티키 헤더도 지원합니다."
       ],
       "font_mapping": {
-        "regular": "NotoSerifCJKkr-Regular.otf",
-        "bold": "NotoSerifCJKkr-Bold.otf",
-        "font_path": "05_NotoSerifCJKOTF/OTF/Korean"
+        "regular": "Pretendard-Regular.otf",
+        "bold": "Pretendard-Bold.otf",
+        "font_path": ""
       }
     },
     "en-US": {

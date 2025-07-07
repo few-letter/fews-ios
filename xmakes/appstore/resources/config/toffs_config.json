@@ -6,7 +6,7 @@
       "background_image": "iphone_background.jpg",
       "phone_y_offset": 180,
       "text_y_offset": -120,
-      "fastlane_device_identifier": "iPhone6s",
+      "fastlane_device_identifier": "iphone69",
       "scale_factor": 0.8,
       "font_size_title": 100,
       "font_size_body": 32,
@@ -22,7 +22,7 @@
       "background_image": "ipad_background.jpg",
       "phone_y_offset": -20,
       "text_y_offset": -200,
-      "fastlane_device_identifier": "ipadPro129",
+      "fastlane_device_identifier": "APP_IPAD_PRO_3GEN_129",
       "scale_factor": 1.8,
       "font_size_title": 128,
       "font_size_body": 32,
@@ -42,7 +42,12 @@
         "가격, 수량, 사진과 메모를 기록할 수 있습니다",
         "작성한 매매일지를 통계로 자동 변환합니다",
         "모든 히스토리를 확인할 수 있습니다"
-      ]
+      ],
+      "font_mapping": {
+        "regular": "Pretendard-Regular.otf",
+        "bold": "Pretendard-Bold.otf",
+        "font_path": ""
+      }
     },
     "en-US": {
       "screenshot_texts": [
@@ -50,7 +55,12 @@
         "You can record price, quantity, photos and notes",
         "Automatically converts your trading journal to statistics",
         "You can check all your trading history"
-      ]
+      ],
+      "font_mapping": {
+        "regular": "NotoSans-Regular.ttf",
+        "bold": "NotoSans-Bold.ttf",
+        "font_path": "NotoSans"
+      }
     },
     "ja": {
       "screenshot_texts": [
@@ -58,7 +68,12 @@
         "価格、数量、写真、メモを記録できます",
         "作成した売買日記を統計に自動変換します",
         "すべての履歴を確認できます"
-      ]
+      ],
+      "font_mapping": {
+        "regular": "NotoSerifCJKjp-Regular.otf",
+        "bold": "NotoSerifCJKjp-Bold.otf",
+        "font_path": "05_NotoSerifCJKOTF/OTF/Japanese"
+      }
     },
     "zh-Hans": {
       "screenshot_texts": [
@@ -66,7 +81,12 @@
         "您可以记录价格、数量、照片和备注",
         "自动将您的交易日志转换为统计数据",
         "您可以查看所有交易历史"
-      ]
+      ],
+      "font_mapping": {
+        "regular": "NotoSerifCJKsc-Regular.otf",
+        "bold": "NotoSerifCJKsc-Bold.otf",
+        "font_path": "05_NotoSerifCJKOTF/OTF/SimplifiedChinese"
+      }
     },
     "zh-Hant": {
       "screenshot_texts": [
@@ -74,7 +94,12 @@
         "您可以記錄價格、數量、照片和備註",
         "自動將您的交易日誌轉換為統計資料",
         "您可以查看所有交易歷史"
-      ]
+      ],
+      "font_mapping": {
+        "regular": "NotoSerifCJKtc-Regular.otf",
+        "bold": "NotoSerifCJKtc-Bold.otf",
+        "font_path": "05_NotoSerifCJKOTF/OTF/TraditionalChinese"
+      }
     },
     "de-DE": {
       "screenshot_texts": [
@@ -82,7 +107,12 @@
         "Sie können Preise, Mengen, Fotos und Notizen aufzeichnen",
         "Wandelt Ihr Handelstagebuch automatisch in Statistiken um",
         "Sie können Ihre gesamte Handelshistorie einsehen"
-      ]
+      ],
+      "font_mapping": {
+        "regular": "NotoSans-Regular.ttf",
+        "bold": "NotoSans-Bold.ttf",
+        "font_path": "NotoSans"
+      }
     },
     "fr-FR": {
       "screenshot_texts": [
@@ -90,7 +120,12 @@
         "Vous pouvez enregistrer les prix, quantités, photos et notes",
         "Convertit automatiquement votre journal de trading en statistiques",
         "Vous pouvez consulter tout votre historique de trading"
-      ]
+      ],
+      "font_mapping": {
+        "regular": "NotoSans-Regular.ttf",
+        "bold": "NotoSans-Bold.ttf",
+        "font_path": "NotoSans"
+      }
     },
     "es-ES": {
       "screenshot_texts": [
@@ -98,7 +133,12 @@
         "Puedes registrar precios, cantidades, fotos y notas",
         "Convierte automáticamente tu diario de trading en estadísticas",
         "Puedes revisar todo tu historial de trading"
-      ]
+      ],
+      "font_mapping": {
+        "regular": "NotoSans-Regular.ttf",
+        "bold": "NotoSans-Bold.ttf",
+        "font_path": "NotoSans"
+      }
     },
     "it": {
       "screenshot_texts": [
@@ -106,7 +146,12 @@
         "Puoi registrare prezzi, quantità, foto e note",
         "Converte automaticamente il tuo diario di trading in statistiche",
         "Puoi controllare tutta la tua cronologia di trading"
-      ]
+      ],
+      "font_mapping": {
+        "regular": "NotoSans-Regular.ttf",
+        "bold": "NotoSans-Bold.ttf",
+        "font_path": "NotoSans"
+      }
     },
     "pt-BR": {
       "screenshot_texts": [
@@ -114,7 +159,12 @@
         "Você pode registrar preços, quantidades, fotos e notas",
         "Converte automaticamente seu diário de trading em estatísticas",
         "Você pode verificar todo seu histórico de trading"
-      ]
+      ],
+      "font_mapping": {
+        "regular": "NotoSans-Regular.ttf",
+        "bold": "NotoSans-Bold.ttf",
+        "font_path": "NotoSans"
+      }
     },
     "ru": {
       "screenshot_texts": [
@@ -122,7 +172,12 @@
         "Вы можете записывать цены, количества, фотографии и заметки",
         "Автоматически преобразует ваш торговый дневник в статистику",
         "Вы можете проверить всю историю торговли"
-      ]
+      ],
+      "font_mapping": {
+        "regular": "NotoSans-Regular.ttf",
+        "bold": "NotoSans-Bold.ttf",
+        "font_path": "NotoSans"
+      }
     },
     "ar-SA": {
       "screenshot_texts": [
@@ -130,7 +185,12 @@
         "يمكنك تسجيل الأسعار والكميات والصور والملاحظات",
         "يحول يومياتك التجارية تلقائياً إلى إحصائيات",
         "يمكنك مراجعة كل تاريخ تداولك"
-      ]
+      ],
+      "font_mapping": {
+        "regular": "NotoSansArabic-Regular.ttf",
+        "bold": "NotoSansArabic-Bold.ttf",
+        "font_path": "NotoSansArabic"
+      }
     },
     "hi": {
       "screenshot_texts": [
@@ -138,7 +198,12 @@
         "आप कीमत, मात्रा, फोटो और नोट्स रिकॉर्ड कर सकते हैं",
         "आपकी ट्रेडिंग डायरी को स्वचालित रूप से आंकड़ों में परिवर्तित करता है",
         "आप अपना सारा ट्रेडिंग इतिहास देख सकते हैं"
-      ]
+      ],
+      "font_mapping": {
+        "regular": "NotoSansDevanagari-Regular.ttf",
+        "bold": "NotoSansDevanagari-Bold.ttf",
+        "font_path": "NotoSansDevanagari"
+      }
     },
     "tr": {
       "screenshot_texts": [
@@ -146,7 +211,12 @@
         "Fiyat, miktar, fotoğraf ve notları kaydedebilirsiniz",
         "Alım-satım günlüğünüzü otomatik olarak istatistiklere dönüştürür",
         "Tüm alım-satım geçmişinizi kontrol edebilirsiniz"
-      ]
+      ],
+      "font_mapping": {
+        "regular": "NotoSans-Regular.ttf",
+        "bold": "NotoSans-Bold.ttf",
+        "font_path": "NotoSans"
+      }
     },
     "pl": {
       "screenshot_texts": [
@@ -154,7 +224,12 @@
         "Możesz rejestrować ceny, ilości, zdjęcia i notatki",
         "Automatycznie przekształca twój dziennik handlowy w statystyki",
         "Możesz sprawdzić całą swoją historię handlową"
-      ]
+      ],
+      "font_mapping": {
+        "regular": "NotoSans-Regular.ttf",
+        "bold": "NotoSans-Bold.ttf",
+        "font_path": "NotoSans"
+      }
     },
     "nl-NL": {
       "screenshot_texts": [
@@ -162,7 +237,12 @@
         "U kunt prijzen, hoeveelheden, foto's en notities registreren",
         "Converteert uw handelslogboek automatisch naar statistieken",
         "U kunt uw complete handelsgeschiedenis bekijken"
-      ]
+      ],
+      "font_mapping": {
+        "regular": "NotoSans-Regular.ttf",
+        "bold": "NotoSans-Bold.ttf",
+        "font_path": "NotoSans"
+      }
     },
     "sv": {
       "screenshot_texts": [
@@ -170,7 +250,12 @@
         "Du kan registrera priser, kvantiteter, foton och anteckningar",
         "Konverterar automatiskt din handelsdagbok till statistik",
         "Du kan kontrollera hela din handelshistorik"
-      ]
+      ],
+      "font_mapping": {
+        "regular": "NotoSans-Regular.ttf",
+        "bold": "NotoSans-Bold.ttf",
+        "font_path": "NotoSans"
+      }
     },
     "da": {
       "screenshot_texts": [
@@ -178,7 +263,12 @@
         "Du kan registrere priser, mængder, billeder og noter",
         "Konverterer automatisk din handelsdagbog til statistik",
         "Du kan tjekke hele din handelshistorik"
-      ]
+      ],
+      "font_mapping": {
+        "regular": "NotoSans-Regular.ttf",
+        "bold": "NotoSans-Bold.ttf",
+        "font_path": "NotoSans"
+      }
     },
     "fi": {
       "screenshot_texts": [
@@ -186,7 +276,12 @@
         "Voit tallentaa hinnat, määrät, kuvat ja muistiinpanot",
         "Muuntaa kaupankäyntipäiväkirjasi automaattisesti tilastoiksi",
         "Voit tarkistaa koko kaupankäyntihistoriasi"
-      ]
+      ],
+      "font_mapping": {
+        "regular": "NotoSans-Regular.ttf",
+        "bold": "NotoSans-Bold.ttf",
+        "font_path": "NotoSans"
+      }
     },
     "no": {
       "screenshot_texts": [
@@ -194,7 +289,12 @@
         "Du kan registrere priser, mengder, bilder og notater",
         "Konverterer automatisk handelsdagboken din til statistikk",
         "Du kan sjekke hele handelshistorikken din"
-      ]
+      ],
+      "font_mapping": {
+        "regular": "NotoSans-Regular.ttf",
+        "bold": "NotoSans-Bold.ttf",
+        "font_path": "NotoSans"
+      }
     }
   }
 }

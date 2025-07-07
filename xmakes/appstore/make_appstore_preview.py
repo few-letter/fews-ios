@@ -24,8 +24,9 @@ class DeviceConfig:
 class AppStorePreviewGenerator:
     
     
-    def __init__(self, language: str = "ko", device_type: str = "iphone"):
-        self.resources_path = Path(__file__).parent / "resources" / "plots"
+    def __init__(self, language: str = "ko", device_type: str = "iphone", app_name: str = "plots"):
+        self.app_name = app_name.lower()
+        self.resources_path = Path(__file__).parent / "resources" / self.app_name
         self.fonts_path = Path(__file__).parent / "resources" / "fonts"
         self.default_font = ImageFont.load_default()
         self.language = language
@@ -50,7 +51,7 @@ class AppStorePreviewGenerator:
 
     
     def _load_device_settings_from_config(self):
-        config_path = Path(__file__).parent / "resources" / "config" / "plots_config.json"
+        config_path = Path(__file__).parent / "resources" / "config" / f"{self.app_name}_config.json"
         try:
             with open(config_path, 'r', encoding='utf-8') as f:
                 config_data = json.load(f)
@@ -87,7 +88,7 @@ class AppStorePreviewGenerator:
             self.font_size_body = 32
 
     def _load_device_configs(self) -> List[DeviceConfig]:
-        config_path = Path(__file__).parent / "resources" / "config" / "plots_config.json"
+        config_path = Path(__file__).parent / "resources" / "config" / f"{self.app_name}_config.json"
         try:
             with open(config_path, 'r', encoding='utf-8') as f:
                 config_data = json.load(f)
@@ -247,7 +248,7 @@ class AppStorePreviewGenerator:
             raise
 
 def generate_appstore_previews(app_name: str, language: str, device_type: str):
-    config_path = Path(__file__).parent / "resources" / "config" / "plots_config.json"
+    config_path = Path(__file__).parent / "resources" / "config" / f"{app_name.lower()}_config.json"
     try:
         with open(config_path, 'r', encoding='utf-8') as f:
             config_data = json.load(f)
@@ -259,7 +260,7 @@ def generate_appstore_previews(app_name: str, language: str, device_type: str):
         print(f"Error loading config file: {e}")
         return
 
-    generator = AppStorePreviewGenerator(language=language, device_type=device_type)
+    generator = AppStorePreviewGenerator(language=language, device_type=device_type, app_name=app_name)
     
     output_dir = Path(__file__).parent / output_base_dir / app_name / device_type / language
     output_dir.mkdir(parents=True, exist_ok=True)

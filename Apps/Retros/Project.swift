@@ -17,7 +17,7 @@ let project = Project(
             ],
             entitlements: "Resources/Retros.entitlements",
             dependencies: [
-                
+                .project(target: "Shared_ThirdPartyLibs", path: "../../Modules/Shared/Shared_ThirdPartyLibs"),
                 .project(target: "Feature_Common", path: "../../Modules/Features/Feature_Common"),
                 .sdk(name: "JavaScriptCore", type: .framework)
             ],

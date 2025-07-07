@@ -128,3 +128,7 @@ fastlane/api_key.json
 *.ttf
 *.otf
 xmakes/venv
+xmakes/screenshots
+xmakes/appstore/output
+xmakes/appstore/resources
+fastlane/metadata

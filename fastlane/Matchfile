@@ -1,4 +1,4 @@
-git_url("https://github.com/few-letter/fews-ios-cert")
+git_url("git@github.com:few-letter/fews-ios-cert.git")
 
 storage_mode("git")
 
@@ -12,3 +12,6 @@ app_identifier([
   "com.folio.world.mulling.app.ios",        # Capts
   "com.tamsadan.toolinder"   # Toff
 ])
+
+# OpenSSL 호환성을 위한 설정
+force_legacy_encryption(true)

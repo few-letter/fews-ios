@@ -412,7 +412,7 @@ platform :ios do
       # 인증서 설정 (임시 키체인 사용)
       UI.message("🔐 인증서 설정 중 (임시 키체인: #{temp_keychain_name})...")
       
-      # 모든 앱에 대해 동일한 로직 사용
+      # Certificate limit 문제와 encryption 문제로 인해 임시로 manual code signing 사용
       begin
         # 먼저 readonly 모드로 기존 인증서 시도
         match(
@@ -428,34 +428,17 @@ platform :ios do
         )
         UI.success("✅ #{app_name} 기존 인증서로 프로파일 다운로드 완료")
       rescue => e
-        if e.message.include?("No matching provisioning profiles found") || 
-           e.message.include?("cannot create a new one because you enabled `readonly`") ||
-           e.message.include?("not valid") ||
-           e.message.include?("expired")
-          UI.important("⚠️ #{app_name}의 provisioning profile 문제: #{e.message}")
-          UI.important("새로운 인증서 및 프로파일을 생성합니다...")
-          
-          # 새로 생성할 때는 안전한 옵션 사용
-          match(
-            type: "appstore",
-            app_identifier: APPS[app_name],
-            readonly: false,
-            skip_set_partition_list: true,
-            keychain_name: temp_keychain_path,
-            keychain_password: "",
-            username: "mooyoung2309@gmail.com",
-            generate_apple_certs: true,  # Apple 인증서 생성 허용
-            skip_provisioning_profiles: false,
-            platform: "ios",
-            force: false,  # 강제 재생성은 안함
-            include_all_certificates: false,
-            skip_certificate_matching: false  # 검증 유지
-          )
-          UI.success("✅ #{app_name}의 새 provisioning profile 생성 완료")
-        else
-          # 다른 에러는 그대로 전파
-          raise e
-        end
+        # Certificate limit과 encryption 문제로 인해 match 사용 중지
+        UI.important("⚠️ #{app_name}의 match 문제: #{e.message}")
+        UI.important("Certificate limit 및 encryption 문제로 인해 수동 코드 서명을 사용합니다.")
+        UI.important("Xcode에서 'Automatically manage signing'을 체크하세요.")
+        
+        # 수동 코드 서명을 위한 환경 변수 설정
+        ENV["CODE_SIGN_STYLE"] = "Automatic"
+        ENV["DEVELOPMENT_TEAM"] = "X64MATB2CC"
+        
+        # 에러를 무시하고 계속 진행 (Xcode가 자동으로 처리)
+        UI.message("수동 코드 서명 모드로 계속 진행...")
       end
       
       # 빌드 디렉토리 생성
@@ -492,17 +475,15 @@ platform :ios do
         disable_package_automatic_updates: true,
         output_directory: output_path,
         output_name: app_name,
-        xcargs: "-allowProvisioningUpdates -skipMacroValidation -CODE_SIGN_STYLE=Manual",
+        xcargs: "-allowProvisioningUpdates -skipMacroValidation -CODE_SIGN_STYLE=Automatic",
         export_options: {
           method: "app-store",
           compileBitcode: false,
           uploadBitcode: false,
           uploadSymbols: true,
           manageAppVersionAndBuildNumber: false,
-          signingStyle: "manual",
-          provisioningProfiles: {
-            APPS[app_name] => "match AppStore #{APPS[app_name]}"
-          }
+          signingStyle: "automatic",
+          teamID: "X64MATB2CC"
         }
       )
       

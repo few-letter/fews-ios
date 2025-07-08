@@ -138,7 +138,7 @@ platform :ios do
           type: type, 
           app_identifier: APPS.values,
           skip_confirmation: false,  # 확인 과정 유지
-          username: "mooyoung2309@gmail.com"
+          username: ENV["APPLE_ID"]
         )
         UI.success("✅ #{type} 인증서 정리 완료")
       rescue => nuke_error
@@ -153,7 +153,7 @@ platform :ios do
           type: type, 
           app_identifier: APPS.values, 
           readonly: false, 
-          username: "mooyoung2309@gmail.com",
+          username: ENV["APPLE_ID"],
           generate_apple_certs: true,  # Apple 인증서 생성 허용
           skip_set_partition_list: true,
           force: false,  # 강제 생성은 안함
@@ -409,10 +409,10 @@ platform :ios do
         temp_keychain_path = "login.keychain"
       end
       
-      # 인증서 설정 (임시 키체인 사용)
-      UI.message("🔐 인증서 설정 중 (임시 키체인: #{temp_keychain_name})...")
+      # 코드 서명 설정 (임시 키체인: #{temp_keychain_name})
+      UI.message("🔐 코드 서명 설정 중...")
       
-      # Certificate limit 문제와 encryption 문제로 인해 임시로 manual code signing 사용
+      # Tuist 프로젝트에서 자동 코드 서명 사용 (Team ID: #{ENV['TEAM_ID']})
       begin
         # 먼저 readonly 모드로 기존 인증서 시도
         match(
@@ -428,18 +428,16 @@ platform :ios do
         )
         UI.success("✅ #{app_name} 기존 인증서로 프로파일 다운로드 완료")
       rescue => e
-        # Certificate limit과 encryption 문제로 인해 match 사용 중지
-        UI.important("⚠️ #{app_name}의 match 문제: #{e.message}")
-        UI.important("Certificate limit 및 encryption 문제로 인해 수동 코드 서명을 사용합니다.")
-        UI.important("Xcode에서 'Automatically manage signing'을 체크하세요.")
+        # Match 실패 시 자동 코드 서명으로 fallback
+        UI.important("⚠️ Match 실패, 자동 코드 서명으로 진행: #{e.message}")
+        UI.important("💡 Xcode가 자동으로 인증서와 프로파일을 관리합니다.")
         
-        # 수동 코드 서명을 위한 환경 변수 설정
+        # 자동 코드 서명을 위한 환경 변수 설정
         ENV["CODE_SIGN_STYLE"] = "Automatic"
-        ENV["DEVELOPMENT_TEAM"] = "X64MATB2CC"
-        
-        # 에러를 무시하고 계속 진행 (Xcode가 자동으로 처리)
-        UI.message("수동 코드 서명 모드로 계속 진행...")
+        ENV["DEVELOPMENT_TEAM"] = ENV["TEAM_ID"]
       end
+      
+      UI.success("✅ 코드 서명 설정 완료 (Team ID: #{ENV['TEAM_ID']})")
       
       # 빌드 디렉토리 생성
       output_path = "./build"
@@ -483,7 +481,7 @@ platform :ios do
           uploadSymbols: true,
           manageAppVersionAndBuildNumber: false,
           signingStyle: "automatic",
-          teamID: "X64MATB2CC"
+          teamID: ENV["TEAM_ID"]
         }
       )
       

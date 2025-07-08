@@ -53,7 +53,7 @@ App Store에 메타데이터와 스크린샷만 업로드합니다.
 [bundle exec] fastlane ios reset
 ```
 
-인증서를 초기화합니다.
+인증서를 안전하게 초기화합니다.
 
 ----
 

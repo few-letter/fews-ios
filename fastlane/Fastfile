@@ -24,6 +24,11 @@ WORKSPACE_PATH = "../#{WORKSPACE_NAME}.xcworkspace".freeze
 # Changing this path will break the screenshot upload functionality
 SCREENSHOTS_PATH_TEMPLATE = "./fastlane/screenshots/%s/".freeze
 
+# CRITICAL: Metadata path - DO NOT MODIFY THIS PATH
+# This path is used throughout the application for metadata upload
+# Changing this path will break the metadata upload functionality
+METADATA_PATH_TEMPLATE = "./fastlane/metadata/%s/".freeze
+
 # --- Lanes ---
 
 platform :ios do
@@ -55,9 +60,48 @@ platform :ios do
 
   desc "App Store에 리뷰를 위해 앱을 빌드하고 제출합니다."
   lane :submit_to_appstore do
-    deploy(
-      submit_for_review: true,
-      title: "App Store 제출"
+    UI.header("🚀 App Store 빌드 및 제출 (스크린샷 생성 및 메타데이터 업로드 포함)")
+    
+    selected_apps = select_apps(all_apps: APPS.keys)
+    break if selected_apps.empty?
+
+    app_versions = prompt_for_version_info(apps: selected_apps)
+    confirmation = UI.input("위 정보로 빌드 및 제출을 시작하시겠습니까? (엔터 또는 y): ")
+    break unless confirmation.empty? || confirmation.downcase.start_with?('y')
+
+    update_version_info(app_versions: app_versions)
+    screenshot_results = generate_screenshots_for_apps(apps: selected_apps)
+    upload_results = upload_app_details(apps: selected_apps)
+    
+    # 빌드 및 제출 단계
+    UI.header("🎯 3단계: 앱 빌드 및 App Store 제출")
+    build_results = { successful: [], failed: [] }
+    
+    selected_apps.each_with_index do |app_name, index|
+      UI.header("📱 #{index + 1}/#{selected_apps.length}: #{app_name} 빌드 및 제출 중...")
+      
+      version_info = app_versions[app_name]
+      unless version_info
+        UI.error("❌ #{app_name}: Info.plist 파일을 찾을 수 없어 건너뜁니다.")
+        build_results[:failed] << { app: app_name, reason: "Info.plist 파일을 찾을 수 없음" }
+        next
+      end
+
+      begin
+        ipa_path = build_and_archive_app(app_name: app_name, version_info: version_info)
+        submit_for_review(app_name: app_name, ipa_path: ipa_path)
+        build_results[:successful] << app_name
+        UI.success("✅ #{app_name} 빌드 및 제출 완료")
+      rescue => e
+        build_results[:failed] << { app: app_name, reason: e.message }
+        UI.error("❌ #{app_name} 빌드/제출 실패: #{e.message}")
+      end
+    end
+    
+    print_full_submit_summary(
+      screenshot_results: screenshot_results, 
+      upload_results: upload_results, 
+      build_results: build_results
     )
   end
 
@@ -79,13 +123,52 @@ platform :ios do
     print_full_upload_summary(screenshot_results: screenshot_results, upload_results: upload_results)
   end
 
-  desc "인증서를 초기화합니다."
+  desc "인증서를 안전하게 초기화합니다."
   lane :reset do
+    UI.header("🔄 인증서 및 프로파일 초기화 시작")
+    
+    confirmation = UI.confirm("⚠️ 경고: 이 작업은 모든 기존 인증서와 프로파일을 삭제합니다. 계속하시겠습니까?")
+    return unless confirmation
+    
     ["development", "appstore"].each do |type|
-      match_nuke(type: type, app_identifier: APPS.values)
-      match(type: type, app_identifier: APPS.values, readonly: false, username: "mooyoung2309@gmail.com")
+      UI.header("🗑️ #{type} 인증서 정리 중...")
+      begin
+        # 안전한 nuke 옵션 사용
+        match_nuke(
+          type: type, 
+          app_identifier: APPS.values,
+          skip_confirmation: false,  # 확인 과정 유지
+          username: "mooyoung2309@gmail.com"
+        )
+        UI.success("✅ #{type} 인증서 정리 완료")
+      rescue => nuke_error
+        UI.error("❌ #{type} 인증서 정리 실패: #{nuke_error.message}")
+        next
+      end
+      
+      UI.header("🔧 #{type} 인증서 재생성 중...")
+      begin
+        # 안전한 재생성 옵션
+        match(
+          type: type, 
+          app_identifier: APPS.values, 
+          readonly: false, 
+          username: "mooyoung2309@gmail.com",
+          generate_apple_certs: true,  # Apple 인증서 생성 허용
+          skip_set_partition_list: true,
+          force: false,  # 강제 생성은 안함
+          include_all_certificates: false,
+          skip_certificate_matching: false,
+          platform: "ios"
+        )
+        UI.success("✅ #{type} 인증서 재생성 완료")
+      rescue => match_error
+        UI.error("❌ #{type} 인증서 재생성 실패: #{match_error.message}")
+      end
     end
+    
     UI.success("✅ 인증서 초기화 완료! 🔐")
+    UI.message("💡 이제 각 앱을 빌드하여 새 인증서가 정상 작동하는지 확인하세요.")
   end
 
   private_lane :deploy do |options|
@@ -218,6 +301,7 @@ platform :ios do
     ENV["ENABLE_USER_SCRIPT_SANDBOXING"] = "NO"
     ENV["FASTLANE_ENABLE_BETA_DELIVER_SYNC_SCREENSHOTS"] = "true"
     ENV["FASTLANE_SCREENSHOT_PROCESSING_TIMEOUT"] = "120"
+    ENV["FASTLANE_SKIP_SET_PARTITION_LIST"] = "true"
   end
 
   def select_apps(all_apps:)
@@ -289,60 +373,171 @@ platform :ios do
   def build_and_archive_app(app_name:, version_info:)
     UI.message("🔨 #{app_name} 빌드 및 아카이브 중...")
     
-    set_info_plist_value(path: version_info[:plist_path], key: "CFBundleShortVersionString", value: version_info[:version])
-    set_info_plist_value(path: version_info[:plist_path], key: "CFBundleVersion", value: version_info[:build])
+    temp_keychain_name = "login"  # 기본값
+    temp_keychain_path = "login.keychain"  # 기본값
     
-    clear_derived_data
-    generate
-    
-    # 인증서 설정
-    UI.message("🔐 인증서 설정 중...")
-    match(
-      type: "appstore",
-      app_identifier: APPS[app_name],
-      readonly: true,
-      keychain_name: "login.keychain",
-      keychain_password: ""
-    )
-    
-    output_path = "./build"
-    sh("mkdir -p #{output_path}")
-    
-    # 워크스페이스 파일의 절대 경로 확인
-    workspace_path = File.expand_path(WORKSPACE_PATH)
-    UI.message("🔍 워크스페이스 경로: #{workspace_path}")
-    
-    unless File.exist?(workspace_path)
-      UI.error("❌ 워크스페이스 파일을 찾을 수 없습니다: #{workspace_path}")
-      raise "워크스페이스 파일을 찾을 수 없습니다: #{workspace_path}"
-    end
-    
-    gym(
-      workspace: workspace_path,
-      scheme: app_name,
-      configuration: "Release",
-      export_method: "app-store",
-      clean: false,
-      destination: "generic/platform=iOS",
-      skip_package_dependencies_resolution: true,
-      disable_package_automatic_updates: true,
-      output_directory: output_path,
-      output_name: app_name,
-      xcargs: "-allowProvisioningUpdates -skipMacroValidation",
-      export_options: {
-        method: "app-store",
-        compileBitcode: false,
-        uploadBitcode: false,
-        uploadSymbols: true,
-        manageAppVersionAndBuildNumber: false,
-        provisioningProfiles: {
-          APPS[app_name] => "match AppStore #{APPS[app_name]}"
+    begin
+      # 버전 정보 업데이트
+      set_info_plist_value(path: version_info[:plist_path], key: "CFBundleShortVersionString", value: version_info[:version])
+      set_info_plist_value(path: version_info[:plist_path], key: "CFBundleVersion", value: version_info[:build])
+      
+      # 파생 데이터 정리 및 프로젝트 생성
+      clear_derived_data
+      generate
+      
+      # 임시 키체인 생성 및 설정
+      temp_keychain_name = "fastlane_#{app_name}_#{Time.now.to_i}"
+      temp_keychain_path = "#{temp_keychain_name}.keychain"
+      
+      UI.message("🔐 임시 키체인 생성 중: #{temp_keychain_name}")
+      begin
+        # 기존 임시 키체인 삭제 (있다면)
+        sh("security delete-keychain #{temp_keychain_path} 2>/dev/null || true")
+        
+        # 새 임시 키체인 생성
+        sh("security create-keychain -p '' #{temp_keychain_path}")
+        sh("security set-keychain-settings -t 3600 -l #{temp_keychain_path}")
+        sh("security unlock-keychain -p '' #{temp_keychain_path}")
+        
+        # 키체인 검색 목록에 추가
+        sh("security list-keychains -s #{temp_keychain_path} login.keychain")
+        
+        UI.success("✅ 임시 키체인 생성 완료: #{temp_keychain_name}")
+      rescue => e
+        UI.message("⚠️ 임시 키체인 생성 중 경고 (기존 키체인 사용): #{e.message}")
+        temp_keychain_name = "login"
+        temp_keychain_path = "login.keychain"
+      end
+      
+      # 인증서 설정 (임시 키체인 사용)
+      UI.message("🔐 인증서 설정 중 (임시 키체인: #{temp_keychain_name})...")
+      
+      # 모든 앱에 대해 동일한 로직 사용
+      begin
+        # 먼저 readonly 모드로 기존 인증서 시도
+        match(
+          type: "appstore",
+          app_identifier: APPS[app_name],
+          readonly: true,
+          skip_set_partition_list: true,
+          keychain_name: temp_keychain_path,
+          keychain_password: "",
+          skip_certificate_matching: false,
+          generate_apple_certs: false,  # 기존 인증서만 사용
+          platform: "ios"
+        )
+        UI.success("✅ #{app_name} 기존 인증서로 프로파일 다운로드 완료")
+      rescue => e
+        if e.message.include?("No matching provisioning profiles found") || 
+           e.message.include?("cannot create a new one because you enabled `readonly`") ||
+           e.message.include?("not valid") ||
+           e.message.include?("expired")
+          UI.important("⚠️ #{app_name}의 provisioning profile 문제: #{e.message}")
+          UI.important("새로운 인증서 및 프로파일을 생성합니다...")
+          
+          # 새로 생성할 때는 안전한 옵션 사용
+          match(
+            type: "appstore",
+            app_identifier: APPS[app_name],
+            readonly: false,
+            skip_set_partition_list: true,
+            keychain_name: temp_keychain_path,
+            keychain_password: "",
+            username: "mooyoung2309@gmail.com",
+            generate_apple_certs: true,  # Apple 인증서 생성 허용
+            skip_provisioning_profiles: false,
+            platform: "ios",
+            force: false,  # 강제 재생성은 안함
+            include_all_certificates: false,
+            skip_certificate_matching: false  # 검증 유지
+          )
+          UI.success("✅ #{app_name}의 새 provisioning profile 생성 완료")
+        else
+          # 다른 에러는 그대로 전파
+          raise e
+        end
+      end
+      
+      # 빌드 디렉토리 생성
+      output_path = "./build"
+      sh("mkdir -p #{output_path}")
+      
+      # 빌드 직전 키체인 잠금 해제
+      UI.message("🔓 빌드를 위한 키체인 잠금 해제: #{temp_keychain_name}...")
+      begin
+        sh("security unlock-keychain -p '' #{temp_keychain_path}")
+        sh("security set-keychain-settings -t 3600 -l #{temp_keychain_path}")
+      rescue => e
+        UI.message("⚠️ 키체인 설정 중 경고 (무시해도 됨): #{e.message}")
+      end
+      
+      # 워크스페이스 파일의 절대 경로 확인
+      workspace_path = File.expand_path(WORKSPACE_PATH)
+      UI.message("🔍 워크스페이스 경로: #{workspace_path}")
+      
+      unless File.exist?(workspace_path)
+        UI.error("❌ 워크스페이스 파일을 찾을 수 없습니다: #{workspace_path}")
+        raise "워크스페이스 파일을 찾을 수 없습니다: #{workspace_path}"
+      end
+      
+      # 앱 빌드 및 아카이브
+      gym(
+        workspace: workspace_path,
+        scheme: app_name,
+        configuration: "Release",
+        export_method: "app-store",
+        clean: false,
+        destination: "generic/platform=iOS",
+        skip_package_dependencies_resolution: true,
+        disable_package_automatic_updates: true,
+        output_directory: output_path,
+        output_name: app_name,
+        xcargs: "-allowProvisioningUpdates -skipMacroValidation -CODE_SIGN_STYLE=Manual",
+        export_options: {
+          method: "app-store",
+          compileBitcode: false,
+          uploadBitcode: false,
+          uploadSymbols: true,
+          manageAppVersionAndBuildNumber: false,
+          signingStyle: "manual",
+          provisioningProfiles: {
+            APPS[app_name] => "match AppStore #{APPS[app_name]}"
+          }
         }
-      }
-    )
-    
-    UI.success("✅ #{app_name} 빌드 완료")
-    "#{output_path}/#{app_name}.ipa"
+      )
+      
+      UI.success("✅ #{app_name} 빌드 완료")
+      
+      # IPA 파일 경로 반환
+      return "#{output_path}/#{app_name}.ipa"
+      
+    rescue => e
+      # 에러 발생 시에도 임시 키체인 정리
+      UI.error("❌ 빌드 중 에러 발생: #{e.message}")
+      unless temp_keychain_name == "login"
+        UI.message("🧹 에러 발생으로 인한 임시 키체인 정리: #{temp_keychain_name}")
+        begin
+          sh("security delete-keychain #{temp_keychain_path} 2>/dev/null || true")
+          sh("security list-keychains -s login.keychain")
+        rescue => cleanup_error
+          UI.message("⚠️ 임시 키체인 정리 중 경고: #{cleanup_error.message}")
+        end
+      end
+      raise e
+      
+    ensure
+      # 성공/실패와 관계없이 항상 임시 키체인 정리
+      unless temp_keychain_name == "login"
+        UI.message("🧹 임시 키체인 정리 중: #{temp_keychain_name}")
+        begin
+          sh("security delete-keychain #{temp_keychain_path} 2>/dev/null || true")
+          sh("security list-keychains -s login.keychain")
+          UI.success("✅ 임시 키체인 정리 완료")
+        rescue => e
+          UI.message("⚠️ 임시 키체인 정리 중 경고 (무시해도 됨): #{e.message}")
+        end
+      end
+    end
   end
 
   def upload_metadata(app_name:)
@@ -353,7 +548,7 @@ platform :ios do
       skip_screenshots: false,
       force: true,
       ignore_language_directory_validation: true,
-      metadata_path: "./metadata/#{app_name}",
+      metadata_path: METADATA_PATH_TEMPLATE % app_name,
       screenshots_path: SCREENSHOTS_PATH_TEMPLATE % app_name,
       sync_screenshots: true
     )
@@ -371,7 +566,7 @@ platform :ios do
       skip_screenshots: true,
       run_precheck_before_submit: true,
       ignore_language_directory_validation: true,
-      metadata_path: "./metadata/#{app_name}",
+      metadata_path: METADATA_PATH_TEMPLATE % app_name,
       submission_information: { 
         export_compliance_uses_encryption: false,
         add_id_info_uses_idfa: false 
@@ -495,7 +690,7 @@ platform :ios do
           app_version: version,
           skip_binary_upload: true,
           force: true,
-          metadata_path: "./metadata/#{app_name}",
+          metadata_path: METADATA_PATH_TEMPLATE % app_name,
           screenshots_path: SCREENSHOTS_PATH_TEMPLATE % app_name,
           skip_screenshots: false,
           sync_screenshots: true,
@@ -541,5 +736,32 @@ platform :ios do
     UI.message("
 🎉 전체 프로세스 완료!")
     UI.message("💡 App Store Connect에서 변경사항을 확인하세요: https://appstoreconnect.apple.com/")
+  end
+
+  def print_full_submit_summary(screenshot_results:, upload_results:, build_results:)
+    UI.header("📊 전체 빌드 및 제출 결과 요약")
+
+    UI.message("
+--- 스크린샷 생성 결과 ---")
+    UI.success("✅ 성공: #{screenshot_results[:successful].join(', ')}") if screenshot_results[:successful].any?
+    UI.error("❌ 실패: #{screenshot_results[:failed].map { |f| f[:app] }.join(', ')}") if screenshot_results[:failed].any?
+
+    UI.message("
+--- 메타데이터 업로드 결과 ---")
+    UI.success("✅ 성공: #{upload_results[:successful].join(', ')}") if upload_results[:successful].any?
+    UI.error("❌ 실패: #{upload_results[:failed].map { |f| f[:app] }.join(', ')}") if upload_results[:failed].any?
+
+    UI.message("
+--- 앱 빌드 및 제출 결과 ---")
+    UI.success("✅ 성공: #{build_results[:successful].join(', ')}") if build_results[:successful].any?
+    UI.error("❌ 실패: #{build_results[:failed].map { |f| f[:app] }.join(', ')}") if build_results[:failed].any?
+
+    total_apps = screenshot_results[:successful].length + screenshot_results[:failed].length
+    successful_builds = build_results[:successful].length
+    
+    UI.message("
+🎉 전체 프로세스 완료!")
+    UI.message("📊 최종 결과: #{successful_builds}/#{total_apps} 앱이 성공적으로 빌드 및 제출되었습니다")
+    UI.message("💡 App Store Connect에서 제출 상태를 확인하세요: https://appstoreconnect.apple.com/")
   end
 end

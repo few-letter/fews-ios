@@ -7,6 +7,9 @@
 
 import SwiftUI
 import ComposableArchitecture
+import PhotosUI
+import Vision
+import AVFoundation
 
 public struct AddPlotView: View {
     @Bindable public var store: StoreOf<AddPlotStore>
@@ -15,126 +18,143 @@ public struct AddPlotView: View {
     @State private var calendarId: UUID = UUID()
     @State private var isScrolled: Bool = false
     @State private var textEditorContent: String = ""
+    @State private var selectedPhoto: PhotosPickerItem?
+    @State private var showingImagePicker = false
+    @State private var showingLiveCamera = false
+    @State private var recognizedTexts: [RecognizedText] = []
+    @State private var selectedImage: UIImage?
+    @State private var showingTextSelectionSheet = false
     
     public var body: some View {
-        ZStack {
-            // 메인 TextEditor
-            VStack(spacing: 0) {
-                // 헤더 공간 확보
-                Rectangle()
-                    .fill(Color.clear)
-                    .frame(height: isScrolled ? 60 : 200)
-                    .animation(.easeInOut(duration: 0.2), value: isScrolled)
-                
-                // TextEditor with scroll detection
-                ScrollViewWithOffset(
-                    onOffsetChange: { offset in
-                        withAnimation(.easeInOut(duration: 0.2)) {
-                            isScrolled = offset > 150
-                        }
-                    }
-                ) {
-                    VStack(spacing: 0) {
-                        // 패딩용 공간
-                        Rectangle()
-                            .fill(Color.clear)
-                            .frame(height: 20)
-                        
-                        TextEditor(text: $store.plot.content)
+        VStack(spacing: 0) {
+            fixedHeaderView
+                .background(Color(UIColor.systemBackground))
+                .shadow(color: .black.opacity(0.1), radius: 1, x: 0, y: 1)
+            
+            ScrollView(.vertical, showsIndicators: true) {
+                VStack(spacing: 12) {
+                    Rectangle()
+                        .fill(Color.clear)
+                        .frame(height: 10)
+                    
+                    quotesSection
+                    
+                    TextEditor(text: $store.plot.content)
                         .font(.body)
-                        .frame(minHeight: 400)
-                        .padding(.horizontal)
-                    }
+                        .frame(minHeight: 300)
+                        .padding(.horizontal, 8)
                 }
             }
             .background(Color(UIColor.systemBackground))
-            
-            // 오버레이 헤더
-            VStack {
-                if isScrolled {
-                    stickyHeaderView
-                        .transition(.opacity.combined(with: .move(edge: .top)))
-                } else {
-                    fullHeaderView
-                        .transition(.opacity.combined(with: .move(edge: .top)))
-                }
-                Spacer()
-            }
         }
         .navigationBarTitleDisplayMode(.inline)
         .onChange(of: store.plot.date) {
             calendarId = UUID()
         }
-    }
-    
-    private var fullHeaderView: some View {
-        VStack(spacing: 0) {
-            HStack(alignment: .firstTextBaseline) {
-                VStack(alignment: .leading, spacing: 10) {
-                    titleField
-                    plotControls
+        .onChange(of: selectedPhoto) { _, newValue in
+            if let selectedPhoto = newValue {
+                loadImageAndRecognizeText(selectedPhoto)
+            }
+        }
+        .sheet(isPresented: $showingTextSelectionSheet) {
+            if let image = selectedImage {
+                NavigationView {
+                    TextSelectionView(image: image, recognizedTexts: recognizedTexts) { selectedText in
+                        addQuote(with: selectedText)
+                    }
+                    .navigationBarTitleDisplayMode(.inline)
+                    .toolbar {
+                        ToolbarItem(placement: .navigationBarTrailing) {
+                            Button("완료") {
+                                showingTextSelectionSheet = false
+                            }
+                        }
+                    }
                 }
-                Spacer()
-                plotTypeSelector
             }
-            .padding()
-            .background(Color(UIColor.systemBackground))
-            
-            Divider()
-                .padding(.horizontal)
+        }
+        .sheet(isPresented: $showingLiveCamera) {
+            NavigationView {
+                LiveCameraView { selectedText in
+                    addQuote(with: selectedText)
+                }
+                .navigationBarTitleDisplayMode(.inline)
+                .toolbar {
+                    ToolbarItem(placement: .navigationBarTrailing) {
+                        Button("완료") {
+                            showingLiveCamera = false
+                        }
+                    }
+                }
+            }
         }
     }
     
-    private var stickyHeaderView: some View {
-        HStack {
-            Text(store.plot.title.isEmpty ? "Title" : store.plot.title)
-                .font(.headline)
-                .fontWeight(.semibold)
-                .lineLimit(1)
-                .foregroundColor(store.plot.title.isEmpty ? .secondary : .primary)
+    private var fixedHeaderView: some View {
+        VStack(spacing: 8) {
+            titleField
             
-            Spacer()
-            
-            HStack(spacing: 2) {
-                Image(systemName: "star.fill")
-                    .foregroundColor(.yellow)
-                    .font(.caption)
-                Text("\(store.plot.point, specifier: "%.1f")")
-                    .font(.caption)
-                    .fontWeight(.medium)
-            }
-            
-            if let plotType = PlotType.allCases.first(where: { $0.rawValue == store.plot.type }) {
-                Text(plotType.title)
-                    .font(.caption)
-                    .fontWeight(.medium)
-                    .padding(.horizontal, 8)
-                    .padding(.vertical, 4)
-                    .background(Color.gray.opacity(0.2))
-                    .cornerRadius(8)
+            HStack(spacing: 8) {
+                plotControls
+                Spacer()
+                plotTypeMenu
             }
         }
-        .padding(.horizontal)
-        .padding(.vertical, 12)
+        .padding(12)
         .background(Color(UIColor.systemBackground))
-        .shadow(color: .black.opacity(0.1), radius: 1, x: 0, y: 1)
     }
     
     private var titleField: some View {
         TextField("Title", text: $store.plot.title)
             .font(.title3)
             .fontWeight(.semibold)
-            .padding(.bottom, 20)
     }
     
     private var plotControls: some View {
-        HStack(spacing: 10) {
+        HStack(spacing: 8) {
             starRatingView
             Text("\(store.plot.point, specifier: "%.1f")")
-                .font(.subheadline)
+                .font(.footnote)
                 .fontWeight(.semibold)
             resetButton
+            pageProgressField
             datePicker
+        }
+    }
+    
+    private var pageProgressField: some View {
+        HStack(spacing: 2) {
+            TextField("123/374", text: Binding(
+                get: {
+                    let current = store.plot.currentPage ?? 0
+                    let total = store.plot.totalPages ?? 0
+                    if current == 0 && total == 0 {
+                        return ""
+                    }
+                    return "\(current)/\(total)"
+                },
+                set: { newValue in
+                    let components = newValue.split(separator: "/")
+                    let currentPage = components.first.flatMap { Int($0) }
+                    let totalPages = components.count > 1 ? Int(components[1]) : nil
+                    
+                    store.send(.binding(.set(\.plot.currentPage, currentPage)))
+                    store.send(.binding(.set(\.plot.totalPages, totalPages)))
+                }
+            ))
+            .textFieldStyle(PlainTextFieldStyle())
+            .font(.caption2)
+            .frame(width: 50)
+            .multilineTextAlignment(.center)
+            .overlay(
+                RoundedRectangle(cornerRadius: 4)
+                    .stroke(Color.gray.opacity(0.3), lineWidth: 1)
+            )
+            .padding(2)
+            
+            Text("p")
+                .font(.caption2)
+                .foregroundColor(.secondary)
         }
     }
     
@@ -166,27 +186,424 @@ public struct AddPlotView: View {
         .id(calendarId)
     }
     
-    private var plotTypeSelector: some View {
-        VStack(alignment: .leading) {
+    private var plotTypeMenu: some View {
+        Menu {
             ForEach(PlotType.allCases, id: \.self) { type in
-                HStack {
-                    Button(
-                        action: {
-                            store.send(.binding(.set(\.plot.type, type.rawValue)), animation: .default)
-                        },
-                        label: {
-                            Image(systemName: store.plot.type == type.rawValue ? "circle.fill" : "circle")
-                                .imageScale(.small)
-                                .font(.footnote)
-                                .foregroundColor(Color(.label))
+                Button(action: {
+                    store.send(.binding(.set(\.plot.type, type.rawValue)), animation: .default)
+                }) {
+                    HStack {
+                        Text(type.title)
+                        if store.plot.type == type.rawValue {
+                            Image(systemName: "checkmark")
                         }
-                    )
-                    Text(type.title)
+                    }
+                }
+            }
+        } label: {
+            HStack(spacing: 4) {
+                if let selectedType = PlotType.allCases.first(where: { $0.rawValue == store.plot.type }) {
+                    Text(selectedType.title)
                         .font(.footnote)
                         .fontWeight(.medium)
+                } else {
+                    Text("Type")
+                        .font(.footnote)
+                        .fontWeight(.medium)
+                        .foregroundColor(.secondary)
+                }
+                Image(systemName: "chevron.down")
+                    .font(.caption2)
+                    .foregroundColor(.secondary)
+            }
+            .padding(.horizontal, 6)
+            .padding(.vertical, 4)
+            .background(Color.gray.opacity(0.1))
+            .cornerRadius(6)
+        }
+    }
+    
+    private var quotesSection: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            HStack {
+                Text("감명 깊었던 한 줄")
+                    .font(.headline)
+                    .fontWeight(.semibold)
+                Spacer()
+                HStack(spacing: 6) {
+                    PhotosPicker(selection: $selectedPhoto, matching: .images) {
+                        Image(systemName: "photo.fill")
+                            .foregroundColor(.blue)
+                            .font(.title3)
+                    }
+                    
+                    Button(action: {
+                        showingLiveCamera = true
+                    }) {
+                        Image(systemName: "camera.fill")
+                            .foregroundColor(.blue)
+                            .font(.title3)
+                    }
+                    
+                    Button(action: {
+                        let newQuote = QuoteModel()
+                        var updatedQuotes = store.plot.quotes
+                        updatedQuotes.append(newQuote)
+                        store.send(.binding(.set(\.plot.quotes, updatedQuotes)))
+                    }) {
+                        Image(systemName: "plus.circle.fill")
+                            .foregroundColor(.blue)
+                            .font(.title3)
+                    }
+                }
+            }
+            .padding(.horizontal, 12)
+            
+            if store.plot.quotes.isEmpty {
+                VStack(spacing: 6) {
+                    Image(systemName: "quote.bubble")
+                        .font(.largeTitle)
+                        .foregroundColor(.secondary)
+                    Text("아직 추가된 인용구가 없습니다")
+                        .font(.subheadline)
+                        .foregroundColor(.secondary)
+                    Text("+ 버튼을 눌러 감명 깊었던 한 줄을 추가해보세요")
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                        .multilineTextAlignment(.center)
+                }
+                .frame(maxWidth: .infinity)
+                .padding(.vertical, 16)
+                .background(Color.gray.opacity(0.05))
+                .cornerRadius(10)
+                .padding(.horizontal, 12)
+            } else {
+                ForEach(store.plot.quotes, id: \.id) { quote in
+                    quoteRow(for: quote)
                 }
             }
         }
+    }
+    
+    private func quoteRow(for quote: QuoteModel) -> some View {
+        HStack(spacing: 6) {
+            HStack(spacing: 2) {
+                Text("p.")
+                    .font(.caption2)
+                    .foregroundColor(.secondary)
+                TextField("", value: Binding(
+                    get: { quote.page },
+                    set: { newValue in
+                        var updatedQuotes = store.plot.quotes
+                        if let index = updatedQuotes.firstIndex(where: { $0.id == quote.id }) {
+                            updatedQuotes[index].page = newValue
+                            store.send(.binding(.set(\.plot.quotes, updatedQuotes)))
+                        }
+                    }
+                ), format: .number)
+                .textFieldStyle(PlainTextFieldStyle())
+                .font(.caption2)
+                .frame(width: 30)
+                .keyboardType(.numberPad)
+                .multilineTextAlignment(.leading)
+                .overlay(
+                    RoundedRectangle(cornerRadius: 4)
+                        .stroke(Color.gray.opacity(0.3), lineWidth: 1)
+                )
+                .padding(2)
+            }
+            .frame(width: 50)
+            
+            TextField("감명 깊었던 한 줄", text: Binding(
+                get: { quote.quote },
+                set: { newValue in
+                    var updatedQuotes = store.plot.quotes
+                    if let index = updatedQuotes.firstIndex(where: { $0.id == quote.id }) {
+                        updatedQuotes[index].quote = newValue
+                        store.send(.binding(.set(\.plot.quotes, updatedQuotes)))
+                    }
+                }
+            ))
+            .textFieldStyle(PlainTextFieldStyle())
+            .font(.subheadline)
+            .lineLimit(1)
+            .truncationMode(.tail)
+            
+            Button(action: {
+                deleteQuote(quote)
+            }) {
+                Image(systemName: "trash.fill")
+                    .foregroundColor(.red)
+                    .font(.caption)
+            }
+        }
+        .padding(.horizontal, 10)
+        .padding(.vertical, 6)
+        .background(Color(UIColor.secondarySystemBackground))
+        .cornerRadius(6)
+        .padding(.horizontal, 12)
+    }
+    
+    private func loadImageAndRecognizeText(_ photoItem: PhotosPickerItem) {
+        Task {
+            guard let data = try? await photoItem.loadTransferable(type: Data.self),
+                  let uiImage = UIImage(data: data) else {
+                return
+            }
+            
+            selectedImage = uiImage
+            
+            guard let cgImage = uiImage.cgImage else { return }
+            
+            let request = VNRecognizeTextRequest { request, error in
+                guard let observations = request.results as? [VNRecognizedTextObservation] else {
+                    return
+                }
+                
+                let recognized = observations.compactMap { observation -> RecognizedText? in
+                    guard let topCandidate = observation.topCandidates(1).first else { return nil }
+                    return RecognizedText(text: topCandidate.string, boundingBox: observation.boundingBox)
+                }
+                
+                DispatchQueue.main.async {
+                    recognizedTexts = recognized
+                    showingTextSelectionSheet = true
+                }
+            }
+            
+            request.recognitionLevel = VNRequestTextRecognitionLevel.accurate
+            request.recognitionLanguages = ["ko-KR", "en-US"]
+            
+            let requestHandler = VNImageRequestHandler(cgImage: cgImage, options: [:])
+            do {
+                try requestHandler.perform([request])
+            } catch {
+                print("Failed to perform text recognition: \(error)")
+            }
+        }
+    }
+    
+    private func addQuote(with text: String) {
+        if !text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+            let newQuote = QuoteModel(quote: text.trimmingCharacters(in: .whitespacesAndNewlines))
+            var updatedQuotes = store.plot.quotes
+            updatedQuotes.append(newQuote)
+            store.send(.binding(.set(\.plot.quotes, updatedQuotes)))
+        }
+        selectedPhoto = nil
+        selectedImage = nil
+        recognizedTexts = []
+        showingTextSelectionSheet = false
+        showingLiveCamera = false
+    }
+    
+    private func deleteQuote(_ quote: QuoteModel) {
+        var updatedQuotes = store.plot.quotes
+        updatedQuotes.removeAll { $0.id == quote.id }
+        store.send(.binding(.set(\.plot.quotes, updatedQuotes)))
+    }
+}
+
+struct RecognizedText {
+    let text: String
+    let boundingBox: CGRect
+}
+
+struct TextSelectionView: View {
+    let image: UIImage
+    let recognizedTexts: [RecognizedText]
+    let onSelect: (String) -> Void
+    
+    var body: some View {
+        GeometryReader { geometry in
+            let originalSize = image.size
+            let scale = min(geometry.size.width / originalSize.width, geometry.size.height / originalSize.height)
+            let displayedWidth = originalSize.width * scale
+            let displayedHeight = originalSize.height * scale
+            let offsetX = (geometry.size.width - displayedWidth) / 2
+            let offsetY = (geometry.size.height - displayedHeight) / 2
+            
+            Image(uiImage: image)
+                .resizable()
+                .scaledToFit()
+                .frame(width: geometry.size.width, height: geometry.size.height)
+                .overlay(
+                    ZStack {
+                        ForEach(recognizedTexts, id: \.text) { recText in
+                            let uiX = recText.boundingBox.origin.x * displayedWidth + offsetX
+                            let uiY = (1 - recText.boundingBox.origin.y - recText.boundingBox.height) * displayedHeight + offsetY
+                            let width = recText.boundingBox.width * displayedWidth
+                            let height = recText.boundingBox.height * displayedHeight
+                            
+                            Rectangle()
+                                .fill(Color.blue.opacity(0.3))
+                                .frame(width: width, height: height)
+                                .position(x: uiX + width / 2, y: uiY + height / 2)
+                                .onTapGesture {
+                                    onSelect(recText.text)
+                                }
+                        }
+                    }
+                )
+        }
+        .navigationTitle("텍스트 선택")
+    }
+}
+
+struct LiveCameraView: View {
+    @StateObject private var cameraModel = CameraModel()
+    @State private var recognizedTexts: [RecognizedText] = []
+    @State private var bufferSize: CGSize = .zero
+    let onSelect: (String) -> Void
+    
+    var body: some View {
+        GeometryReader { geometry in
+            ZStack {
+                if let previewLayer = cameraModel.previewLayer {
+                    CameraPreview(previewLayer: previewLayer)
+                        .frame(width: geometry.size.width, height: geometry.size.height)
+                        .onAppear {
+                            previewLayer.frame = CGRect(origin: .zero, size: geometry.size)
+                            cameraModel.startSession()
+                            cameraModel.onTextRecognized = { texts, size in
+                                recognizedTexts = texts
+                                bufferSize = size
+                            }
+                        }
+                        .onDisappear {
+                            cameraModel.stopSession()
+                        }
+                    
+                    if bufferSize != .zero {
+                        let scale = min(geometry.size.width / bufferSize.width, geometry.size.height / bufferSize.height)
+                        let displayedWidth = bufferSize.width * scale
+                        let displayedHeight = bufferSize.height * scale
+                        let offsetX = (geometry.size.width - displayedWidth) / 2
+                        let offsetY = (geometry.size.height - displayedHeight) / 2
+                        
+                        ZStack {
+                            ForEach(recognizedTexts, id: \.text) { recText in
+                                let uiX = recText.boundingBox.origin.x * displayedWidth + offsetX
+                                let uiY = (1 - recText.boundingBox.origin.y - recText.boundingBox.height) * displayedHeight + offsetY
+                                let width = recText.boundingBox.width * displayedWidth
+                                let height = recText.boundingBox.height * displayedHeight
+                                
+                                Rectangle()
+                                    .fill(Color.blue.opacity(0.3))
+                                    .frame(width: width, height: height)
+                                    .position(x: uiX + width / 2, y: uiY + height / 2)
+                                    .onTapGesture {
+                                        onSelect(recText.text)
+                                    }
+                            }
+                        }
+                    }
+                } else {
+                    Color.black
+                        .frame(width: geometry.size.width, height: geometry.size.height)
+                }
+            }
+        }
+        .ignoresSafeArea()
+        .navigationTitle("라이브 카메라")
+    }
+}
+
+class CameraModel: NSObject, ObservableObject, AVCaptureVideoDataOutputSampleBufferDelegate {
+    let captureSession = AVCaptureSession()
+    var previewLayer: AVCaptureVideoPreviewLayer?
+    var onTextRecognized: (([RecognizedText], CGSize) -> Void)?
+    
+    override init() {
+        super.init()
+        setupCamera()
+    }
+    
+    private func setupCamera() {
+        guard let backCamera = AVCaptureDevice.default(for: .video) else { return }
+        
+        do {
+            let input = try AVCaptureDeviceInput(device: backCamera)
+            if captureSession.canAddInput(input) {
+                captureSession.addInput(input)
+            }
+            
+            let output = AVCaptureVideoDataOutput()
+            output.setSampleBufferDelegate(self, queue: DispatchQueue(label: "videoQueue"))
+            if captureSession.canAddOutput(output) {
+                captureSession.addOutput(output)
+            }
+            
+            if let connection = output.connection(with: .video) {
+                connection.videoOrientation = .portrait
+            }
+            
+            previewLayer = AVCaptureVideoPreviewLayer(session: captureSession)
+            previewLayer?.videoGravity = .resizeAspectFill
+        } catch {
+            print(error.localizedDescription)
+        }
+    }
+    
+    func startSession() {
+        DispatchQueue.global(qos: .background).async {
+            if !self.captureSession.isRunning {
+                self.captureSession.startRunning()
+            }
+        }
+    }
+    
+    func stopSession() {
+        DispatchQueue.global(qos: .background).async {
+            if self.captureSession.isRunning {
+                self.captureSession.stopRunning()
+            }
+        }
+    }
+    
+    func captureOutput(_ output: AVCaptureOutput, didOutput sampleBuffer: CMSampleBuffer, from connection: AVCaptureConnection) {
+        guard let pixelBuffer = CMSampleBufferGetImageBuffer(sampleBuffer) else { return }
+        
+        let bufferWidth = CGFloat(CVPixelBufferGetWidth(pixelBuffer))
+        let bufferHeight = CGFloat(CVPixelBufferGetHeight(pixelBuffer))
+        let bufferSize = CGSize(width: bufferWidth, height: bufferHeight)
+        
+        let request = VNRecognizeTextRequest { request, error in
+            guard let observations = request.results as? [VNRecognizedTextObservation] else { return }
+            
+            let recognized = observations.compactMap { observation -> RecognizedText? in
+                guard let topCandidate = observation.topCandidates(1).first else { return nil }
+                return RecognizedText(text: topCandidate.string, boundingBox: observation.boundingBox)
+            }
+            
+            DispatchQueue.main.async {
+                self.onTextRecognized?(recognized, bufferSize)
+            }
+        }
+        
+        request.recognitionLevel = VNRequestTextRecognitionLevel.accurate
+        request.recognitionLanguages = ["ko-KR", "en-US"]
+        
+        let requestHandler = VNImageRequestHandler(cvPixelBuffer: pixelBuffer, options: [:])
+        do {
+            try requestHandler.perform([request])
+        } catch {
+            print("Failed to perform text recognition: \(error)")
+        }
+    }
+}
+
+struct CameraPreview: UIViewRepresentable {
+    let previewLayer: AVCaptureVideoPreviewLayer
+    
+    func makeUIView(context: Context) -> UIView {
+        let view = UIView()
+        view.layer.addSublayer(previewLayer)
+        return view
+    }
+    
+    func updateUIView(_ uiView: UIView, context: Context) {
+        previewLayer.frame = uiView.bounds
     }
 }
 
@@ -203,7 +620,7 @@ struct StarRatingView: View {
             }
         }
         
-        return stars
+        stars
             .contentShape(Rectangle())
             .gesture(dragGesture)
             .frame(width: 80)
@@ -230,27 +647,5 @@ struct StarRatingView: View {
             }
         }
         .mask(stars)
-    }
-}
-
-// 스크롤 오프셋 감지를 위한 헬퍼 뷰
-struct ScrollViewWithOffset<Content: View>: View {
-    let onOffsetChange: (CGFloat) -> Void
-    let content: () -> Content
-    
-    var body: some View {
-        ScrollView(.vertical, showsIndicators: true) {
-            ZStack(alignment: .top) {
-                GeometryReader { geometry in
-                    Color.clear
-                        .onChange(of: geometry.frame(in: .global).minY) { offset in
-                            onOffsetChange(-offset)
-                        }
-                }
-                .frame(height: 0)
-                
-                content()
-            }
-        }
     }
 }

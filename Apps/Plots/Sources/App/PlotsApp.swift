@@ -31,7 +31,7 @@ struct PlotsApp: App {
     
     init() {
         do {
-            container = try ModelContainer(for: Plot.self, Folder.self)
+            container = try ModelContainer(for: Plot.self, Folder.self, Quote.self)
         } catch {
             fatalError("Failed to create ModelContainer: \(error)")
         }

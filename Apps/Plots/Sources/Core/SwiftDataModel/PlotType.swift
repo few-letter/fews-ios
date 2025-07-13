@@ -8,27 +8,33 @@
 import Foundation
 
 public enum PlotType: Int, CaseIterable {
-    case movie
-    case book
-    case exhibition
-    case concert
-    case music
-    case food
-    case place
-    case media
+    case novel
+    case essay
+    case selfDevelopment
+    case business
+    case psychology
+    case philosophy
+    case history
+    case science
+    case biography
+    case poetry
+    case comics
     case etc
     
     var title: String {
         switch self {
-        case .movie: return "movie"
-        case .book: return "book"
-        case .exhibition: return "exhibition"
-        case .concert: return "concert"
-        case .music: return "music"
-        case .food: return "food"
-        case .place: return "place"
-        case .media: return "media"
-        case .etc: return "etc"
+        case .novel: return "Novel"
+        case .essay: return "Essay"
+        case .selfDevelopment: return "Self-Development"
+        case .business: return "Business"
+        case .psychology: return "Psychology"
+        case .philosophy: return "Philosophy"
+        case .history: return "History"
+        case .science: return "Science"
+        case .biography: return "Biography"
+        case .poetry: return "Poetry"
+        case .comics: return "Comics"
+        case .etc: return "Others"
         }
     }
 }

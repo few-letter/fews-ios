@@ -21,7 +21,7 @@
 	<key>CFBundleShortVersionString</key>
 	<string>3.4.2</string>
 	<key>CFBundleVersion</key>
-	<string>20250708233700</string>
+	<string>20250709010618</string>
 	<key>GADApplicationIdentifier</key>
 	<string>$(ADMOB_APP_ID)</string>
 	<key>ITSAppUsesNonExemptEncryption</key>

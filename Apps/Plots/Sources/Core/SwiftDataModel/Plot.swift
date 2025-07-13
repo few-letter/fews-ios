@@ -15,6 +15,11 @@ public final class Plot {
     public var point: Double?
     public var title: String?
     public var type: Int?
+    public var currentPage: Int?
+    public var totalPages: Int?
+    
+    @Relationship(deleteRule: .cascade, inverse: \Quote.plot)
+    public var quotes: [Quote]?
     
     public var folder: Folder?
     
@@ -24,6 +29,8 @@ public final class Plot {
         point: Double = 0.0,
         title: String? = nil,
         type: Int = 0,
+        currentPage: Int? = nil,
+        totalPages: Int? = nil,
         folder: Folder? = nil
     ) {
         self.content = content
@@ -31,6 +38,8 @@ public final class Plot {
         self.point = point
         self.title = title
         self.type = type
+        self.currentPage = currentPage
+        self.totalPages = totalPages
         self.folder = folder
     }
 }

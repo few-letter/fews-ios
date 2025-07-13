@@ -12,9 +12,15 @@
       "font_size_body": 32,
       "fallback_font_path": "NotoSansKR-Regular.otf",
       "screenshots": [
-        { "filename": "iphone_01.png" },
-        { "filename": "iphone_02.png" },
-        { "filename": "iphone_03.png" }
+        {
+          "filename": "iphone_01.png"
+        },
+        {
+          "filename": "iphone_02.png"
+        },
+        {
+          "filename": "iphone_03.png"
+        }
       ]
     },
     "ipad": {
@@ -27,9 +33,15 @@
       "font_size_body": 32,
       "fallback_font_path": "NotoSansKR-Regular.otf",
       "screenshots": [
-        { "filename": "ipad_01.png" },
-        { "filename": "ipad_02.png" },
-        { "filename": "ipad_03.png" }
+        {
+          "filename": "ipad_01.png"
+        },
+        {
+          "filename": "ipad_02.png"
+        },
+        {
+          "filename": "ipad_03.png"
+        }
       ]
     }
   },
@@ -43,7 +55,8 @@
       "font_mapping": {
         "regular": "Pretendard-Regular.otf",
         "bold": "Pretendard-Bold.otf",
-        "font_path": ""
+        "font_path": "",
+        "font_color": "#FFFFFF"
       }
     },
     "en-US": {
@@ -55,7 +68,8 @@
       "font_mapping": {
         "regular": "NotoSans-Regular.ttf",
         "bold": "NotoSans-Bold.ttf",
-        "font_path": "NotoSans"
+        "font_path": "NotoSans",
+        "font_color": "#FFFFFF"
       }
     },
     "ja": {
@@ -67,7 +81,8 @@
       "font_mapping": {
         "regular": "NotoSerifCJKjp-Regular.otf",
         "bold": "NotoSerifCJKjp-Bold.otf",
-        "font_path": "05_NotoSerifCJKOTF/OTF/Japanese"
+        "font_path": "05_NotoSerifCJKOTF/OTF/Japanese",
+        "font_color": "#FFFFFF"
       }
     },
     "zh-Hans": {
@@ -79,7 +94,8 @@
       "font_mapping": {
         "regular": "NotoSerifCJKsc-Regular.otf",
         "bold": "NotoSerifCJKsc-Bold.otf",
-        "font_path": "05_NotoSerifCJKOTF/OTF/SimplifiedChinese"
+        "font_path": "05_NotoSerifCJKOTF/OTF/SimplifiedChinese",
+        "font_color": "#FFFFFF"
       }
     },
     "zh-Hant": {
@@ -91,7 +107,8 @@
       "font_mapping": {
         "regular": "NotoSerifCJKtc-Regular.otf",
         "bold": "NotoSerifCJKtc-Bold.otf",
-        "font_path": "05_NotoSerifCJKOTF/OTF/TraditionalChinese"
+        "font_path": "05_NotoSerifCJKOTF/OTF/TraditionalChinese",
+        "font_color": "#FFFFFF"
       }
     },
     "de-DE": {
@@ -103,7 +120,8 @@
       "font_mapping": {
         "regular": "NotoSans-Regular.ttf",
         "bold": "NotoSans-Bold.ttf",
-        "font_path": "NotoSans"
+        "font_path": "NotoSans",
+        "font_color": "#FFFFFF"
       }
     },
     "fr-FR": {
@@ -115,7 +133,8 @@
       "font_mapping": {
         "regular": "NotoSans-Regular.ttf",
         "bold": "NotoSans-Bold.ttf",
-        "font_path": "NotoSans"
+        "font_path": "NotoSans",
+        "font_color": "#FFFFFF"
       }
     },
     "es-ES": {
@@ -127,7 +146,8 @@
       "font_mapping": {
         "regular": "NotoSans-Regular.ttf",
         "bold": "NotoSans-Bold.ttf",
-        "font_path": "NotoSans"
+        "font_path": "NotoSans",
+        "font_color": "#FFFFFF"
       }
     },
     "it": {
@@ -139,7 +159,8 @@
       "font_mapping": {
         "regular": "NotoSans-Regular.ttf",
         "bold": "NotoSans-Bold.ttf",
-        "font_path": "NotoSans"
+        "font_path": "NotoSans",
+        "font_color": "#FFFFFF"
       }
     },
     "pt-BR": {
@@ -151,7 +172,8 @@
       "font_mapping": {
         "regular": "NotoSans-Regular.ttf",
         "bold": "NotoSans-Bold.ttf",
-        "font_path": "NotoSans"
+        "font_path": "NotoSans",
+        "font_color": "#FFFFFF"
       }
     },
     "ru": {
@@ -163,7 +185,8 @@
       "font_mapping": {
         "regular": "NotoSans-Regular.ttf",
         "bold": "NotoSans-Bold.ttf",
-        "font_path": "NotoSans"
+        "font_path": "NotoSans",
+        "font_color": "#FFFFFF"
       }
     },
     "ar-SA": {
@@ -175,7 +198,8 @@
       "font_mapping": {
         "regular": "NotoSansArabic-Regular.ttf",
         "bold": "NotoSansArabic-Bold.ttf",
-        "font_path": "NotoSansArabic"
+        "font_path": "NotoSansArabic",
+        "font_color": "#FFFFFF"
       }
     },
     "hi": {
@@ -187,7 +211,8 @@
       "font_mapping": {
         "regular": "NotoSansDevanagari-Regular.ttf",
         "bold": "NotoSansDevanagari-Bold.ttf",
-        "font_path": "NotoSansDevanagari"
+        "font_path": "NotoSansDevanagari",
+        "font_color": "#FFFFFF"
       }
     },
     "tr": {
@@ -199,7 +224,8 @@
       "font_mapping": {
         "regular": "NotoSans-Regular.ttf",
         "bold": "NotoSans-Bold.ttf",
-        "font_path": "NotoSans"
+        "font_path": "NotoSans",
+        "font_color": "#FFFFFF"
       }
     },
     "pl": {
@@ -212,7 +238,8 @@
       "font_mapping": {
         "regular": "NotoSans-Regular.ttf",
         "bold": "NotoSans-Bold.ttf",
-        "font_path": "NotoSans"
+        "font_path": "NotoSans",
+        "font_color": "#FFFFFF"
       }
     },
     "nl-NL": {
@@ -224,7 +251,8 @@
       "font_mapping": {
         "regular": "NotoSans-Regular.ttf",
         "bold": "NotoSans-Bold.ttf",
-        "font_path": "NotoSans"
+        "font_path": "NotoSans",
+        "font_color": "#FFFFFF"
       }
     },
     "sv": {
@@ -236,7 +264,8 @@
       "font_mapping": {
         "regular": "NotoSans-Regular.ttf",
         "bold": "NotoSans-Bold.ttf",
-        "font_path": "NotoSans"
+        "font_path": "NotoSans",
+        "font_color": "#FFFFFF"
       }
     },
     "da": {
@@ -248,7 +277,8 @@
       "font_mapping": {
         "regular": "NotoSans-Regular.ttf",
         "bold": "NotoSans-Bold.ttf",
-        "font_path": "NotoSans"
+        "font_path": "NotoSans",
+        "font_color": "#FFFFFF"
       }
     },
     "fi": {
@@ -260,7 +290,8 @@
       "font_mapping": {
         "regular": "NotoSans-Regular.ttf",
         "bold": "NotoSans-Bold.ttf",
-        "font_path": "NotoSans"
+        "font_path": "NotoSans",
+        "font_color": "#FFFFFF"
       }
     },
     "no": {
@@ -272,7 +303,8 @@
       "font_mapping": {
         "regular": "NotoSans-Regular.ttf",
         "bold": "NotoSans-Bold.ttf",
-        "font_path": "NotoSans"
+        "font_path": "NotoSans",
+        "font_color": "#FFFFFF"
       }
     }
   }

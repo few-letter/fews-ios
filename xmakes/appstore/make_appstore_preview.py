@@ -99,9 +99,16 @@ class AppStorePreviewGenerator:
             localized_texts_data = config_data.get('localization', {})
             localized_texts = localized_texts_data.get(self.language, {}).get('screenshot_texts', [])
             
+            # 폰트 색상 로드
+            font_mapping = localized_texts_data.get(self.language, {}).get('font_mapping', {})
+            self.font_color = font_mapping.get('font_color', '#FFFFFF')  # 기본값: 흰색
+            
             if not localized_texts:
                 print(f"Warning: No localized texts found for language '{self.language}'. Using 'ko' as fallback.")
                 localized_texts = localized_texts_data.get("ko", {}).get('screenshot_texts', [])
+                # 폰트 색상도 fallback 설정
+                fallback_font_mapping = localized_texts_data.get("ko", {}).get('font_mapping', {})
+                self.font_color = fallback_font_mapping.get('font_color', '#FFFFFF')
 
         except FileNotFoundError:
             print(f"Error: Config file not found: {config_path}")
@@ -167,6 +174,22 @@ class AppStorePreviewGenerator:
         wrapper = textwrap.TextWrapper(width=chars_per_line, break_long_words=True)
         return wrapper.fill(text).split('\n')
     
+    def _hex_to_rgb(self, hex_color: str) -> Tuple[int, int, int]:
+        """헥스 색상 코드를 RGB 튜플로 변환"""
+        # # 기호 제거
+        hex_color = hex_color.lstrip('#')
+        
+        # 3자리 헥스 코드 처리 (예: #FFF -> #FFFFFF)
+        if len(hex_color) == 3:
+            hex_color = ''.join([c*2 for c in hex_color])
+        
+        # RGB 값 추출
+        try:
+            return tuple(int(hex_color[i:i+2], 16) for i in (0, 2, 4))
+        except ValueError:
+            # 잘못된 헥스 코드인 경우 기본값 (흰색) 반환
+            return (255, 255, 255)
+    
     def generate_individual_previews(self, output_dir: str) -> List[str]:
         print("Starting individual App Store preview image generation")
         
@@ -216,7 +239,9 @@ class AppStorePreviewGenerator:
                 line_x = text_center_x - (line_width // 2)
                 line_y = text_y + (line_idx * line_height)
                 
-                draw.text((line_x, line_y), line, font=self.font_manager.get_title_font(), fill=(0, 0, 0))
+                # 폰트 색상 적용
+                font_color = self._hex_to_rgb(self.font_color)
+                draw.text((line_x, line_y), line, font=self.font_manager.get_title_font(), fill=font_color)
             
             # Fastlane 파일명 형식으로 생성: {순번}_{기기식별자}_{순번}.png (0 패딩)
             filename = f"{idx:02d}_{self.fastlane_device_identifier}_{idx}.png"

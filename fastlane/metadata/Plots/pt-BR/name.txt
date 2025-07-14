@@ -1,1 +1,1 @@
-Plots - Diário de Leitura 
+Plots: Rastreador de Livros

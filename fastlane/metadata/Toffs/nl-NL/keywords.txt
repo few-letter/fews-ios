@@ -1,1 +1,1 @@
-portfolio,investering,aandelen,ETF,dividend,kalender,tracker,rendement,activa,handel 
+etf,dividend,kalender,rendement,assetmanagement,portfolio,investeringsapp

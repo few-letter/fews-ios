@@ -1,1 +1,1 @@
-portefølje,investering,aksjer,ETF,utbytte,kalender,tracker,avkastning,eiendeler 
+etf,utbytte,kalender,avkastning,aktivforvaltning,portefolje,investeringsapp

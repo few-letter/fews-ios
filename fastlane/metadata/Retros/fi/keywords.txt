@@ -1,1 +1,1 @@
-pohdinta,päiväkirja,KPT,kehitys,kasvu,tuottavuus,tapa,emotionaalinen,stressi,tavoitteet
+paivittainenpohdiskelu,itsepaivakirja,henkilokohtainenkehitys,tapaseuranta,tavoitteet,stressi

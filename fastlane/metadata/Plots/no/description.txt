@@ -1,18 +1,12 @@
-Registrer hva du har "lest og sett" på den enkleste måten med Plots.
-Spor bøker, serier og filmer like enkelt som en notater-app, vurder raskt med 5-stjernersystem! Organiser ryddig med mapper og kategorier, alt trygt synkronisert med iCloud.
+Spor bøkene dine med Plots, den ultimate bok tracker og leselog app. Registrer enkelt bøker, filmer og serier som notater, vurder med 5 stjerner og organiser i mapper. Synkroniser sikkert via iCloud.
+Administrer lesejournalen og filmloggen uten anstrengelse.
 
-Hva som gjør Plots spesiell
-Lesefokuserte registreringer – Lagre sider, sitater og følelser som notater
+Hvorfor Plots skiller seg ut:
+• Dype notater for sider, sitater og tanker
+• Intuitiv 5-stjernet vurdering
+• Kategoriser etter sjanger eller serie
+• Stjernebildetagger for unike vibber
+• Minimalistisk UI enkel å bruke
+• Automatisk iCloud backup
 
-5-stjernersystem – Intuitiv vurdering med ett trykk
-
-Mapper & Kategorier – Organiser fritt etter sjanger eller serie
-
-Stjernebildemerker – Uttrykk verkenes atmosfære gjennom 12 stjernetegn for unike oppdagelser
-
-Enkelt grensesnitt – Minimalistisk design som en notater-app, klar til bruk for alle
-
-iCloud-sikkerhetskopi – Automatisk beskyttelse og synkronisering av alle dine registre
-
-Fra nybegynnere som ønsker å utvikle lesevaner til registreringsentusiaster
-Plots viser visuelt flyten av hva du har "sett og lest", og hjelper deg med å velge ditt neste verk. 
+Bygg lesevaner og inspirer til neste. Last ned Plots nå og begynn å logge reisen din!

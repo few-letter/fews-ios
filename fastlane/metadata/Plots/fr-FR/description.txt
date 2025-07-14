@@ -1,18 +1,12 @@
-Enregistrez ce que vous avez "lu et regardé" de la façon la plus simple avec Plots.
-Suivez les livres, séries et films aussi facilement qu'une application mémo, évaluez avec un système de 5 étoiles ! Organisez proprement avec des dossiers et catégories, tout synchronisé en sécurité avec iCloud.
+Suivez vos livres avec Plots, l'app ultime de suivi de livres et journal de lecture. Enregistrez facilement livres, films et séries comme des notes, notez avec 5 étoiles et organisez en dossiers. Synchronisez en toute sécurité via iCloud.
+Gérez votre journal de lecture et journal de films sans effort.
 
-Ce qui rend Plots spécial
-Enregistrements centrés sur la lecture – Sauvegardez pages, citations et sentiments comme des notes
+Pourquoi Plots se distingue :
+• Notes profondes de pages, citations et idées
+• Notation intuitive 5 étoiles
+• Classez par genre ou série
+• Étiquettes de constellations pour des vibes uniques
+• UI minimaliste facile à utiliser
+• Sauvegarde automatique iCloud
 
-Système d'évaluation 5 étoiles – Évaluation intuitive en un seul clic
-
-Dossiers & Catégories – Organisez librement par genre ou série
-
-Étiquettes constellation – Exprimez l'atmosphère des œuvres à travers 12 signes du zodiaque pour des découvertes uniques
-
-Interface simple – Design minimaliste comme une application mémo, prêt à utiliser pour tous
-
-Sauvegarde iCloud – Protection automatique et synchronisation de tous vos enregistrements
-
-Des débutants souhaitant développer des habitudes de lecture aux passionnés d'enregistrement
-Plots montre visuellement le flux de ce que vous avez "vu et lu", vous aidant à choisir votre prochaine œuvre. 
+Construisez des habitudes de lecture et inspirez-vous pour le suivant. Téléchargez Plots maintenant et commencez à journaliser votre voyage !

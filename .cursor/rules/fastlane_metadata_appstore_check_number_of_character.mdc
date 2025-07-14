@@ -1,166 +1,170 @@
----
-description: Fastlane App Store 메타데이터 글자수 제한 규칙
-globs: 
-alwaysApply: false
----
-# Fastlane 메타데이터 검증 가이드
+# JSON 메타데이터 글자수 검증 도구
 
 ## 📊 Apple App Store 글자수 제한
 
-| 파일명 | 제한 | 설명 |
-|--------|------|------|
-| `name.txt` | 30자 | 앱 이름 |
-| `subtitle.txt` | 30자 | 부제목 |
-| `keywords.txt` | 100자 | 키워드 (쉼표 포함) |
-| `description.txt` | 4,000자 | 앱 설명 |
+| 필드명        | 제한    | 설명               |
+| ------------- | ------- | ------------------ |
+| `name`        | 30자    | 앱 이름            |
+| `subtitle`    | 30자    | 부제목             |
+| `keywords`    | 100자   | 키워드 (쉼표 포함) |
+| `description` | 4,000자 | 앱 설명            |
 
 > ⚠️ **중요**: 바이트가 아닌 **문자 수** 기준입니다 (한글 1글자 = 1문자)
 
-## 📁 필수 파일 목록 (8개)
+## 🔍 JSON 글자수 검증 스크립트
 
-기준 언어 폴더(`ko/`)에 다음 파일들이 모두 있어야 합니다:
+```python
+#!/usr/bin/env python3
+# scripts/metadata/check_json_chars.py
 
-```
-name.txt, subtitle.txt, description.txt, keywords.txt
-release_notes.txt, privacy_url.txt, marketing_url.txt, support_url.txt
-```
+import json
+import sys
 
-## 🔧 통합 검증 스크립트
+# 글자수 제한 설정
+CHAR_LIMITS = {
+    'name': 30,
+    'subtitle': 30,
+    'keywords': 100,
+    'description': 4000
+}
 
-프로젝트 루트에서 실행하세요:
+def check_json_character_limits(config_path):
+    """JSON 설정 파일의 글자수 제한 검증"""
+    print(f"🔍 JSON 메타데이터 글자수 검증: {config_path}")
 
-```bash
-#!/bin/bash
-# validate_metadata.sh
+    with open(config_path, 'r', encoding='utf-8') as f:
+        config = json.load(f)
 
-APP_NAME=${1:-"Capts"}  # 기본값: Capts, 다른 앱명 전달 가능
-METADATA_PATH="fastlane/metadata/$APP_NAME"
+    app_name = config.get('app_name', 'unknown')
+    violations = []
 
-echo "🔍 $APP_NAME 메타데이터 검증 시작..."
+    print(f"\n📱 앱: {app_name}")
+    print("=" * 50)
 
-# 1. 기준 폴더(ko) 파일 개수 확인
-ko_count=$(find "$METADATA_PATH/ko" -name "*.txt" 2>/dev/null | wc -l)
-echo "📁 ko/ 폴더 파일: $ko_count개 (필요: 8개)"
+    for lang, data in config.get('localization', {}).items():
+        print(f"\n🌐 언어: {lang}")
 
-if [ $ko_count -ne 8 ]; then
-    echo "❌ 필수 파일이 부족합니다!"
-    echo "누락 가능성 있는 파일들:"
-    echo "name.txt subtitle.txt description.txt keywords.txt release_notes.txt privacy_url.txt marketing_url.txt support_url.txt"
-    exit 1
-fi
+        for field, content in data.items():
+            if field in CHAR_LIMITS:
+                char_count = len(str(content))
+                limit = CHAR_LIMITS[field]
 
-# 2. 빈 파일 확인
-empty_files=$(find "$METADATA_PATH" -name "*.txt" -exec sh -c '[ ! -s "$1" ] && echo "$1"' _ {} \; 2>/dev/null)
-if [ -n "$empty_files" ]; then
-    echo "❌ 빈 파일 발견:"
-    echo "$empty_files"
-else
-    echo "✅ 빈 파일 없음"
-fi
+                status = "✅" if char_count <= limit else "❌"
+                print(f"  {field:12} : {char_count:3d}/{limit:3d} 글자 {status}")
 
-# 3. 글자수 제한 확인 (멀티바이트 안전)
-echo "📝 글자수 제한 확인..."
-violations=$(find "$METADATA_PATH" -name "*.txt" -exec sh -c '
-    if [ -s "$1" ]; then
-        chars=$(python3 -c "with open(\"$1\") as f: print(len(f.read().strip()))" 2>/dev/null || echo "0")
-        filename=$(basename "$1")
-        case "$filename" in
-            name.txt|subtitle.txt)
-                if [ "$chars" -gt 30 ]; then
-                    echo "$1: $chars/30 chars ❌"
-                fi
-                ;;
-            keywords.txt)
-                if [ "$chars" -gt 100 ]; then
-                    echo "$1: $chars/100 chars ❌"
-                fi
-                ;;
-        esac
-    fi
-' _ {} \; 2>/dev/null)
+                if char_count > limit:
+                    violations.append({
+                        'app': app_name,
+                        'lang': lang,
+                        'field': field,
+                        'current': char_count,
+                        'limit': limit,
+                        'excess': char_count - limit
+                    })
 
-if [ -n "$violations" ]; then
-    echo "❌ 글자수 초과:"
-    echo "$violations"
-else
-    echo "✅ 모든 파일이 글자수 제한 내"
-fi
+    # 결과 요약
+    if violations:
+        print(f"\n❌ 글자수 초과 항목: {len(violations)}개")
+        print("-" * 50)
+        for v in violations:
+            print(f"  {v['lang']}.{v['field']}: {v['current']}자 ({v['excess']}자 초과)")
+        return False
+    else:
+        print(f"\n✅ 모든 항목이 글자수 제한을 준수합니다!")
+        return True
 
-# 4. 언어별 파일 개수 비교
-echo "🌐 언어별 파일 개수 확인..."
-for lang_dir in "$METADATA_PATH"/*; do
-    if [ -d "$lang_dir" ]; then
-        lang=$(basename "$lang_dir")
-        lang_count=$(find "$lang_dir" -name "*.txt" | wc -l)
-        if [ "$lang" != "ko" ] && [ $lang_count -ne $ko_count ]; then
-            echo "❌ $lang: $lang_count개 (기준: $ko_count개)"
-        fi
-    fi
-done
+if __name__ == "__main__":
+    if len(sys.argv) != 2:
+        print("사용법: python3 check_json_chars.py <config.json>")
+        sys.exit(1)
 
-echo "✅ 검증 완료!"
+    config_file = sys.argv[1]
+    try:
+        is_valid = check_json_character_limits(config_file)
+        sys.exit(0 if is_valid else 1)
+    except FileNotFoundError:
+        print(f"❌ 파일을 찾을 수 없습니다: {config_file}")
+        sys.exit(1)
+    except json.JSONDecodeError:
+        print(f"❌ JSON 형식이 올바르지 않습니다: {config_file}")
+        sys.exit(1)
 ```
 
 ## 🚀 사용법
 
-### 1. 스크립트 실행
-```bash
-# 기본 (Capts 앱)
-bash validate_metadata.sh
+### 단일 파일 검증
 
-# 다른 앱
-bash validate_metadata.sh Plots
-bash validate_metadata.sh Multis
+```bash
+python3 scripts/metadata/check_json_chars.py scripts/metadata/resources/config/toffs_config.json
 ```
 
-### 2. 빠른 글자수 확인
-```bash
-# 특정 파일 글자수 확인
-python3 -c "with open('fastlane/metadata/Capts/ko/name.txt') as f: print(f'글자수: {len(f.read().strip())}')"
+### 모든 config 파일 검증
 
-# 현재 폴더의 모든 txt 파일 글자수
-find . -name "*.txt" -exec python3 -c "
-import sys
-with open(sys.argv[1]) as f: 
-    content = f.read().strip()
-    print(f'{sys.argv[1]}: {len(content)} chars')
-" {} \;
+```bash
+for config in scripts/metadata/resources/config/*.json; do
+    echo "=== $(basename $config) ==="
+    python3 scripts/metadata/check_json_chars.py "$config"
+    echo
+done
 ```
 
-## 🛠️ 문제 해결
+### 빠른 글자수 확인 (특정 필드)
 
-### 글자수 초과 시 수정 전략
-
-**name.txt (30자 제한)**
-- ❌ `Plots - 책 읽기 일기장` (11자)
-- ✅ `Plots - 독서일기` (9자)
-
-**subtitle.txt (30자 제한)**
-- ❌ `책, 영화, 문화생활을 기록하는 앱` (17자)
-- ✅ `책, 영화, 문화 기록` (10자)
-
-**keywords.txt (100자 제한)**
-- 중요도 순으로 키워드 선별
-- 쉼표와 공백도 글자수에 포함됨 주의
-
-### 빠른 파일 생성
 ```bash
-# 누락된 파일 생성 (빈 파일)
-touch fastlane/metadata/{AppName}/ko/{name,subtitle,description,keywords,release_notes,privacy_url,marketing_url,support_url}.txt
+# 특정 필드의 글자수만 확인
+python3 -c "
+import json
+with open('scripts/metadata/resources/config/toffs_config.json') as f:
+    config = json.load(f)
+    ko_data = config['localization']['ko']
+    for field in ['name', 'subtitle', 'keywords']:
+        content = ko_data.get(field, '')
+        print(f'{field}: {len(content)} 글자')
+"
 ```
 
-## 📋 체크리스트
+## 🎯 JSON 구조 예시
 
-번역 작업 전:
-- [ ] ko/ 폴더에 8개 파일 모두 존재
-- [ ] 모든 파일에 내용 있음 (빈 파일 없음)
-- [ ] 글자수 제한 준수
+```json
+{
+  "app_name": "toffs",
+  "localization": {
+    "ko": {
+      "name": "Toffs: 주식 ETF 트래커", // 30자 제한
+      "subtitle": "배당 캘린더 투자일지", // 30자 제한
+      "keywords": "주식,etf,배당금,달력,수익률", // 100자 제한
+      "description": "앱에 대한 상세한 설명..." // 4000자 제한
+    },
+    "en-US": {
+      "name": "Toffs: Stock ETF Tracker",
+      "subtitle": "Dividend Calendar Journal",
+      "keywords": "stock,etf,dividend,calendar",
+      "description": "Detailed app description..."
+    }
+  }
+}
+```
 
-번역 작업 후:
-- [ ] 모든 언어 폴더에 동일한 파일 개수
-- [ ] 빈 파일 없음
-- [ ] 글자수 제한 준수
+## 💡 글자수 초과 시 수정 가이드
 
-Fastlane 업로드 전:
-- [ ] 전체 검증 스크립트 실행
-- [ ] 모든 검증 통과
+**name (30자 제한)**
+
+- 핵심 키워드만 남기기
+- 불필요한 조사, 부사 제거
+
+**subtitle (30자 제한)**
+
+- 앱의 핵심 기능만 표현
+- 중복 단어 제거
+
+**keywords (100자 제한)**
+
+- 중요도 낮은 키워드 제거
+- 쉼표 뒤 공백 최소화
+- 유사한 의미의 키워드 통합
+
+**description (4000자 제한)**
+
+- 중복 문장 제거
+- 핵심 기능 위주로 축약
+- 불필요한 수식어 제거

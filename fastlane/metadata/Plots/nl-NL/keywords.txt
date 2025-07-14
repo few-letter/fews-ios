@@ -1,1 +1,1 @@
-lees dagboek,boek tracker,lees notities,gelezen boeken,5-sterren beoordeling,boek recensie 
+leeslog,boekjournaal,filmtracker,tvtracker,boeknotities,5sterrenbeoordeling

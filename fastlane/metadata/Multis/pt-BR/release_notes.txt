@@ -1,1 +1,1 @@
-App atualizado. Na próxima semana vou começar em uma nova empresa. 
+Esta atualização melhora a estabilidade do temporizador em segundo plano. Melhore o gerenciamento de tempo e foco para melhor produtividade.

@@ -1,1 +1,1 @@
-Multis - Todo Timer 
+Multis: Multi Timer ToDo

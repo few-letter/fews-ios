@@ -1,1 +1,1 @@
-reflexion,tagebuch,KPT,selbstentwicklung,wachstum,produktivität,gewohnheit,emotional,stress,ziele 
+taglichereflektion,selbsttagebuch,personlicheentwicklung,gewohnheitstracker,zielsetzung,stressabbau

@@ -1,1 +1,1 @@
-lese-tagebuch,buch-tracker,lese-notizen,gelesene bücher,5-sterne-bewertung,buchkritik,einfach 
+leseprotokoll,buchtagebuch,filmtracker,serientracker,buchnotizen,5sternebewertung

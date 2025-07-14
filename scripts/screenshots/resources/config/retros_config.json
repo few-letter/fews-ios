@@ -1,0 +1,336 @@
+{
+  "app_name": "retros",
+  "output_base_dir": "output",
+  "devices": {
+    "iphone": {
+      "background_image": "iphone_background.jpg",
+      "phone_y_offset": 180,
+      "text_y_offset": -170,
+      "fastlane_device_identifier": "iphone69",
+      "scale_factor": 0.8,
+      "font_size_title": 100,
+      "font_size_body": 32,
+      "fallback_font_path": "NotoSansKR-Regular.otf",
+      "screenshots": [
+        {
+          "filename": "iphone_01.png"
+        },
+        {
+          "filename": "iphone_02.png"
+        },
+        {
+          "filename": "iphone_03.png"
+        },
+        {
+          "filename": "iphone_04.png"
+        }
+      ]
+    },
+    "ipad": {
+      "background_image": "ipad_background.jpg",
+      "phone_y_offset": -20,
+      "text_y_offset": -250,
+      "fastlane_device_identifier": "APP_IPAD_PRO_3GEN_129",
+      "scale_factor": 1.8,
+      "font_size_title": 110,
+      "font_size_body": 32,
+      "fallback_font_path": "NotoSansKR-Regular.otf",
+      "screenshots": [
+        {
+          "filename": "ipad_01.png"
+        },
+        {
+          "filename": "ipad_02.png"
+        },
+        {
+          "filename": "ipad_03.png"
+        },
+        {
+          "filename": "ipad_04.png"
+        }
+      ]
+    }
+  },
+  "localization": {
+    "ko": {
+      "screenshot_texts": [
+        "캘린더로 회고를 관리하세요",
+        "더 많은 회고 리스트를 확인하세요",
+        "KPT 회고법으로 회고를 작성하세요",
+        "모든 회고의 히스토리를 확인할 수 있습니다"
+      ],
+      "font_mapping": {
+        "regular": "Pretendard-Regular.otf",
+        "bold": "Pretendard-Bold.otf",
+        "font_path": "",
+        "font_color": "#FFFFFF"
+      }
+    },
+    "en-US": {
+      "screenshot_texts": [
+        "Manage retrospectives with calendar",
+        "Check more retrospective lists",
+        "Write retrospectives with KPT method",
+        "You can check the history of all retrospectives"
+      ],
+      "font_mapping": {
+        "regular": "NotoSans-Regular.ttf",
+        "bold": "NotoSans-Bold.ttf",
+        "font_path": "NotoSans",
+        "font_color": "#FFFFFF"
+      }
+    },
+    "ja": {
+      "screenshot_texts": [
+        "カレンダーで振り返りを管理しましょう",
+        "より多くの振り返りリストを確認しましょう",
+        "KPT振り返り法で振り返りを書きましょう",
+        "すべての振り返りの履歴を確認できます"
+      ],
+      "font_mapping": {
+        "regular": "NotoSerifCJKjp-Regular.otf",
+        "bold": "NotoSerifCJKjp-Bold.otf",
+        "font_path": "05_NotoSerifCJKOTF/OTF/Japanese",
+        "font_color": "#FFFFFF"
+      }
+    },
+    "zh-Hans": {
+      "screenshot_texts": [
+        "用日历管理回顾",
+        "查看更多回顾列表",
+        "用KPT回顾法写回顾",
+        "可以查看所有回顾的历史"
+      ],
+      "font_mapping": {
+        "regular": "NotoSerifCJKsc-Regular.otf",
+        "bold": "NotoSerifCJKsc-Bold.otf",
+        "font_path": "05_NotoSerifCJKOTF/OTF/SimplifiedChinese",
+        "font_color": "#FFFFFF"
+      }
+    },
+    "zh-Hant": {
+      "screenshot_texts": [
+        "用日曆管理回顧",
+        "查看更多回顧列表",
+        "用KPT回顧法寫回顧",
+        "可以查看所有回顧的歷史"
+      ],
+      "font_mapping": {
+        "regular": "NotoSerifCJKtc-Regular.otf",
+        "bold": "NotoSerifCJKtc-Bold.otf",
+        "font_path": "05_NotoSerifCJKOTF/OTF/TraditionalChinese",
+        "font_color": "#FFFFFF"
+      }
+    },
+    "de-DE": {
+      "screenshot_texts": [
+        "Verwalten Sie Retrospektiven mit Kalender",
+        "Weitere Retrospektiv-Listen anzeigen",
+        "Schreiben Sie Retrospektiven mit KPT-Methode",
+        "Sie können die Historie aller Retrospektiven anzeigen"
+      ],
+      "font_mapping": {
+        "regular": "NotoSans-Regular.ttf",
+        "bold": "NotoSans-Bold.ttf",
+        "font_path": "NotoSans",
+        "font_color": "#FFFFFF"
+      }
+    },
+    "fr-FR": {
+      "screenshot_texts": [
+        "Gérez les rétrospectives avec le calendrier",
+        "Consultez plus de listes de rétrospectives",
+        "Rédigez des rétrospectives avec la méthode KPT",
+        "Vous pouvez consulter l'historique de toutes les rétrospectives"
+      ],
+      "font_mapping": {
+        "regular": "NotoSans-Regular.ttf",
+        "bold": "NotoSans-Bold.ttf",
+        "font_path": "NotoSans",
+        "font_color": "#FFFFFF"
+      }
+    },
+    "es-ES": {
+      "screenshot_texts": [
+        "Administra retrospectivas con calendario",
+        "Consulta más listas de retrospectivas",
+        "Escribe retrospectivas con el método KPT",
+        "Puedes consultar el historial de todas las retrospectivas"
+      ],
+      "font_mapping": {
+        "regular": "NotoSans-Regular.ttf",
+        "bold": "NotoSans-Bold.ttf",
+        "font_path": "NotoSans",
+        "font_color": "#FFFFFF"
+      }
+    },
+    "it": {
+      "screenshot_texts": [
+        "Gestisci le retrospettive con il calendario",
+        "Controlla più elenchi di retrospettive",
+        "Scrivi retrospettive con il metodo KPT",
+        "Puoi controllare la cronologia di tutte le retrospettive"
+      ],
+      "font_mapping": {
+        "regular": "NotoSans-Regular.ttf",
+        "bold": "NotoSans-Bold.ttf",
+        "font_path": "NotoSans",
+        "font_color": "#FFFFFF"
+      }
+    },
+    "pt-BR": {
+      "screenshot_texts": [
+        "Gerencie retrospectivas com calendário",
+        "Verifique mais listas de retrospectivas",
+        "Escreva retrospectivas com o método KPT",
+        "Você pode verificar o histórico de todas as retrospectivas"
+      ],
+      "font_mapping": {
+        "regular": "NotoSans-Regular.ttf",
+        "bold": "NotoSans-Bold.ttf",
+        "font_path": "NotoSans",
+        "font_color": "#FFFFFF"
+      }
+    },
+    "ru": {
+      "screenshot_texts": [
+        "Управляйте ретроспективами с помощью календаря",
+        "Просмотрите больше списков ретроспектив",
+        "Пишите ретроспективы методом KPT",
+        "Вы можете просмотреть историю всех ретроспектив"
+      ],
+      "font_mapping": {
+        "regular": "NotoSans-Regular.ttf",
+        "bold": "NotoSans-Bold.ttf",
+        "font_path": "NotoSans",
+        "font_color": "#FFFFFF"
+      }
+    },
+    "ar-SA": {
+      "screenshot_texts": [
+        "إدارة الاستعراضات بالتقويم",
+        "تحقق من قوائم الاستعراضات الأكثر",
+        "اكتب الاستعراضات بطريقة KPT",
+        "يمكنك التحقق من تاريخ جميع الاستعراضات"
+      ],
+      "font_mapping": {
+        "regular": "NotoSansArabic-Regular.ttf",
+        "bold": "NotoSansArabic-Bold.ttf",
+        "font_path": "NotoSansArabic",
+        "font_color": "#FFFFFF"
+      }
+    },
+    "hi": {
+      "screenshot_texts": [
+        "कैलेंडर के साथ रेट्रोस्पेक्टिव्स प्रबंधित करें",
+        "अधिक रेट्रोस्पेक्टिव सूचियों की जांच करें",
+        "KPT पद्धति से रेट्रोस्पेक्टिव्स लिखें",
+        "आप सभी रेट्रोस्पेक्टिव्स का इतिहास देख सकते हैं"
+      ],
+      "font_mapping": {
+        "regular": "NotoSansDevanagari-Regular.ttf",
+        "bold": "NotoSansDevanagari-Bold.ttf",
+        "font_path": "NotoSansDevanagari",
+        "font_color": "#FFFFFF"
+      }
+    },
+    "tr": {
+      "screenshot_texts": [
+        "Takvim ile retrospektifleri yönetin",
+        "Daha fazla retrospektif listesini kontrol edin",
+        "KPT yöntemi ile retrospektifler yazın",
+        "Tüm retrospektiflerin geçmişini kontrol edebilirsiniz"
+      ],
+      "font_mapping": {
+        "regular": "NotoSans-Regular.ttf",
+        "bold": "NotoSans-Bold.ttf",
+        "font_path": "NotoSans",
+        "font_color": "#FFFFFF"
+      }
+    },
+    "pl": {
+      "screenshot_texts": [
+        "Zarządzaj retrospektywami za pomocą kalendarza",
+        "Sprawdź więcej list retrospektyw",
+        "Pisz retrospektywy metodą KPT",
+        "Możesz sprawdzić historię wszystkich retrospektyw"
+      ],
+      "font_mapping": {
+        "regular": "NotoSans-Regular.ttf",
+        "bold": "NotoSans-Bold.ttf",
+        "font_path": "NotoSans",
+        "font_color": "#FFFFFF"
+      }
+    },
+    "nl-NL": {
+      "screenshot_texts": [
+        "Beheer retrospectives met kalender",
+        "Bekijk meer retrospectivelijsten",
+        "Schrijf retrospectives met KPT-methode",
+        "Je kunt de geschiedenis van alle retrospectives bekijken"
+      ],
+      "font_mapping": {
+        "regular": "NotoSans-Regular.ttf",
+        "bold": "NotoSans-Bold.ttf",
+        "font_path": "NotoSans",
+        "font_color": "#FFFFFF"
+      }
+    },
+    "sv": {
+      "screenshot_texts": [
+        "Hantera retrospektiv med kalender",
+        "Kontrollera fler retrospektiv-listor",
+        "Skriv retrospektiv med KPT-metoden",
+        "Du kan kontrollera historiken för alla retrospektiv"
+      ],
+      "font_mapping": {
+        "regular": "NotoSans-Regular.ttf",
+        "bold": "NotoSans-Bold.ttf",
+        "font_path": "NotoSans",
+        "font_color": "#FFFFFF"
+      }
+    },
+    "da": {
+      "screenshot_texts": [
+        "Administrer retrospektiver med kalender",
+        "Tjek flere retrospektiv-lister",
+        "Skriv retrospektiver med KPT-metoden",
+        "Du kan tjekke historikken for alle retrospektiver"
+      ],
+      "font_mapping": {
+        "regular": "NotoSans-Regular.ttf",
+        "bold": "NotoSans-Bold.ttf",
+        "font_path": "NotoSans",
+        "font_color": "#FFFFFF"
+      }
+    },
+    "fi": {
+      "screenshot_texts": [
+        "Hallitse retrospektiivejä kalenterin avulla",
+        "Tarkista lisää retrospektiivi-listoja",
+        "Kirjoita retrospektiivejä KPT-metodilla",
+        "Voit tarkistaa kaikkien retrospektiivien historian"
+      ],
+      "font_mapping": {
+        "regular": "NotoSans-Regular.ttf",
+        "bold": "NotoSans-Bold.ttf",
+        "font_path": "NotoSans",
+        "font_color": "#FFFFFF"
+      }
+    },
+    "no": {
+      "screenshot_texts": [
+        "Administrer retrospektiver med kalender",
+        "Sjekk flere retrospektiv-lister",
+        "Skriv retrospektiver med KPT-metoden",
+        "Du kan sjekke historikken til alle retrospektiver"
+      ],
+      "font_mapping": {
+        "regular": "NotoSans-Regular.ttf",
+        "bold": "NotoSans-Bold.ttf",
+        "font_path": "NotoSans",
+        "font_color": "#FFFFFF"
+      }
+    }
+  }
+}

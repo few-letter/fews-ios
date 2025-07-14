@@ -1,1 +1,1 @@
-timer,zadania,produktywność,pomodoro,wielozadaniowość,zarządzanie czasem,fokus,tło,kalendarz 
+wielokrotny timer,pomodoro,zarządzanie czasem,koncentracja,timer interwału,stoper,tła

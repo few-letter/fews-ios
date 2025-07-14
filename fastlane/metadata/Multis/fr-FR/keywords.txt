@@ -1,1 +1,1 @@
-minuteur,todo,productivité,pomodoro,multitâche,gestion temps,focus,arrière-plan,calendrier 
+minuteur multiple,pomodoro,gestion temps,concentration,intervalle,chronomètre,fond

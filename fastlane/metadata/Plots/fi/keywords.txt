@@ -1,1 +1,1 @@
-lukupäiväkirja,kirjaseuranta,arviointi,muistiinpanot,organisaatio,kategoria,tavoitteet,suositukset
+lukuloki,kirjapaivakirja,elokuvaseuraaja,tvseuraaja,kirjamuistiinpanot,5tahtiarviointi

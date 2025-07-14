@@ -1,1 +1,1 @@
-lesedagbok,boksporer,lesenotater,vurdering,organisering,kategori,mål,anbefaling
+leselog,bokjournal,filmtracker,tvtracker,boknotater,5stjernevurdering

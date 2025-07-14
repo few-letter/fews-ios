@@ -1,1 +1,1 @@
-Multis - Timer Todo 
+Multis: Minuteur Multiple ToDo

@@ -1,1 +1,1 @@
-diário de leitura,rastreador de livros,notas de leitura,livros lidos,avaliação 5 estrelas
+registroleitura,diariolivros,rastreadorfilmes,rastreioseries,notaslivros,avaliacao5estrelas

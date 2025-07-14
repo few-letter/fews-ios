@@ -132,3 +132,4 @@ xmakes/screenshots
 xmakes/appstore/output
 xmakes/appstore/resources
 fastlane/metadata
+scripts/venv

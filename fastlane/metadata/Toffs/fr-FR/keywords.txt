@@ -1,1 +1,1 @@
-portefeuille,investissement,actions,ETF,dividende,calendrier,tracker,rendement,actifs 
+etf,dividende,calendrier,rendement,gestionactifs,portefeuille,appinvestissement

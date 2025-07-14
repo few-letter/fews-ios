@@ -1,1 +1,1 @@
-Sovellus päivitetty. Ensi viikolla aloitan uudessa yrityksessä. 
+Tämä päivitys parantaa tausta-ajastimen vakautta. Paranna ajan hallintaa ja keskittymistä parempaan tuottavuuteen.

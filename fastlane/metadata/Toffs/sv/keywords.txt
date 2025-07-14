@@ -1,1 +1,1 @@
-portfölj,investering,aktier,ETF,utdelning,kalender,tracker,avkastning,tillgångar 
+etf,utdelning,kalender,avkastning,tillgangshantering,portfolio,investeringsapp

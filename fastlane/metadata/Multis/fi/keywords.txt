@@ -1,1 +1,1 @@
-ajastin,tehtävät,tuottavuus,pomodoro,monitehtävyys,ajanhallinta,keskittyminen,tausta,kalenteri 
+moniajastin,pomodoro,ajan hallinta,keskittyminen,väliajastin,pysäytykello,tausta

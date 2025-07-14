@@ -1,0 +1,278 @@
+{
+  "app_name": "capts",
+  "output_base_dir": "output",
+  "devices": {
+    "iphone": {
+      "background_image": "iphone_background.jpg",
+      "phone_y_offset": 180,
+      "text_y_offset": -120,
+      "fastlane_device_identifier": "iphone69",
+      "scale_factor": 0.8,
+      "font_size_title": 100,
+      "font_size_body": 32,
+      "fallback_font_path": "NotoSansKR-Regular.otf",
+      "screenshots": [
+        {
+          "filename": "iphone_01.png"
+        },
+        {
+          "filename": "iphone_02.png"
+        }
+      ]
+    },
+    "ipad": {
+      "background_image": "ipad_background.jpg",
+      "phone_y_offset": -20,
+      "text_y_offset": -200,
+      "fastlane_device_identifier": "APP_IPAD_PRO_3GEN_129",
+      "scale_factor": 1.8,
+      "font_size_title": 110,
+      "font_size_body": 32,
+      "fallback_font_path": "NotoSansKR-Regular.otf",
+      "screenshots": [
+        {
+          "filename": "ipad_01.png"
+        },
+        {
+          "filename": "ipad_02.png"
+        }
+      ]
+    }
+  },
+  "localization": {
+    "ko": {
+      "screenshot_texts": [
+        "텍스트가 포함된 이미지를 선택하세요",
+        "AI로 깔끔하게 정리합니다"
+      ],
+      "font_mapping": {
+        "regular": "Pretendard-Regular.otf",
+        "bold": "Pretendard-Bold.otf",
+        "font_path": "",
+        "font_color": "#FFFFFF"
+      }
+    },
+    "en-US": {
+      "screenshot_texts": [
+        "Select an image containing text",
+        "AI will organize it neatly"
+      ],
+      "font_mapping": {
+        "regular": "NotoSans-Regular.ttf",
+        "bold": "NotoSans-Bold.ttf",
+        "font_path": "NotoSans",
+        "font_color": "#FFFFFF"
+      }
+    },
+    "ja": {
+      "screenshot_texts": [
+        "テキストが含まれた画像を選択してください",
+        "AIできれいに整理します"
+      ],
+      "font_mapping": {
+        "regular": "NotoSerifCJKjp-Regular.otf",
+        "bold": "NotoSerifCJKjp-Bold.otf",
+        "font_path": "05_NotoSerifCJKOTF/OTF/Japanese",
+        "font_color": "#FFFFFF"
+      }
+    },
+    "zh-Hans": {
+      "screenshot_texts": ["请选择包含文本的图像", "AI会整洁地整理"],
+      "font_mapping": {
+        "regular": "NotoSerifCJKsc-Regular.otf",
+        "bold": "NotoSerifCJKsc-Bold.otf",
+        "font_path": "05_NotoSerifCJKOTF/OTF/SimplifiedChinese",
+        "font_color": "#FFFFFF"
+      }
+    },
+    "zh-Hant": {
+      "screenshot_texts": ["請選擇包含文本的圖像", "AI會整潔地整理"],
+      "font_mapping": {
+        "regular": "NotoSerifCJKtc-Regular.otf",
+        "bold": "NotoSerifCJKtc-Bold.otf",
+        "font_path": "05_NotoSerifCJKOTF/OTF/TraditionalChinese",
+        "font_color": "#FFFFFF"
+      }
+    },
+    "de-DE": {
+      "screenshot_texts": [
+        "Wählen Sie ein Bild mit Text aus",
+        "AI wird es ordentlich organisieren"
+      ],
+      "font_mapping": {
+        "regular": "NotoSans-Regular.ttf",
+        "bold": "NotoSans-Bold.ttf",
+        "font_path": "NotoSans",
+        "font_color": "#FFFFFF"
+      }
+    },
+    "fr-FR": {
+      "screenshot_texts": [
+        "Sélectionnez une image contenant du texte",
+        "L'IA l'organisera proprement"
+      ],
+      "font_mapping": {
+        "regular": "NotoSans-Regular.ttf",
+        "bold": "NotoSans-Bold.ttf",
+        "font_path": "NotoSans",
+        "font_color": "#FFFFFF"
+      }
+    },
+    "es-ES": {
+      "screenshot_texts": [
+        "Selecciona una imagen que contenga texto",
+        "La IA la organizará ordenadamente"
+      ],
+      "font_mapping": {
+        "regular": "NotoSans-Regular.ttf",
+        "bold": "NotoSans-Bold.ttf",
+        "font_path": "NotoSans",
+        "font_color": "#FFFFFF"
+      }
+    },
+    "it": {
+      "screenshot_texts": [
+        "Seleziona un'immagine contenente testo",
+        "L'AI la organizzerà in modo ordinato"
+      ],
+      "font_mapping": {
+        "regular": "NotoSans-Regular.ttf",
+        "bold": "NotoSans-Bold.ttf",
+        "font_path": "NotoSans",
+        "font_color": "#FFFFFF"
+      }
+    },
+    "pt-BR": {
+      "screenshot_texts": [
+        "Selecione uma imagem contendo texto",
+        "A IA organizará tudo de forma ordenada"
+      ],
+      "font_mapping": {
+        "regular": "NotoSans-Regular.ttf",
+        "bold": "NotoSans-Bold.ttf",
+        "font_path": "NotoSans",
+        "font_color": "#FFFFFF"
+      }
+    },
+    "ru": {
+      "screenshot_texts": [
+        "Выберите изображение с текстом",
+        "ИИ аккуратно организует его"
+      ],
+      "font_mapping": {
+        "regular": "NotoSans-Regular.ttf",
+        "bold": "NotoSans-Bold.ttf",
+        "font_path": "NotoSans",
+        "font_color": "#FFFFFF"
+      }
+    },
+    "ar-SA": {
+      "screenshot_texts": [
+        "اختر صورة تحتوي على نص",
+        "الذكاء الاصطناعي سينظمها بدقة"
+      ],
+      "font_mapping": {
+        "regular": "NotoSansArabic-Regular.ttf",
+        "bold": "NotoSansArabic-Bold.ttf",
+        "font_path": "NotoSansArabic",
+        "font_color": "#FFFFFF"
+      }
+    },
+    "hi": {
+      "screenshot_texts": [
+        "टेक्स्ट वाली एक तस्वीर चुनें",
+        "AI इसे साफ-सुथरा व्यवस्थित करेगा"
+      ],
+      "font_mapping": {
+        "regular": "NotoSansDevanagari-Regular.ttf",
+        "bold": "NotoSansDevanagari-Bold.ttf",
+        "font_path": "NotoSansDevanagari",
+        "font_color": "#FFFFFF"
+      }
+    },
+    "tr": {
+      "screenshot_texts": [
+        "Metin içeren bir resim seçin",
+        "AI onu düzgün bir şekilde organize edecek"
+      ],
+      "font_mapping": {
+        "regular": "NotoSans-Regular.ttf",
+        "bold": "NotoSans-Bold.ttf",
+        "font_path": "NotoSans",
+        "font_color": "#FFFFFF"
+      }
+    },
+    "pl": {
+      "screenshot_texts": [
+        "Wybierz obraz zawierający tekst",
+        "AI uporządkuje go w sposób przejrzysty"
+      ],
+      "font_mapping": {
+        "regular": "NotoSans-Regular.ttf",
+        "bold": "NotoSans-Bold.ttf",
+        "font_path": "NotoSans",
+        "font_color": "#FFFFFF"
+      }
+    },
+    "nl-NL": {
+      "screenshot_texts": [
+        "Selecteer een afbeelding met tekst",
+        "AI zal het netjes organiseren"
+      ],
+      "font_mapping": {
+        "regular": "NotoSans-Regular.ttf",
+        "bold": "NotoSans-Bold.ttf",
+        "font_path": "NotoSans",
+        "font_color": "#FFFFFF"
+      }
+    },
+    "sv": {
+      "screenshot_texts": [
+        "Välj en bild som innehåller text",
+        "AI kommer att organisera det snyggt"
+      ],
+      "font_mapping": {
+        "regular": "NotoSans-Regular.ttf",
+        "bold": "NotoSans-Bold.ttf",
+        "font_path": "NotoSans",
+        "font_color": "#FFFFFF"
+      }
+    },
+    "da": {
+      "screenshot_texts": [
+        "Vælg et billede med tekst",
+        "AI vil organisere det pænt"
+      ],
+      "font_mapping": {
+        "regular": "NotoSans-Regular.ttf",
+        "bold": "NotoSans-Bold.ttf",
+        "font_path": "NotoSans",
+        "font_color": "#FFFFFF"
+      }
+    },
+    "fi": {
+      "screenshot_texts": [
+        "Valitse kuva, jossa on tekstiä",
+        "AI järjestää sen siististi"
+      ],
+      "font_mapping": {
+        "regular": "NotoSans-Regular.ttf",
+        "bold": "NotoSans-Bold.ttf",
+        "font_path": "NotoSans",
+        "font_color": "#FFFFFF"
+      }
+    },
+    "no": {
+      "screenshot_texts": [
+        "Velg et bilde som inneholder tekst",
+        "AI vil organisere det pent"
+      ],
+      "font_mapping": {
+        "regular": "NotoSans-Regular.ttf",
+        "bold": "NotoSans-Bold.ttf",
+        "font_path": "NotoSans",
+        "font_color": "#FFFFFF"
+      }
+    }
+  }
+}

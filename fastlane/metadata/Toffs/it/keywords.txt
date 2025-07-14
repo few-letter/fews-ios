@@ -1,1 +1,1 @@
-portafoglio,investimento,azioni,ETF,dividendo,calendario,tracker,rendimento,assets 
+etf,dividendo,calendario,rendimento,gestionepatrimonio,portafoglio,appinvestimento

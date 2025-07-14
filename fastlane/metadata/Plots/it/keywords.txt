@@ -1,1 +1,1 @@
-diario di lettura,tracker di libri,note di lettura,libri letti,valutazione 5 stelle,recensione 
+registrolettura,diariolibri,trackerfilm,trackerserie,notelibri,valutazione5stelle

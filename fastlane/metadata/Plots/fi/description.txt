@@ -1,18 +1,12 @@
-Tallenna mitä olet "lukenut ja katsonut" yksinkertaisimmalla tavalla Plotsin kanssa.
-Seuraa kirjoja, sarjoja ja elokuvia yhtä helposti kuin muistiosovellusta, arvioi nopeasti 5 tähden järjestelmällä! Järjestä siististi kansioiden ja kategorioiden kanssa, kaikki turvallisesti synkronoitu iCloudin kanssa.
+Seuraa kirjojasi Plotsilla, ultimate kirja seuraaja ja lukuloki app. Kirjaa helposti kirjat, elokuvat ja sarjat muistiinpanoina, arvioi 5 tähdellä ja järjestä kansioihin. Synkronoi turvallisesti iCloudin kautta.
+Hallitse luku päiväkirjaasi ja elokuva lokia vaivattomasti.
 
-Mikä tekee Plotsista erityisen
-Lukemiskeskeiset tallennukset – Tallenna sivuja, lainauksia ja tunteita kuten muistiinpanoja
+Miksi Plots erottuu:
+• Syvät muistiinpanot sivuille, lainauksille ja ajatuksille
+• Intuitiivinen 5 tähden arviointi
+• Kategorisoi genren tai sarjan mukaan
+• Tähtikuvio taggeja uniikkeja vibejä varten
+• Minimalistinen UI helppo käyttää
+• Automaattinen iCloud varmuuskopio
 
-5 tähden arviointijärjestelmä – Intuitiivinen arviointi yhdellä napautuksella
-
-Kansiot & Kategoriat – Järjestä vapaasti genren tai sarjan mukaan
-
-Tähtikuviotagit – Ilmaise teosten tunnelmaa 12 horoskooppimerkin kautta ainutlaatuisia löytöjä varten
-
-Yksinkertainen käyttöliittymä – Minimalistinen design kuten muistiosovellus, valmis käyttöön kaikille
-
-iCloud-varmuuskopio – Automaattinen suojaus ja synkronointi kaikille tallenteillesi
-
-Aloittelijoista, jotka haluavat kehittää lukutottumuksia, tallennusintoilijoihin
-Plots näyttää visuaalisesti sen virtauksen, mitä olet "nähnyt ja lukenut", auttaen sinua valitsemaan seuraavan teoksesi. 
+Rakenna lukutottumuksia ja inspiroidu seuraavaan. Lataa Plots nyt ja aloita matkasi kirjaaminen!

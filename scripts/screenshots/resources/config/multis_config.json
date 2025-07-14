@@ -1,0 +1,336 @@
+{
+  "app_name": "multis",
+  "output_base_dir": "output",
+  "devices": {
+    "iphone": {
+      "background_image": "iphone_background.jpg",
+      "phone_y_offset": 180,
+      "text_y_offset": -120,
+      "fastlane_device_identifier": "iphone69",
+      "scale_factor": 0.8,
+      "font_size_title": 100,
+      "font_size_body": 32,
+      "fallback_font_path": "NotoSansKR-Regular.otf",
+      "screenshots": [
+        {
+          "filename": "iphone_01.png"
+        },
+        {
+          "filename": "iphone_02.png"
+        },
+        {
+          "filename": "iphone_03.png"
+        },
+        {
+          "filename": "iphone_04.png"
+        }
+      ]
+    },
+    "ipad": {
+      "background_image": "ipad_background.jpg",
+      "phone_y_offset": -20,
+      "text_y_offset": -200,
+      "fastlane_device_identifier": "APP_IPAD_PRO_3GEN_129",
+      "scale_factor": 1.8,
+      "font_size_title": 110,
+      "font_size_body": 32,
+      "fallback_font_path": "NotoSansKR-Regular.otf",
+      "screenshots": [
+        {
+          "filename": "ipad_01.png"
+        },
+        {
+          "filename": "ipad_02.png"
+        },
+        {
+          "filename": "ipad_03.png"
+        },
+        {
+          "filename": "ipad_04.png"
+        }
+      ]
+    }
+  },
+  "localization": {
+    "ko": {
+      "screenshot_texts": [
+        "캘린더로 타이머를 관리하세요",
+        "더 많은 타이머 리스트를 확인하세요",
+        "카테고리와 시간을 수정할 수 있습니다",
+        "모든 타이머의 히스토리를 확인할 수 있습니다"
+      ],
+      "font_mapping": {
+        "regular": "Pretendard-Regular.otf",
+        "bold": "Pretendard-Bold.otf",
+        "font_path": "",
+        "font_color": "#FFFFFF"
+      }
+    },
+    "en-US": {
+      "screenshot_texts": [
+        "Manage timers with calendar",
+        "Check more timer lists",
+        "You can modify categories and time",
+        "You can check the history of all timers"
+      ],
+      "font_mapping": {
+        "regular": "NotoSans-Regular.ttf",
+        "bold": "NotoSans-Bold.ttf",
+        "font_path": "NotoSans",
+        "font_color": "#FFFFFF"
+      }
+    },
+    "ja": {
+      "screenshot_texts": [
+        "カレンダーでタイマーを管理しましょう",
+        "より多くのタイマーリストを確認しましょう",
+        "カテゴリと時間を変更できます",
+        "すべてのタイマーの履歴を確認できます"
+      ],
+      "font_mapping": {
+        "regular": "NotoSerifCJKjp-Regular.otf",
+        "bold": "NotoSerifCJKjp-Bold.otf",
+        "font_path": "05_NotoSerifCJKOTF/OTF/Japanese",
+        "font_color": "#FFFFFF"
+      }
+    },
+    "zh-Hans": {
+      "screenshot_texts": [
+        "用日历管理定时器",
+        "查看更多定时器列表",
+        "可以修改类别和时间",
+        "可以查看所有定时器的历史"
+      ],
+      "font_mapping": {
+        "regular": "NotoSerifCJKsc-Regular.otf",
+        "bold": "NotoSerifCJKsc-Bold.otf",
+        "font_path": "05_NotoSerifCJKOTF/OTF/SimplifiedChinese",
+        "font_color": "#FFFFFF"
+      }
+    },
+    "zh-Hant": {
+      "screenshot_texts": [
+        "用日曆管理定時器",
+        "查看更多定時器列表",
+        "可以修改類別和時間",
+        "可以查看所有定時器的歷史"
+      ],
+      "font_mapping": {
+        "regular": "NotoSerifCJKtc-Regular.otf",
+        "bold": "NotoSerifCJKtc-Bold.otf",
+        "font_path": "05_NotoSerifCJKOTF/OTF/TraditionalChinese",
+        "font_color": "#FFFFFF"
+      }
+    },
+    "de-DE": {
+      "screenshot_texts": [
+        "Verwalten Sie Timer mit Kalender",
+        "Weitere Timer-Listen anzeigen",
+        "Sie können Kategorien und Zeit ändern",
+        "Sie können die Historie aller Timer anzeigen"
+      ],
+      "font_mapping": {
+        "regular": "NotoSans-Regular.ttf",
+        "bold": "NotoSans-Bold.ttf",
+        "font_path": "NotoSans",
+        "font_color": "#FFFFFF"
+      }
+    },
+    "fr-FR": {
+      "screenshot_texts": [
+        "Gérez les minuteries avec le calendrier",
+        "Consultez plus de listes de minuteries",
+        "Vous pouvez modifier les catégories et le temps",
+        "Vous pouvez consulter l'historique de toutes les minuteries"
+      ],
+      "font_mapping": {
+        "regular": "NotoSans-Regular.ttf",
+        "bold": "NotoSans-Bold.ttf",
+        "font_path": "NotoSans",
+        "font_color": "#FFFFFF"
+      }
+    },
+    "es-ES": {
+      "screenshot_texts": [
+        "Administra temporizadores con calendario",
+        "Consulta más listas de temporizadores",
+        "Puedes modificar categorías y tiempo",
+        "Puedes consultar el historial de todos los temporizadores"
+      ],
+      "font_mapping": {
+        "regular": "NotoSans-Regular.ttf",
+        "bold": "NotoSans-Bold.ttf",
+        "font_path": "NotoSans",
+        "font_color": "#FFFFFF"
+      }
+    },
+    "it": {
+      "screenshot_texts": [
+        "Gestisci i timer con il calendario",
+        "Controlla più elenchi di timer",
+        "Puoi modificare categorie e tempo",
+        "Puoi controllare la cronologia di tutti i timer"
+      ],
+      "font_mapping": {
+        "regular": "NotoSans-Regular.ttf",
+        "bold": "NotoSans-Bold.ttf",
+        "font_path": "NotoSans",
+        "font_color": "#FFFFFF"
+      }
+    },
+    "pt-BR": {
+      "screenshot_texts": [
+        "Gerencie temporizadores com calendário",
+        "Verifique mais listas de temporizadores",
+        "Você pode modificar categorias e tempo",
+        "Você pode verificar o histórico de todos os temporizadores"
+      ],
+      "font_mapping": {
+        "regular": "NotoSans-Regular.ttf",
+        "bold": "NotoSans-Bold.ttf",
+        "font_path": "NotoSans",
+        "font_color": "#FFFFFF"
+      }
+    },
+    "ru": {
+      "screenshot_texts": [
+        "Управляйте таймерами с помощью календаря",
+        "Просмотрите больше списков таймеров",
+        "Вы можете изменить категории и время",
+        "Вы можете просмотреть историю всех таймеров"
+      ],
+      "font_mapping": {
+        "regular": "NotoSans-Regular.ttf",
+        "bold": "NotoSans-Bold.ttf",
+        "font_path": "NotoSans",
+        "font_color": "#FFFFFF"
+      }
+    },
+    "ar-SA": {
+      "screenshot_texts": [
+        "إدارة المؤقتات بالتقويم",
+        "تحقق من قوائم المؤقتات الأكثر",
+        "يمكنك تعديل الفئات والوقت",
+        "يمكنك التحقق من تاريخ جميع المؤقتات"
+      ],
+      "font_mapping": {
+        "regular": "NotoSansArabic-Regular.ttf",
+        "bold": "NotoSansArabic-Bold.ttf",
+        "font_path": "NotoSansArabic",
+        "font_color": "#FFFFFF"
+      }
+    },
+    "hi": {
+      "screenshot_texts": [
+        "कैलेंडर के साथ टाइमर प्रबंधित करें",
+        "अधिक टाइमर सूचियों की जांच करें",
+        "आप श्रेणियां और समय संशोधित कर सकते हैं",
+        "आप सभी टाइमरों का इतिहास देख सकते हैं"
+      ],
+      "font_mapping": {
+        "regular": "NotoSansDevanagari-Regular.ttf",
+        "bold": "NotoSansDevanagari-Bold.ttf",
+        "font_path": "NotoSansDevanagari",
+        "font_color": "#FFFFFF"
+      }
+    },
+    "tr": {
+      "screenshot_texts": [
+        "Takvim ile zamanlayıcıları yönetin",
+        "Daha fazla zamanlayıcı listesini kontrol edin",
+        "Kategorileri ve zamanı değiştirebilirsiniz",
+        "Tüm zamanlayıcıların geçmişini kontrol edebilirsiniz"
+      ],
+      "font_mapping": {
+        "regular": "NotoSans-Regular.ttf",
+        "bold": "NotoSans-Bold.ttf",
+        "font_path": "NotoSans",
+        "font_color": "#FFFFFF"
+      }
+    },
+    "pl": {
+      "screenshot_texts": [
+        "Zarządzaj minutnikami za pomocą kalendarza",
+        "Sprawdź więcej list minutników",
+        "Możesz modyfikować kategorie i czas",
+        "Możesz sprawdzić historię wszystkich minutników"
+      ],
+      "font_mapping": {
+        "regular": "NotoSans-Regular.ttf",
+        "bold": "NotoSans-Bold.ttf",
+        "font_path": "NotoSans",
+        "font_color": "#FFFFFF"
+      }
+    },
+    "nl-NL": {
+      "screenshot_texts": [
+        "Beheer timers met kalender",
+        "Bekijk meer timerlijsten",
+        "Je kunt categorieën en tijd aanpassen",
+        "Je kunt de geschiedenis van alle timers bekijken"
+      ],
+      "font_mapping": {
+        "regular": "NotoSans-Regular.ttf",
+        "bold": "NotoSans-Bold.ttf",
+        "font_path": "NotoSans",
+        "font_color": "#FFFFFF"
+      }
+    },
+    "sv": {
+      "screenshot_texts": [
+        "Hantera timers med kalender",
+        "Kontrollera fler timer-listor",
+        "Du kan ändra kategorier och tid",
+        "Du kan kontrollera historiken för alla timers"
+      ],
+      "font_mapping": {
+        "regular": "NotoSans-Regular.ttf",
+        "bold": "NotoSans-Bold.ttf",
+        "font_path": "NotoSans",
+        "font_color": "#FFFFFF"
+      }
+    },
+    "da": {
+      "screenshot_texts": [
+        "Administrer timere med kalender",
+        "Tjek flere timer-lister",
+        "Du kan ændre kategorier og tid",
+        "Du kan tjekke historikken for alle timere"
+      ],
+      "font_mapping": {
+        "regular": "NotoSans-Regular.ttf",
+        "bold": "NotoSans-Bold.ttf",
+        "font_path": "NotoSans",
+        "font_color": "#FFFFFF"
+      }
+    },
+    "fi": {
+      "screenshot_texts": [
+        "Hallitse ajastimia kalenterin avulla",
+        "Tarkista lisää ajastinlistoja",
+        "Voit muokata luokkia ja aikaa",
+        "Voit tarkistaa kaikkien ajastimien historian"
+      ],
+      "font_mapping": {
+        "regular": "NotoSans-Regular.ttf",
+        "bold": "NotoSans-Bold.ttf",
+        "font_path": "NotoSans",
+        "font_color": "#FFFFFF"
+      }
+    },
+    "no": {
+      "screenshot_texts": [
+        "Administrer timere med kalender",
+        "Sjekk flere timer-lister",
+        "Du kan endre kategorier og tid",
+        "Du kan sjekke historikken til alle timere"
+      ],
+      "font_mapping": {
+        "regular": "NotoSans-Regular.ttf",
+        "bold": "NotoSans-Bold.ttf",
+        "font_path": "NotoSans",
+        "font_color": "#FFFFFF"
+      }
+    }
+  }
+}

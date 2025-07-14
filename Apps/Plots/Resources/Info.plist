@@ -2,8 +2,6 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<key>NSCameraUsageDescription</key>
-	<string>사진을 기록하기 위해 카메라를 사용합니다.</string>
 	<key>ADMOB_OPENING_AD_ID</key>
 	<string>$(ADMOB_OPENING_AD_ID)</string>
 	<key>ADMOB_REWARD_AD_ID</key>
@@ -17,13 +15,13 @@
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundleName</key>
-	<string></string>
+	<string/>
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
-	<string>3.4.2</string>
+	<string>3.4.4</string>
 	<key>CFBundleVersion</key>
-	<string>20250707223244</string>
+	<string>20250714014140</string>
 	<key>GADApplicationIdentifier</key>
 	<string>$(ADMOB_APP_ID)</string>
 	<key>ITSAppUsesNonExemptEncryption</key>
@@ -37,6 +35,8 @@
 		<key>NSAllowsArbitraryLoads</key>
 		<true/>
 	</dict>
+	<key>NSCameraUsageDescription</key>
+	<string>사진을 기록하기 위해 카메라를 사용합니다.</string>
 	<key>NSUserTrackingUsageDescription</key>
 	<string>이 앱은 더 나은 사용자 경험을 제공하기 위해 사용자 데이터를 추적합니다.</string>
 	<key>SKAdNetworkItems</key>
@@ -245,9 +245,9 @@
 	<key>UILaunchScreen</key>
 	<dict>
 		<key>UIColorName</key>
-		<string></string>
+		<string/>
 		<key>UIImageName</key>
-		<string></string>
+		<string/>
 	</dict>
 	<key>UISupportedInterfaceOrientations</key>
 	<array>

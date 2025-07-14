@@ -1,0 +1,149 @@
+{
+  "app_name": "multis",
+  "base_language": "ko",
+  "marketing_url": "https://fewmultis.blogspot.com/",
+  "privacy_url": "https://www.notion.so/sbmo/b1230ae9827742a39955a4a7df2da172?pvs=4",
+  "support_url": "https://www.notion.so/sbmo/URL-94ecc4853eb544a28ca3a114e247cc53?pvs=4",
+  "localization": {
+    "ko": {
+      "name": "Multis: 멀티 타이머 투두",
+      "subtitle": "생산성 캘린더 연동",
+      "description": "Multis로 여러 작업을 동시에 타이머로 관리하세요. 멀티 타이머와 캘린더 연동으로 생산성을 극대화하며, 백그라운드에서도 안정적으로 작동하는 스마트 투두 관리를 경험하세요.\n\n멀티 타이머, 시간 관리, 집중력 향상을 위한 필수 앱입니다.\n\n• 동시 멀티 타이머: 여러 작업을 개별 추적하며 효율 관리\n• 캘린더 원터치 실행: 일정에서 바로 타이머 시작\n• 백그라운드 처리: 앱 닫아도 안정 작동\n• 스마트 문서 정리: 카테고리별 자동 분류\n• 타이머 리셋 자유: 유연한 제어\n• iCloud 동기화: 데이터 백업 및 기기간 공유\n\n바쁜 현대인과 전문가를 위한 Multis로 복잡한 멀티태스킹을 간단히 해결하세요.\n\n지금 다운로드하고 생산성을 높이세요!",
+      "keywords": "멀티타이머,투두리스트,생산성,포모도로,멀티태스킹,시간관리,집중력,배경타이머,시간블록,간격타이머",
+      "release_notes": "이번 업데이트에서 백그라운드 타이머 안정성을 강화했습니다. 시간 관리와 집중력을 높여 더 나은 생산성을 경험하세요."
+    },
+    "en-US": {
+      "name": "Multis: Multi Timer ToDo",
+      "subtitle": "Productivity Calendar Sync",
+      "description": "Manage multiple tasks simultaneously with Multis multi timer app. Boost productivity with calendar integration and reliable background operation for smart to-do management.\n\nMulti timer, time management, and focus enhancement in one essential app.\n\n• Simultaneous Multi Timers: Track tasks individually for efficient management\n• One-Touch Calendar Start: Launch timers directly from schedules\n• Background Processing: Continues running even when app is closed\n• Smart Document Organization: Auto-categorize by category and period\n• Flexible Timer Reset: Restart anytime with ease\n• Secure iCloud Sync: Automatic backup and cross-device sharing\n\nTransform multitasking into simple time blocks with Multis for busy professionals.\n\nDownload now and enhance your productivity!",
+      "keywords": "multi timer,pomodoro,task timer,time management,focus,interval timer,countdown,stopwatch,background",
+      "release_notes": "This update improves background timer stability. Enhance time management and focus for better productivity."
+    },
+    "ja": {
+      "name": "Multis: マルチタイマー ToDo",
+      "subtitle": "生産性カレンダー同期",
+      "description": "Multisで複数のタスクを同時にタイマーで管理しましょう。マルチタイマーとカレンダー連携で生産性を最大化し、バックグラウンドでも安定動作するスマートToDo管理を体験してください。\n\nマルチタイマー、時間管理、集中力向上に欠かせないアプリです。\n\n• 同時マルチタイマー: 複数の作業を個別に追跡し効率管理\n• カレンダーワンタッチ実行: スケジュールから直接タイマー開始\n• 完璧なバックグラウンド処理: アプリを閉じても継続動作\n• スマートドキュメント整理: カテゴリと期間別自動分類\n• タイマーリセット自由: いつでも柔軟に再開始\n• 安全なiCloud同期: データ自動バックアップとデバイス間共有\n\n忙しい現代人とプロフェッショナル向けに、複雑なマルチタスキングをシンプルに変えるMultis。\n\n今すぐダウンロードして生産性を向上させましょう！",
+      "keywords": "マルチタイマー,ポモドーロ,タスクタイマー,時間管理,集中,インターバルタイマー,カウントダウン,ストップウォッチ,バックグラウンドタイマー,タイムブロック",
+      "release_notes": "このアップデートでバックグラウンドタイマーの安定性を向上させました。時間管理と集中力を高めてより良い生産性を。"
+    },
+    "zh-Hans": {
+      "name": "Multis: 多任务定时器待办",
+      "subtitle": "生产力日历同步",
+      "description": "使用Multis同时管理多个任务的定时器。通过多任务定时器和日历集成最大化生产力，并在后台稳定运行的智能待办事项管理。\n\n多任务定时器、时间管理、专注提升于一体的必备应用。\n\n• 同时多任务定时器：单独跟踪任务以高效管理\n• 日历一键启动：直接从日程启动定时器\n• 完美后台处理：关闭应用后继续运行\n• 智能文档整理：按类别和期间自动分类\n• 定时器重置自由：随时灵活重新开始\n• 安全的iCloud同步：数据自动备份和跨设备共享\n\n为忙碌的现代人和专业人士，将复杂多任务转化为简单时间块的Multis。\n\n立即下载，提升您的生产力！",
+      "keywords": "多任务定时器,番茄工作法,任务定时器,时间管理,专注,间隔定时器,倒计时,秒表,后台定时器,时间块",
+      "release_notes": "本次更新提升了后台定时器的稳定性。提升时间管理和专注力以获得更好的生产力。"
+    },
+    "zh-Hant": {
+      "name": "Multis: 多任務計時器待辦",
+      "subtitle": "生產力日曆同步",
+      "description": "使用Multis同時管理多個任務的計時器。透過多任務計時器和日曆整合最大化生產力，並在後臺穩定運行的智慧待辦事項管理。\n\n多任務計時器、時間管理、專注提升於一身的必備應用。\n\n• 同時多任務計時器：單獨追蹤任務以高效管理\n• 日曆一鍵啟動：直接從日程啟動計時器\n• 完美後臺處理：關閉應用後繼續運行\n• 智慧文件整理：按類別和期間自動分類\n• 計時器重置自由：隨時靈活重新開始\n• 安全的iCloud同步：資料自動備份和跨裝置共享\n\n為忙碌的現代人和專業人士，將複雜多任務轉化為簡單時間塊的Multis。\n\n立即下載，提升您的生產力！",
+      "keywords": "多任務計時器,番茄工作法,任務計時器,時間管理,專注,間隔計時器,倒計時,碼表,後臺計時器,時間塊",
+      "release_notes": "本次更新提升了後臺計時器的穩定性。提升時間管理和專注力以獲得更好的生產力。"
+    },
+    "es-ES": {
+      "name": "Multis: Multi Timer ToDo",
+      "subtitle": "Productividad Calendario Sync",
+      "description": "Gestiona múltiples tareas simultáneamente con Multis temporizador múltiple. Aumenta la productividad con integración de calendario y operación confiable en segundo plano para una gestión inteligente de tareas pendientes.\n\nTemporizador múltiple, gestión de tiempo y mejora de enfoque en una app esencial.\n\n• Temporizadores Múltiples Simultáneos: Rastrea tareas individualmente para una gestión eficiente\n• Inicio con Un Toque en Calendario: Lanza temporizadores directamente desde horarios\n• Procesamiento en Segundo Plano: Continúa funcionando incluso con la app cerrada\n• Organización Inteligente de Documentos: Clasificación automática por categoría y período\n• Reinicio Flexible de Temporizador: Reinicia en cualquier momento con facilidad\n• Sincronización Segura con iCloud: Copia de seguridad automática y compartición entre dispositivos\n\nTransforma el multitarea en bloques de tiempo simples con Multis para profesionales ocupados.\n\n¡Descarga ahora y mejora tu productividad!",
+      "keywords": "temporizador múltiple,pomodoro,gestión tiempo,enfoque,intervalo,cuenta atrás,cronómetro,fondo",
+      "release_notes": "Esta actualización mejora la estabilidad del temporizador en segundo plano. Mejora la gestión del tiempo y el enfoque para una mejor productividad."
+    },
+    "fr-FR": {
+      "name": "Multis: Minuteur Multiple ToDo",
+      "subtitle": "Productivité Calendrier Sync",
+      "description": "Gérez plusieurs tâches simultanément avec Multis minuteur multiple. Augmentez la productivité avec l'intégration du calendrier et un fonctionnement fiable en arrière-plan pour une gestion intelligente des tâches.\n\nMinuteur multiple, gestion du temps et amélioration de la concentration dans une app essentielle.\n\n• Minuteurs Multiples Simultannés : Suivez les tâches individuellement pour une gestion efficace\n• Démarrage en Un Clic sur Calendrier : Lancez les minuteurs directement depuis les plannings\n• Traitement en Arrière-Plan : Continue de fonctionner même app fermée\n• Organisation Intelligente des Documents : Classification automatique par catégorie et période\n• Réinitialisation Flexible du Minuteur : Redémarrez à tout moment avec facilité\n• Synchronisation Sécurisée iCloud : Sauvegarde automatique et partage entre appareils\n\nTransformez le multitâche en blocs de temps simples avec Multis pour professionnels occupés.\n\nTéléchargez maintenant et améliorez votre productivité !",
+      "keywords": "minuteur multiple,pomodoro,gestion temps,concentration,intervalle,chronomètre,fond",
+      "release_notes": "Cette mise à jour améliore la stabilité du minuteur en arrière-plan. Améliorez la gestion du temps et la concentration pour une meilleure productivité."
+    },
+    "de-DE": {
+      "name": "Multis: Multi-Timer ToDo",
+      "subtitle": "Produktivität Kalender Sync",
+      "description": "Verwalten Sie mehrere Aufgaben gleichzeitig mit Multis Multi-Timer. Steigern Sie die Produktivität mit Kalenderintegration und zuverlässigem Hintergrundbetrieb für intelligente To-Do-Verwaltung.\n\nMulti-Timer, Zeitmanagement und Fokusverbesserung in einer essenziellen App.\n\n• Simultane Multi-Timer: Verfolgen Sie Aufgaben individuell für effizientes Management\n• Ein-Klick-Kalender-Start: Starten Sie Timer direkt aus Zeitplänen\n• Hintergrundverarbeitung: Läuft weiter, auch bei geschlossener App\n• Intelligente Dokumentorganisation: Automatische Kategorisierung nach Kategorie und Periode\n• Flexible Timer-Zurücksetzung: Jederzeit mit Leichtigkeit neu starten\n• Sichere iCloud-Sync: Automatische Backup und Geräteübergreifende Freigabe\n\nVerwandeln Sie Multitasking in einfache Zeitblöcke mit Multis für beschäftigte Profis.\n\nJetzt herunterladen und Produktivität steigern!",
+      "keywords": "multi timer,pomodoro,zeitmanagement,fokus,intervall,countdown,stoppuhr,hintergrund",
+      "release_notes": "Dieses Update verbessert die Stabilität des Hintergrund-Timers. Verbessern Sie Zeitmanagement und Fokus für bessere Produktivität."
+    },
+    "it": {
+      "name": "Multis: Timer Multiplo ToDo",
+      "subtitle": "Produttività Calendario Sync",
+      "description": "Gestisci più compiti contemporaneamente con Multis timer multiplo. Aumenta la produttività con integrazione calendario e operazione affidabile in background per una gestione intelligente delle to-do.\n\nTimer multiplo, gestione del tempo e miglioramento della concentrazione in un'app essenziale.\n\n• Timer Multipli Simultanei: Traccia compiti individualmente per una gestione efficiente\n• Avvio con Un Tocco su Calendario: Avvia timer direttamente da pianificazioni\n• Elaborazione in Background: Continua a funzionare anche con app chiusa\n• Organizzazione Intelligente dei Documenti: Classificazione automatica per categoria e periodo\n• Reset Flessibile del Timer: Riavvia in qualsiasi momento con facilità\n• Sync Sicura iCloud: Backup automatico e condivisione tra dispositivi\n\nTrasforma il multitasking in blocchi di tempo semplici con Multis per professionisti occupati.\n\nScarica ora e migliora la tua produttività!",
+      "keywords": "timer multiplo,pomodoro,gestione tempo,concentrazione,intervallo,cronometro,background",
+      "release_notes": "Questo aggiornamento migliora la stabilità del timer in background. Migliora la gestione del tempo e la concentrazione per una migliore produttività."
+    },
+    "pt-BR": {
+      "name": "Multis: Multi Timer ToDo",
+      "subtitle": "Produtividade Calendário Sync",
+      "description": "Gerencie várias tarefas simultaneamente com Multis temporizador múltiplo. Aumente a produtividade com integração de calendário e operação confiável em segundo plano para gerenciamento inteligente de to-do.\n\nTemporizador múltiplo, gerenciamento de tempo e melhoria de foco em um app essencial.\n\n• Temporizadores Múltiplos Simultâneos: Rastreie tarefas individualmente para gerenciamento eficiente\n• Início com Um Toque no Calendário: Inicie temporizadores diretamente de agendas\n• Processamento em Segundo Plano: Continua rodando mesmo com app fechado\n• Organização Inteligente de Documentos: Classificação automática por categoria e período\n• Reset Flexível do Temporizador: Reinicie a qualquer momento com facilidade\n• Sincronização Segura iCloud: Backup automático e compartilhamento entre dispositivos\n\nTransforme multitarefa em blocos de tempo simples com Multis para profissionais ocupados.\n\nBaixe agora e melhore sua produtividade!",
+      "keywords": "temporizador múltiplo,pomodoro,gerenciamento tempo,foco,intervalo,cronômetro,fundo",
+      "release_notes": "Esta atualização melhora a estabilidade do temporizador em segundo plano. Melhore o gerenciamento de tempo e foco para melhor produtividade."
+    },
+    "ru": {
+      "name": "Multis: Мульти Таймер ToDo",
+      "subtitle": "Продуктивность Календарь Синхр",
+      "description": "Управляйте несколькими задачами одновременно с Multis мульти таймер. Повысьте продуктивность с интеграцией календаря и надежной фоновой операцией для умного управления задачами.\n\nМульти таймер, управление временем и улучшение фокуса в одном essential приложении.\n\n• Одновременные Мульти Таймеры: Отслеживайте задачи индивидуально для эффективного управления\n• Запуск в Один Клик на Календаре: Запускайте таймеры прямо из расписаний\n• Фоновая Обработка: Продолжает работать даже с закрытым приложением\n• Умная Организация Документов: Автоматическая классификация по категории и периоду\n• Гибкий Сброс Таймера: Перезапускайте в любое время с легкостью\n• Безопасная Синхронизация iCloud: Автоматическое резервное копирование и обмен между устройствами\n\nПреобразуйте многозадачность в простые временные блоки с Multis для занятых профессионалов.\n\nЗагрузите сейчас и повысьте продуктивность!",
+      "keywords": "мульти таймер,помодоро,управление временем,фокус,интервальный,секундомер,фоновый",
+      "release_notes": "Это обновление улучшает стабильность фонового таймера. Улучшите управление временем и фокус для лучшей продуктивности."
+    },
+    "ar-SA": {
+      "name": "Multis: مؤقت متعدد قائمة مهام",
+      "subtitle": "إنتاجية تقويم مزامنة",
+      "description": "إدارة مهام متعددة في وقت واحد باستخدام Multis مؤقت متعدد. زيادة الإنتاجية مع تكامل التقويم وعملية خلفية موثوقة لإدارة المهام الذكية.\n\nمؤقت متعدد، إدارة الوقت، وتحسين التركيز في تطبيق أساسي.\n\n• مؤقتات متعددة متزامنة: تتبع المهام بشكل فردي لإدارة فعالة\n• بدء بلمسة واحدة في التقويم: بدء المؤقتات مباشرة من الجداول\n• معالجة خلفية: يستمر في العمل حتى مع إغلاق التطبيق\n• تنظيم ذكي للوثائق: تصنيف تلقائي حسب الفئة والفترة\n• إعادة تعيين المؤقت مرن: إعادة البدء في أي وقت بسهولة\n• مزامنة آمنة iCloud: نسخ احتياطي تلقائي ومشاركة عبر الأجهزة\n\nحول المهام المتعددة إلى كتل زمنية بسيطة مع Multis للمحترفين المشغولين.\n\nقم بالتنزيل الآن وتحسين إنتاجيتك!",
+      "keywords": "مؤقت متعدد,بومودورو,مؤقت مهام,إدارة وقت,تركيز,مؤقت فاصل,عد تنازلي,ساعة إيقاف,مؤقت خلفي,كتلة زمنية",
+      "release_notes": "يحسن هذا التحديث استقرار المؤقت الخلفي. تحسين إدارة الوقت والتركيز لإنتاجية أفضل."
+    },
+    "hi": {
+      "name": "Multis: मल्टी टाइमर टूडू",
+      "subtitle": "उत्पादकता कैलेंडर सिंक",
+      "description": "Multis के साथ कई कार्यों को एक साथ टाइमर से प्रबंधित करें। मल्टी टाइमर और कैलेंडर एकीकरण के साथ उत्पादकता बढ़ाएं और पृष्ठभूमि में विश्वसनीय संचालन के लिए स्मार्ट टूडू प्रबंधन का अनुभव करें।\n\nमल्टी टाइमर, समय प्रबंधन, और फोकस सुधार एक आवश्यक ऐप में।\n\n• एक साथ मल्टी टाइमर: कार्यों को व्यक्तिगत रूप से ट्रैक करें कुशल प्रबंधन के लिए\n• कैलेंडर वन-टच स्टार्ट: शेड्यूल से सीधे टाइमर शुरू करें\n• बैकग्राउंड प्रोसेसिंग: ऐप बंद होने पर भी जारी रहता है\n• स्मार्ट दस्तावेज़ संगठन: श्रेणी और अवधि द्वारा ऑटो वर्गीकरण\n• टाइमर रीसेट लचीलापन: कभी भी आसानी से पुनः शुरू करें\n• सुरक्षित iCloud सिंक: स्वचालित बैकअप और डिवाइस के बीच साझाकरण\n\nव्यस्त पेशेवरों के लिए Multis के साथ मल्टीटास्किंग को सरल समय ब्लॉकों में बदलें।\n\nअब डाउनलोड करें और अपनी उत्पादकता बढ़ाएं!",
+      "keywords": "मल्टी टाइमर,पोमोडोरो,समय प्रबंधन,फोकस,अंतराल,स्टॉपवॉच,पृष्ठभूमि",
+      "release_notes": "यह अपडेट बैकग्राउंड टाइमर की स्थिरता में सुधार करता है। समय प्रबंधन और फोकस में सुधार के लिए बेहतर उत्पादकता।"
+    },
+    "tr": {
+      "name": "Multis: Çoklu Zamanlayıcı ToDo",
+      "subtitle": "Verimlilik Takvim Senk",
+      "description": "Multis ile birden fazla görevi aynı anda zamanlayıcı ile yönetin. Çoklu zamanlayıcı ve takvim entegrasyonu ile verimliliği maksimize edin ve arka planda güvenilir işlem için akıllı to-do yönetimi deneyimleyin.\n\nÇoklu zamanlayıcı, zaman yönetimi ve odak iyileştirme bir temel uygulamada.\n\n• Eşzamanlı Çoklu Zamanlayıcılar: Görevleri bireysel olarak takip edin verimli yönetim için\n• Takvim Tek Dokunuş Başlat: Zamanlayıcıları doğrudan programlardan başlatın\n• Arka Plan İşleme: Uygulama kapalı olsa da devam eder\n• Akıllı Belge Organizasyonu: Kategori ve dönemlere göre otomatik sınıflandırma\n• Zamanlayıcı Sıfırlama Esnekliği: Her zaman kolayca yeniden başlatın\n• Güvenli iCloud Senk: Otomatik yedekleme ve cihazlar arası paylaşım\n\nMeşgul profesyoneller için Multis ile çoklu görevleri basit zaman bloklarına dönüştürün.\n\nŞimdi indirin ve verimliliğinizi artırın!",
+      "keywords": "çoklu zamanlayıcı,pomodoro,zaman yönetimi,odak,aralık,kronometre,arka plan",
+      "release_notes": "Bu güncelleme arka plan zamanlayıcısının kararlılığını iyileştirir. Zaman yönetimi ve odak için daha iyi verimlilik."
+    },
+    "nl-NL": {
+      "name": "Multis: Multi Timer ToDo",
+      "subtitle": "Productiviteit Kalender Sync",
+      "description": "Beheer meerdere taken tegelijkertijd met Multis multi timer. Verhoog productiviteit met kalenderintegratie en betrouwbare achtergrondwerking voor slimme to-do beheer.\n\nMulti timer, tijdbeheer en focusverbetering in één essentiële app.\n\n• Gelijktijdige Multi Timers: Volg taken individueel voor efficiënt beheer\n• Eén-Tik Kalender Start: Start timers direct vanaf schema's\n• Achtergrondverwerking: Gaat door zelfs met gesloten app\n• Slimme Documentorganisatie: Automatische classificatie per categorie en periode\n• Flexibele Timer Reset: Herstart op elk moment met gemak\n• Veilige iCloud Sync: Automatische back-up en delen tussen apparaten\n\nTransformeer multitasking in eenvoudige tijdblokken met Multis voor drukke professionals.\n\nDownload nu en verbeter je productiviteit!",
+      "keywords": "multi timer,pomodoro,tijdbeheer,focus,interval timer,stopwatch,achtergrond",
+      "release_notes": "Deze update verbetert de stabiliteit van de achtergrondtimer. Verbeter tijdbeheer en focus voor betere productiviteit."
+    },
+    "sv": {
+      "name": "Multis: Multi Timer ToDo",
+      "subtitle": "Produktivitet Kalender Sync",
+      "description": "Hantera flera uppgifter samtidigt med Multis multi timer. Öka produktiviteten med kalenderintegration och pålitlig bakgrundsoperation för smart to-do hantering.\n\nMulti timer, tidshantering och fokusförbättring i en essentiell app.\n\n• Simultana Multi Timers: Spåra uppgifter individuellt för effektiv hantering\n• En-Tryck Kalender Start: Starta timers direkt från scheman\n• Bakgrundsbehandling: Fortsätter köra även med stängd app\n• Smart Dokumentorganisation: Automatisk klassificering per kategori och period\n• Flexibel Timer Återställning: Starta om när som helst med lätthet\n• Säker iCloud Sync: Automatisk säkerhetskopiering och delning mellan enheter\n\nFörvandla multitasking till enkla tidsblock med Multis för upptagna proffs.\n\nLadda ner nu och förbättra din produktivitet!",
+      "keywords": "multi timer,pomodoro,tidshantering,fokus,intervall timer,stoppur,bakgrund",
+      "release_notes": "Denna uppdatering förbättrar bakgrundstimerns stabilitet. Förbättra tidshantering och fokus för bättre produktivitet."
+    },
+    "da": {
+      "name": "Multis: Multi Timer ToDo",
+      "subtitle": "Produktivitet Kalender Sync",
+      "description": "Administrer flere opgaver samtidigt med Multis multi timer. Øg produktiviteten med kalenderintegration og pålidelig baggrundsoperation for smart to-do styring.\n\nMulti timer, tidsstyring og fokusforbedring i en essentiel app.\n\n• Simultane Multi Timere: Spor opgaver individuelt for effektiv styring\n• Et-Tryk Kalender Start: Start timere direkte fra skemaer\n• Baggrundsbehandling: Fortsætter at køre selv med lukket app\n• Smart Dokumentorganisering: Automatisk klassificering efter kategori og periode\n• Fleksibel Timer Nulstilling: Genstart når som helst med lethed\n• Sikker iCloud Sync: Automatisk backup og deling mellem enheder\n\nTransformér multitasking til simple tidsblokke med Multis for travle professionelle.\n\nDownload nu og forbedr din produktivitet!",
+      "keywords": "multi timer,pomodoro,tidsstyring,fokus,interval timer,stopur,baggrund",
+      "release_notes": "Denne opdatering forbedrer baggrundstimerens stabilitet. Forbedr tidsstyring og fokus for bedre produktivitet."
+    },
+    "no": {
+      "name": "Multis: Multi Timer ToDo",
+      "subtitle": "Produktivitet Kalender Sync",
+      "description": "Administrer flere oppgaver samtidig med Multis multi timer. Øk produktiviteten med kalenderintegrasjon og pålitelig bakgrunnsdrift for smart to-do styring.\n\nMulti timer, tidsstyring og fokusforbedring i en essensiell app.\n\n• Simultane Multi Timere: Spor oppgaver individuelt for effektiv styring\n• Ett-Trykk Kalender Start: Start timere direkte fra tidsplaner\n• Bakgrunnsbehandling: Fortsetter å kjøre selv med lukket app\n• Smart Dokumentorganisering: Automatisk klassifisering etter kategori og periode\n• Fleksibel Timer Tilbakestilling: Start på nytt når som helst med letthet\n• Sikker iCloud Sync: Automatisk sikkerhetskopi og deling mellom enheter\n\nForvandle multitasking til enkle tidsblokker med Multis for travle profesjonelle.\n\nLast ned nå og forbedre produktiviteten din!",
+      "keywords": "multi timer,pomodoro,tidsstyring,fokus,intervall timer,stoppeklokke,bakgrunn",
+      "release_notes": "Denne oppdateringen forbedrer bakgrunnstimerens stabilitet. Forbedre tidsstyring og fokus for bedre produktivitet."
+    },
+    "fi": {
+      "name": "Multis: Moniajastin ToDo",
+      "subtitle": "Tuottavuus Kalenteri Sync",
+      "description": "Hallitse useita tehtäviä samanaikaisesti Multis moniajastimella. Paranna tuottavuutta kalenteriintegraatiolla ja luotettavalla taustatoiminnolla älykkääseen to-do hallintaan.\n\nMoniajastin, ajan hallinta ja keskittymisen parantaminen yhdessä olennaisessa sovelluksessa.\n\n• Samanaikaiset Moniajastimet: Seuraa tehtäviä yksilöllisesti tehokkaaseen hallintaan\n• Yhden Kosketuksen Kalenteri Käynnistys: Käynnistä ajastimet suoraan aikatauluista\n• Taustakäsittely: Jatkaa toimintaa jopa suljetulla sovelluksella\n• Älykäs Asiakirjojen Järjestäminen: Automaattinen luokittelu kategorian ja jakson mukaan\n• Joustava Ajastimen Nollaus: Käynnistä uudelleen milloin tahansa helposti\n• Turvallinen iCloud Sync: Automaattinen varmuuskopiointi ja jakaminen laitteiden välillä\n\nMuunna moniajo yksinkertaisiksi aikablokeiksi Multisilla kiireisille ammattilaisille.\n\nLataa nyt ja paranna tuottavuuttasi!",
+      "keywords": "moniajastin,pomodoro,ajan hallinta,keskittyminen,väliajastin,pysäytykello,tausta",
+      "release_notes": "Tämä päivitys parantaa tausta-ajastimen vakautta. Paranna ajan hallintaa ja keskittymistä parempaan tuottavuuteen."
+    },
+    "pl": {
+      "name": "Multis: Wielokrotny Timer ToDo",
+      "subtitle": "Produktywność Kalendarz Sync",
+      "description": "Zarządzaj wieloma zadaniami jednocześnie za pomocą Multis wielokrotny timer. Zwiększ produktywność dzięki integracji kalendarza i niezawodnej operacji w tle dla inteligentnego zarządzania zadaniami.\n\nWielokrotny timer, zarządzanie czasem i poprawa koncentracji w jednej niezbędnej aplikacji.\n\n• Jednoczesne Wielokrotne Timery: Śledź zadania indywidualnie dla efektywnego zarządzania\n• Uruchomienie Jednym Dotknięciem Kalendarza: Uruchamiaj timery bezpośrednio z harmonogramów\n• Przetwarzanie w Tle: Kontynuuje działanie nawet przy zamkniętej aplikacji\n• Inteligentna Organizacja Dokumentów: Automatyczna klasyfikacja według kategorii i okresu\n• Elastyczny Reset Timera: Restartuj w dowolnym momencie z łatwością\n• Bezpieczna Synchronizacja iCloud: Automatyczna kopia zapasowa i udostępnianie między urządzeniami\n\nPrzekształć wielozadaniowość w proste bloki czasu z Multis dla zajętych profesjonalistów.\n\nPobierz teraz i popraw swoją produktywność!",
+      "keywords": "wielokrotny timer,pomodoro,zarządzanie czasem,koncentracja,timer interwału,stoper,tła",
+      "release_notes": "Ta aktualizacja poprawia stabilność timera w tle. Popraw zarządzanie czasem i koncentrację dla lepszej produktywności."
+    }
+  }
+}

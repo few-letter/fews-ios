@@ -37,17 +37,18 @@ platform :ios do
     setup_environment
   end
 
-  desc "App Store에 앱을 빌드하고 업로드합니다. (스크린샷 생성 및 메타데이터 업로드 포함)"
+  desc "App Store에 앱을 빌드하고 업로드합니다. (메타데이터 및 스크린샷 생성 포함)"
   lane :upload do
-    UI.header("🚀 전체 프로세스 시작: 스크린샷 생성 및 App Store 업로드")
+    UI.header("🚀 전체 프로세스 시작: 메타데이터 및 스크린샷 생성, App Store 업로드")
     
     selected_apps = select_apps(all_apps: APPS.keys)
     break if selected_apps.empty?
 
+    metadata_results = generate_metadata_for_apps(apps: selected_apps)
     screenshot_results = generate_screenshots_for_apps(apps: selected_apps)
     upload_results = upload_app_details(apps: selected_apps)
 
-    print_full_upload_summary(screenshot_results: screenshot_results, upload_results: upload_results)
+    print_full_upload_summary(metadata_results: metadata_results, screenshot_results: screenshot_results, upload_results: upload_results)
   end
 
   desc "TestFlight에 앱을 빌드하고 업로드합니다."
@@ -60,7 +61,7 @@ platform :ios do
 
   desc "App Store에 리뷰를 위해 앱을 빌드하고 제출합니다."
   lane :submit_to_appstore do
-    UI.header("🚀 App Store 빌드 및 제출 (스크린샷 생성 및 메타데이터 업로드 포함)")
+    UI.header("🚀 App Store 빌드 및 제출 (메타데이터 및 스크린샷 생성 포함)")
     
     selected_apps = select_apps(all_apps: APPS.keys)
     break if selected_apps.empty?
@@ -70,11 +71,12 @@ platform :ios do
     break unless confirmation.empty? || confirmation.downcase.start_with?('y')
 
     update_version_info(app_versions: app_versions)
+    metadata_results = generate_metadata_for_apps(apps: selected_apps)
     screenshot_results = generate_screenshots_for_apps(apps: selected_apps)
     upload_results = upload_app_details(apps: selected_apps)
     
     # 빌드 및 제출 단계
-    UI.header("🎯 3단계: 앱 빌드 및 App Store 제출")
+    UI.header("🎯 4단계: 앱 빌드 및 App Store 제출")
     build_results = { successful: [], failed: [] }
     
     selected_apps.each_with_index do |app_name, index|
@@ -99,6 +101,7 @@ platform :ios do
     end
     
     print_full_submit_summary(
+      metadata_results: metadata_results,
       screenshot_results: screenshot_results, 
       upload_results: upload_results, 
       build_results: build_results
@@ -117,10 +120,11 @@ platform :ios do
     break unless confirmation.empty? || confirmation.downcase.start_with?('y')
 
     update_version_info(app_versions: app_versions)
+    metadata_results = generate_metadata_for_apps(apps: selected_apps)
     screenshot_results = generate_screenshots_for_apps(apps: selected_apps)
     upload_results = upload_app_details(apps: selected_apps)
 
-    print_full_upload_summary(screenshot_results: screenshot_results, upload_results: upload_results)
+    print_full_upload_summary(metadata_results: metadata_results, screenshot_results: screenshot_results, upload_results: upload_results)
   end
 
   desc "인증서를 안전하게 초기화합니다."
@@ -572,7 +576,7 @@ platform :ios do
   end
 
   def generate_screenshots_for_apps(apps:)
-    UI.header("🎯 1단계: 스크린샷 생성")
+    UI.header("🎯 2단계: 스크린샷 생성")
     results = { successful: [], failed: [] }
     
     apps.each_with_index do |app_name, index|
@@ -591,19 +595,19 @@ platform :ios do
   end
 
   def run_screenshot_generator(app_name)
-    xmakes_dir = "../xmakes"
-    raise "xmakes 폴더를 찾을 수 없습니다: #{xmakes_dir}" unless Dir.exist?(xmakes_dir)
+    scripts_dir = "../scripts"
+    raise "scripts 폴더를 찾을 수 없습니다: #{scripts_dir}" unless Dir.exist?(scripts_dir)
 
-    venv_python_relative_to_appstore = "../venv/bin/python"
-    xmakes_appstore_dir = File.join(xmakes_dir, "appstore")
+    screenshots_dir = "../scripts/screenshots"
+    venv_python_relative_to_screenshots = "../venv/bin/python"
     
-    unless File.exist?(File.join(xmakes_appstore_dir, venv_python_relative_to_appstore))
-      raise "Python 가상환경을 찾을 수 없습니다. `cd ../xmakes && python3 setup_venv.py`를 실행하세요."
+    unless File.exist?(File.join(screenshots_dir, venv_python_relative_to_screenshots))
+      raise "Python 가상환경을 찾을 수 없습니다. `cd ../scripts && python3 setup_venv.py`를 실행하세요."
     end
 
-    Dir.chdir(xmakes_appstore_dir) do
+    Dir.chdir(screenshots_dir) do
       sh("rm -rf output") if Dir.exist?("output")
-      sh("#{venv_python_relative_to_appstore} run_appstore_preview.py #{app_name}")
+      sh("#{venv_python_relative_to_screenshots} run_screenshots.py #{app_name}")
       copy_screenshots(app_name: app_name)
     end
   end
@@ -646,8 +650,80 @@ platform :ios do
     end
   end
 
+  def generate_metadata_for_apps(apps:)
+    UI.header("🎯 1단계: 메타데이터 생성")
+    results = { successful: [], failed: [] }
+
+    apps.each_with_index do |app_name, index|
+      UI.header("📱 #{index + 1}/#{apps.length}: #{app_name} 메타데이터 생성 중...")
+      begin
+        run_metadata_generator(app_name)
+        results[:successful] << app_name
+        UI.success("✅ #{app_name} 메타데이터 생성 및 복사 완료!")
+      rescue => e
+        results[:failed] << { app: app_name, reason: e.message }
+        UI.error("❌ #{app_name} 메타데이터 생성 실패: #{e.message}")
+      end
+    end
+    results
+  end
+
+  def run_metadata_generator(app_name)
+    scripts_dir = "../scripts"
+    raise "scripts 폴더를 찾을 수 없습니다: #{scripts_dir}" unless Dir.exist?(scripts_dir)
+
+    metadata_dir = "../scripts/metadata"
+    venv_python_relative_to_metadata = "../venv/bin/python"
+    
+    unless File.exist?(File.join(metadata_dir, venv_python_relative_to_metadata))
+      raise "Python 가상환경을 찾을 수 없습니다. `cd ../scripts && python3 setup_venv.py`를 실행하세요."
+    end
+
+    Dir.chdir(metadata_dir) do
+      sh("rm -rf output") if Dir.exist?("output")
+      sh("#{venv_python_relative_to_metadata} run_metadata.py #{app_name}")
+      copy_metadata(app_name: app_name)
+    end
+  end
+
+  def copy_metadata(app_name:)
+    UI.message("📁 메타데이터 복사 중...")
+    source_dir = "output/#{app_name}"
+    raise "생성된 메타데이터 폴더를 찾을 수 없습니다: #{source_dir}" unless Dir.exist?(source_dir)
+
+    project_root = File.expand_path("../..")
+    
+    target_app_dir = File.join(project_root, "fastlane", "metadata", app_name)
+    sh("rm -rf '#{target_app_dir}'") if Dir.exist?(target_app_dir)
+    sh("mkdir -p '#{target_app_dir}'")
+
+    generated_locales = Dir.glob("#{source_dir}/*").select { |f| File.directory?(f) }.map { |f| File.basename(f) }
+
+    all_locales = generated_locales.uniq
+    all_locales.each do |locale|
+      target_lang_dir = File.join(target_app_dir, locale)
+      sh("mkdir -p '#{target_lang_dir}'")
+      UI.message("📁 #{locale} 메타데이터 디렉토리 생성.")
+    end
+
+    Dir.glob("#{source_dir}/*").each do |lang_dir|
+      next unless File.directory?(lang_dir)
+      lang_code = File.basename(lang_dir)
+      target_lang_dir = File.join(target_app_dir, lang_code)
+      
+      txt_files = Dir.glob("#{lang_dir}/*.txt")
+      if txt_files.empty?
+        UI.message("⚠️  #{lang_code}: 복사할 TXT 메타데이터가 없습니다.")
+        next
+      end
+      
+      sh("cp '#{lang_dir}'/*.txt '#{target_lang_dir}/'")
+      UI.message("📝 #{lang_code} 메타데이터 복사 완료.")
+    end
+  end
+
   def upload_app_details(apps:)
-    UI.header("🎯 2단계: 메타데이터 및 스크린샷 업로드")
+    UI.header("🎯 3단계: 메타데이터 및 스크린샷 업로드")
     results = { successful: [], failed: [] }
 
     apps.each_with_index do |app_name, index|
@@ -663,6 +739,9 @@ platform :ios do
 
         screenshots_path = SCREENSHOTS_PATH_TEMPLATE % app_name
         has_screenshots = Dir.exist?(screenshots_path) && !Dir.glob("#{screenshots_path}/**/*.{jpg,png,jpeg}").empty?
+
+        metadata_path = METADATA_PATH_TEMPLATE % app_name
+        has_metadata = Dir.exist?(metadata_path) && !Dir.glob("#{metadata_path}/**/*.txt").empty?
 
         upload_to_app_store(
           app_identifier: APPS[app_name],
@@ -699,8 +778,13 @@ platform :ios do
     results
   end
 
-  def print_full_upload_summary(screenshot_results:, upload_results:)
+  def print_full_upload_summary(metadata_results:, screenshot_results:, upload_results:)
     UI.header("📊 전체 프로세스 결과 요약")
+
+    UI.message("
+--- 메타데이터 생성 결과 ---")
+    UI.success("✅ 성공: #{metadata_results[:successful].join(', ')}") if metadata_results[:successful].any?
+    UI.error("❌ 실패: #{metadata_results[:failed].map { |f| f[:app] }.join(', ')}") if metadata_results[:failed].any?
 
     UI.message("
 --- 스크린샷 생성 결과 ---")
@@ -717,8 +801,13 @@ platform :ios do
     UI.message("💡 App Store Connect에서 변경사항을 확인하세요: https://appstoreconnect.apple.com/")
   end
 
-  def print_full_submit_summary(screenshot_results:, upload_results:, build_results:)
+  def print_full_submit_summary(metadata_results:, screenshot_results:, upload_results:, build_results:)
     UI.header("📊 전체 빌드 및 제출 결과 요약")
+
+    UI.message("
+--- 메타데이터 생성 결과 ---")
+    UI.success("✅ 성공: #{metadata_results[:successful].join(', ')}") if metadata_results[:successful].any?
+    UI.error("❌ 실패: #{metadata_results[:failed].map { |f| f[:app] }.join(', ')}") if metadata_results[:failed].any?
 
     UI.message("
 --- 스크린샷 생성 결과 ---")
@@ -735,7 +824,7 @@ platform :ios do
     UI.success("✅ 성공: #{build_results[:successful].join(', ')}") if build_results[:successful].any?
     UI.error("❌ 실패: #{build_results[:failed].map { |f| f[:app] }.join(', ')}") if build_results[:failed].any?
 
-    total_apps = screenshot_results[:successful].length + screenshot_results[:failed].length
+    total_apps = metadata_results[:successful].length + metadata_results[:failed].length + screenshot_results[:successful].length + screenshot_results[:failed].length
     successful_builds = build_results[:successful].length
     
     UI.message("

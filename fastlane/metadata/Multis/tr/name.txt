@@ -1,1 +1,1 @@
-Multis - Görev Zamanlayıcı 
+Multis: Çoklu Zamanlayıcı ToDo

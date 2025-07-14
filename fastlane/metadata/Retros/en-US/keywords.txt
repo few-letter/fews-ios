@@ -1,1 +1,1 @@
-reflection,diary,KPT,self-development,growth,productivity,habit,emotional,stress,goals,improvement 
+dailyreflection,selfjournal,personaldevelopment,habittracker,moodlog,goalsetting,stressrelief

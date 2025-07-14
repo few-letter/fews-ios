@@ -1,0 +1,149 @@
+{
+  "app_name": "toffs",
+  "base_language": "ko",
+  "marketing_url": "https://fewtoffs.blogspot.com/",
+  "privacy_url": "https://moyoung.notion.site/0efc741fd0c7481585a041a06da60b16",
+  "support_url": "https://moyoung.notion.site/a40c090f59fb41c29b37168565aaef17",
+  "localization": {
+    "ko": {
+      "name": "Toffs: 매매일지 & 투자관리",
+      "subtitle": "ETF 배당 캘린더 투자일지",
+      "description": "Toffs 매매일지 & 투자관리 앱으로 주식 ETF 데이터를 시각적 캘린더로 변환하세요. 포트폴리오 변화와 배당 수익을 한눈에 파악하며 자산관리하세요. 복잡한 투자 앱 대신 간단한 매매일지 & 투자관리 도구로 효율적 결정을 내리세요.\n\nToffs 매매일지 & 투자관리의 특별함:\n• 시각적 투자 캘린더 – 포트폴리오 변화를 시간 순으로 확인\n• 다중 통화 지원 – 해외 자산 및 환율 자동 적용\n• 주식 템플릿 – 거래 기록 빠른 입력\n• 초간단 추적 – 배당 수익 매매일지 몇 초 만에\n• 안전 iCloud 동기화 – 금융 데이터 보호\n\n초보자부터 전문가까지, Toffs 매매일지 & 투자관리로 데이터를 인사이트로 전환하세요. 지금 다운로드하고 투자 경험을 혁신하세요!",
+      "keywords": "etf,배당금,달력,수익률,자산관리,포트폴리오,투자앱,환율,거래기록,주식트래커",
+      "release_notes": "이번 업데이트로 ETF 배당 캘린더가 업그레이드됐어요. 더 정확한 수익률 예측으로 매매일지 & 투자관리에서 스마트한 결정을 도와줍니다. 사용자 의견 반영!"
+    },
+    "en-US": {
+      "name": "Toffs: Trade Journal & Invest",
+      "subtitle": "ETF Dividend Calendar Tracker",
+      "description": "Transform stock ETF data into visual calendar with Toffs Trade Journal & Invest Mgr. Track portfolio changes, dividends, and yields at a glance for efficient asset management. Skip complex apps for simple trade journal & invest mgr tools to make better decisions.\n\nWhy Toffs Trade Journal & Invest Mgr stands out:\n• Visual Investment Calendar – Chronological portfolio shifts\n• Multi-Currency Support – Seamless overseas assets\n• Stock Templates – Quick transaction logs\n• Easy Tracking – Trades, dividends, profits in seconds\n• Secure iCloud Sync – Protect financial data\n\nFrom beginners to experts, convert data to insights with Toffs Trade Journal & Invest Mgr. Download now and elevate your investing!",
+      "keywords": "etf,dividend,calendar,yield,assetmanagement,portfolio,investmentapp,exchange",
+      "release_notes": "This update boosts ETF dividend calendar features. With precise yield forecasts in trade journal & invest mgr, make informed investment choices. User feedback incorporated!"
+    },
+    "ja": {
+      "name": "Toffs: 取引日誌 & 投資管理",
+      "subtitle": "ETF 配当カレンダートラッカー",
+      "description": "Toffs取引日誌 & 投資管理で株ETFデータを視覚カレンダーに変換。ポートフォリオ変化、配当、利回りを一目で追跡し資産管理を効率化。複雑アプリを避けシンプル取引日誌 & 投資管理ツールで賢い決定を。\n\nToffs取引日誌 & 投資管理の特別さ:\n• 視覚投資カレンダー – 時系列ポートフォリオ変動\n• 多通貨対応 – 海外資産簡単\n• 株テンプレート – 取引記録迅速入力\n• 簡単追跡 – 取引、配当、利益数秒\n• 安全iCloud同期 – 財務データ保護\n\n初心者からプロまで、Toffs取引日誌 & 投資管理でデータを洞察に。今すぐダウンロード！",
+      "keywords": "etf,配当金,カレンダー,利回り,資産管理,ポートフォリオ,投資アプリ,為替,取引記録,株トラッカー",
+      "release_notes": "この更新でETF配当カレンダーが強化。取引日誌 & 投資管理で正確な利回り予測により投資決定をサポート。ユーザー意見反映！"
+    },
+    "zh-Hans": {
+      "name": "Toffs: 交易日志 & 投资管理",
+      "subtitle": "ETF 股息日历跟踪器",
+      "description": "用Toffs交易日志 & 投资管理将股票ETF数据转为直观日历。追踪投资组合变化、股息和收益率，一目了然进行资产管理。放弃复杂应用，选择简单交易日志 & 投资管理工具做出更好决策。\n\nToffs交易日志 & 投资管理的独特之处:\n• 可视化投资日历 – 按时序查看投资组合变化\n• 多货币支持 – 海外资产简便\n• 股票模板 – 快速交易记录\n• 简单追踪 – 交易、股息、利润几秒\n• 安全iCloud同步 – 保护财务数据\n\n从新手到专家，用Toffs交易日志 & 投资管理将数据转为洞察。现在下载！",
+      "keywords": "etf,股息,日历,收益率,资产管理,投资组合,投资应用,汇率,交易记录,股票跟踪器",
+      "release_notes": "此次更新提升ETF股息日历功能。交易日志 & 投资管理中更准收益率预测，帮助投资决策。基于用户反馈！"
+    },
+    "zh-Hant": {
+      "name": "Toffs: 交易日誌 & 投資管理",
+      "subtitle": "ETF 股息日曆跟蹤器",
+      "description": "用Toffs交易日誌 & 投資管理將股票ETF數據轉為直觀日曆。追蹤投資組合變化、股息和收益率，一目了然進行資產管理。放棄複雜應用，選擇簡單交易日誌 & 投資管理工具做出更好決策。\n\nToffs交易日誌 & 投資管理的獨特之處:\n• 可視化投資日曆 – 按時序查看投資組合變化\n• 多貨幣支持 – 海外資產簡便\n• 股票模板 – 快速交易記錄\n• 簡單追蹤 – 交易、股息、利潤幾秒\n• 安全iCloud同步 – 保護財務數據\n\n從新手到專家，用Toffs交易日誌 & 投資管理將數據轉為洞察。現在下載！",
+      "keywords": "etf,股息,日曆,收益率,資產管理,投資組合,投資應用,匯率,交易記錄,股票跟蹤器",
+      "release_notes": "此次更新提升ETF股息日曆功能。交易日誌 & 投資管理中更準收益率預測，幫助投資決策。基於用戶反饋！"
+    },
+    "es-ES": {
+      "name": "Toffs: Diario Trades",
+      "subtitle": "ETF Calendario Dividendos",
+      "description": "Transforma datos de acciones ETF en calendario visual con Toffs Diario de Trades & Gestor. Rastrea cambios de cartera, dividendos y rendimientos de un vistazo para gestión de activos eficiente. Deja apps complejas por herramientas simples de diario de trades & gestor.\n\nPor qué destaca Toffs Diario de Trades & Gestor:\n• Calendario Inversión Visual – Cambios de cartera cronológicos\n• Soporte Multi-Moneda – Activos extranjeros fáciles\n• Plantillas Acciones – Registros transacciones rápidos\n• Rastreo Simple – Trades, dividendos, ganancias segundos\n• Sincronización iCloud Segura – Protege datos financieros\n\nDe principiantes a pros, convierte datos en insights con Toffs Diario de Trades & Gestor. ¡Descarga ahora!",
+      "keywords": "etf,dividendo,calendario,rendimiento,gestionactivos,cartera,appinversion",
+      "release_notes": "Esta actualización mejora calendario ETF dividendos. Con predicciones rendimiento precisas en diario de trades & gestor, toma decisiones inversión inteligentes. ¡Basado en feedback usuarios!"
+    },
+    "fr-FR": {
+      "name": "Toffs: Journal Trades",
+      "subtitle": "ETF Calendrier Dividendes",
+      "description": "Transformez données actions ETF en calendrier intuitif avec Toffs Journal Trades & Gestion Inv. Suivez changements portefeuille, dividendes et rendements d'un coup d'œil pour gestion actifs efficace. Abandonnez apps complexes pour outils simples journal trades & gestion inv.\n\nPourquoi Toffs Journal Trades & Gestion Inv se distingue:\n• Calendrier Investissement Visuel – Shifts portefeuille chronologiques\n• Support Multi-Devises – Actifs étrangers faciles\n• Modèles Actions – Enregistrements transactions rapides\n• Suivi Simple – Trades, dividendes, profits secondes\n• Sync iCloud Sécurisée – Protégez données financières\n\nDes débutants aux pros, transformez données en insights avec Toffs Journal Trades & Gestion Inv. Téléchargez maintenant !",
+      "keywords": "etf,dividende,calendrier,rendement,gestionactifs,portefeuille,appinvestissement",
+      "release_notes": "Cette mise à jour améliore calendrier ETF dividendes. Avec prédictions rendement précises dans journal trades & gestion inv, prenez décisions investissement intelligentes. Basé sur retours utilisateurs !"
+    },
+    "de-DE": {
+      "name": "Toffs: Trade Journal",
+      "subtitle": "ETF Dividenden Kalender",
+      "description": "Verwandeln Sie Aktien ETF Daten in visuellen Kalender mit Toffs Trade Journal & Invest Mgr. Verfolgen Sie Portfolio-Änderungen, Dividenden und Renditen auf einen Blick für effiziente Asset Management. Verzichten Sie auf komplexe Apps für einfache Trade Journal & Invest Mgr Tools.\n\nWarum Toffs Trade Journal & Invest Mgr heraussticht:\n• Visueller Investitionskalender – Chronologische Portfolio-Shifts\n• Multi-Währungs-Support – Ausländische Assets einfach\n• Aktien-Vorlagen – Schnelle Transaktionslogs\n• Einfaches Tracking – Trades, Dividenden, Gewinne Sekunden\n• Sichere iCloud-Sync – Schützen Finanzdaten\n\nVon Anfängern zu Profis, verwandeln Daten in Insights mit Toffs Trade Journal & Invest Mgr. Jetzt herunterladen!",
+      "keywords": "etf,dividende,kalender,rendite,assetmanagement,portfolio,investmentapp",
+      "release_notes": "Dieses Update verbessert ETF Dividenden Kalender. Mit genauen Renditevorhersagen in Trade Journal & Invest Mgr treffen smarte Investitionsentscheidungen. Basierend auf User-Feedback!"
+    },
+    "it": {
+      "name": "Toffs: Diario Trade",
+      "subtitle": "ETF Calendario Dividendi",
+      "description": "Trasforma dati azioni ETF in calendario intuitivo con Toffs Diario Trade & Gest Invest. Traccia cambiamenti portafoglio, dividendi e rendimenti a colpo d'occhio per gestione patrimonio efficiente. Abbandona app complesse per tool semplici diario trade & gest invest.\n\nPerché Toffs Diario Trade & Gest Invest spicca:\n• Calendario Investimento Visivo – Shift portafoglio cronologici\n• Supporto Multi-Valuta – Asset esteri facili\n• Template Azioni – Registrazioni transazioni rapide\n• Tracking Semplice – Trade, dividendi, profitti secondi\n• Sync iCloud Sicura – Proteggi dati finanziari\n\nDa principianti a pro, trasforma dati in insights con Toffs Diario Trade & Gest Invest. Scarica ora!",
+      "keywords": "etf,dividendo,calendario,rendimento,gestionepatrimonio,portafoglio,appinvestimento",
+      "release_notes": "Questo aggiornamento migliora calendario ETF dividendi. Con previsioni rendimento accurate in diario trade & gest invest, prendi decisioni investimento smart. Basato su feedback utenti!"
+    },
+    "pt-BR": {
+      "name": "Toffs: Diário Trades",
+      "subtitle": "ETF Calendário Dividendos",
+      "description": "Transforme dados ações ETF em calendário intuitivo com Toffs Diário Trades & Gest Invest. Rastreie mudanças portfólio, dividendos e retornos de relance para gerenciamento ativos eficiente. Deixe apps complexas por ferramentas simples diário trades & gest invest.\n\nPor que Toffs Diário Trades & Gest Invest se destaca:\n• Calendário Investimento Visual – Shifts portfólio cronológicos\n• Suporte Multi-Moeda – Ativos estrangeiros fáceis\n• Modelos Ações – Registros transações rápidos\n• Rastreio Simples – Trades, dividendos, lucros segundos\n• Sync iCloud Segura – Proteja dados financeiros\n\nDe iniciantes a pros, transforme dados em insights com Toffs Diário Trades & Gest Invest. Baixe agora!",
+      "keywords": "etf,dividendo,calendario,rendimento,gerenciamentoativos,portfolio,appinvestimento",
+      "release_notes": "Esta atualização melhora calendário ETF dividendos. Com previsões rendimento precisas em diário trades & gest invest, tome decisões investimento inteligentes. Baseado em feedback usuários!"
+    },
+    "ru": {
+      "name": "Toffs: Журнал Сделок",
+      "subtitle": "ETF Календарь Дивидендов",
+      "description": "Преобразуйте данные акций ETF в визуальный календарь с Toffs Журнал Сделок & Инв Менедж. Отслеживайте изменения портфеля, дивиденды и доходы с первого взгляда для эффективного управления активами. Откажитесь от сложных приложений за простые журнал сделок & инв менедж инструменты.\n\nПочему Toffs Журнал Сделок & Инв Менедж выделяется:\n• Визуальный Инвестиционный Календарь – Хронологические изменения портфеля\n• Поддержка Мультивалют – Зарубежные активы легко\n• Шаблоны Акций – Быстрые записи транзакций\n• Простое Отслеживание – Сделки, дивиденды, прибыли секунды\n• Безопасная Синхронизация iCloud – Защита финансовых данных\n\nОт новичков до профи, преобразуйте данные в insights с Toffs Журнал Сделок & Инв Менедж. Скачайте сейчас!",
+      "keywords": "etf,дивиденд,календарь,доходность,управлениеактивами,портфель,приложениеинвестиций",
+      "release_notes": "Это обновление улучшает календарь ETF дивидендов. С точными прогнозами доходности в журнал сделок & инв менедж принимайте умные инвестиционные решения. На основе отзывов пользователей!"
+    },
+    "ar-SA": {
+      "name": "Toffs: سجل التداول",
+      "subtitle": "ETF تقويم أرباح التتبع",
+      "description": "حول بيانات أسهم ETF إلى تقويم بصري مع Toffs سجل التداول & إدارة الاستثمار. تتبع تغييرات المحفظة، أرباح و عوائد بلمحة لإدارة أصول فعالة. تخلص من التطبيقات المعقدة لأدوات بسيطة سجل التداول & إدارة الاستثمار.\n\nلماذا يبرز Toffs سجل التداول & إدارة الاستثمار:\n• تقويم استثمار بصري – تغييرات المحفظة زمنيًا\n• دعم متعدد العملات – أصول أجنبية سهلة\n• قوالب أسهم – تسجيل معاملات سريع\n• تتبع بسيط – صفقات، أرباح، أرباح ثوان\n• مزامنة iCloud آمنة – حماية بيانات مالية\n\nمن المبتدئين إلى المهنيين، حوّل البيانات إلى رؤى مع Toffs سجل التداول & إدارة الاستثمار. حمل الآن!",
+      "keywords": "etf,ارباح,تقويم,عائد,ادارةاصول,محفظة,تطبيقاستثمار,صرف,تسجيلمعاملات,اسهمتتبع",
+      "release_notes": "هذا التحديث يحسن تقويم ETF أرباح. مع توقعات عائد أدق في سجل التداول & إدارة الاستثمار، اتخذ قرارات استثمار ذكية. بناءً على تعليقات المستخدمين!"
+    },
+    "hi": {
+      "name": "Toffs: ट्रेड जर्नल",
+      "subtitle": "ETF लाभांश कैलेंडर ट्रैकर",
+      "description": "Toffs ट्रेड जर्नल & इन्वेस्ट मैनेजर से स्टॉक ETF डेटा को विजुअल कैलेंडर में बदलें। पोर्टफोलियो बदलाव, लाभांश और रिटर्न एक नजर में ट्रैक करें एसेट मैनेजमेंट के लिए। जटिल ऐप्स छोड़ें, सरल ट्रेड जर्नल & इन्वेस्ट मैनेजर टूल्स से बेहतर निर्णय लें।\n\nToffs ट्रेड जर्नल & इन्वेस्ट मैनेजर क्यों अलग:\n• विजुअल निवेश कैलेंडर – कालानुक्रमिक पोर्टफोलियो शिफ्ट्स\n• मल्टी-करेंसी सपोर्ट – विदेशी एसेट आसान\n• स्टॉक टेम्प्लेट – ट्रांजेक्शन लॉगिंग तेज\n• सरल ट्रैकिंग – ट्रेड्स, लाभांश, लाभ सेकंड्स\n• सुरक्षित iCloud सिंक – वित्तीय डेटा सुरक्षित\n\nनौसिखियों से प्रो तक, डेटा को इनसाइट्स में बदलें Toffs ट्रेड जर्नल & इन्वेस्ट मैनेजर से। अब डाउनलोड करें!",
+      "keywords": "etf,लाभांश,कैलेंडर,उपज,एसेटमैनेजमेंट,पोर्टफोलियो,इन्वेस्टमेंटऐप,एक्सचेंज,ट्रांजेक्शनलॉग,स्टॉकट्रैकर",
+      "release_notes": "यह अपडेट ETF लाभांश कैलेंडर को बेहतर बनाता है। ट्रेड जर्नल & इन्वेस्ट मैनेजर में सटीक उपज पूर्वानुमान से स्मार्ट निवेश निर्णय लें। उपयोगकर्ता फीडबैक पर आधारित!"
+    },
+    "tr": {
+      "name": "Toffs: İşlem Günlüğü",
+      "subtitle": "ETF Temettü Takvimi Takipçisi",
+      "description": "Toffs İşlem Günlüğü & Yatırım Yön ile hisse ETF verilerini görsel takvime dönüştürün. Portföy değişiklikleri, temettü ve getirileri bir bakışta izleyin varlık yönetimi için. Karmaşık uygulamalardan vazgeçin, basit işlem günlüğü & yatırım yön araçları ile daha iyi kararlar alın.\n\nToffs İşlem Günlüğü & Yatırım Yön neden öne çıkıyor:\n• Görsel Yatırım Takvimi – Kronolojik portföy kaymaları\n• Çoklu Para Birimi Desteği – Yabancı varlıklar kolay\n• Hisse Şablonları – Hızlı işlem kaydı\n• Basit Takip – İşlemler, temettü, karlar saniyede\n• Güvenli iCloud Senkronizasyonu – Finansal verileri koruyun\n\nYeni başlayanlardan profesyonellere, verileri içgörülere dönüştürün Toffs İşlem Günlüğü & Yatırım Yön ile. Şimdi indirin!",
+      "keywords": "etf,temettu,takvim,getiri,varlikyonetimi,portfoy,yatirimuygulamasi,doviz,islemkaydi,hissetracker",
+      "release_notes": "Bu güncelleme ETF temettü takvimini geliştirir. İşlem günlüğü & yatırım yönünde doğru getiri tahminleri ile akıllı yatırım kararları alın. Kullanıcı geri bildirimlerine dayalı!"
+    },
+    "nl-NL": {
+      "name": "Toffs: Trade Journal",
+      "subtitle": "ETF Dividend Kalender Tracker",
+      "description": "Transformeer aandelen ETF data in intuïtieve kalender met Toffs Trade Journal & Invest Beheer. Track portfolio veranderingen, dividenden en rendementen in een oogopslag voor efficiënt asset management. Laat complexe apps achter voor eenvoudige trade journal & invest beheer tools.\n\nWaarom Toffs Trade Journal & Invest Beheer uitblinkt:\n• Visuele Investeringskalender – Chronologische portfolio shifts\n• Multi-Valuta Ondersteuning – Buitenlandse assets eenvoudig\n• Aandelen Sjablonen – Snelle transactie logging\n• Eenvoudig Tracken – Trades, dividenden, winsten seconden\n• Veilige iCloud Sync – Bescherm financiële data\n\nVan beginners tot pro's, transformeer data in insights met Toffs Trade Journal & Invest Beheer. Download nu!",
+      "keywords": "etf,dividend,kalender,rendement,assetmanagement,portfolio,investeringsapp",
+      "release_notes": "Deze update verbetert ETF dividend kalender. Met nauwkeurige rendement voorspellingen in trade journal & invest beheer neem slimme investeringsbeslissingen. Gebaseerd op gebruiker feedback!"
+    },
+    "sv": {
+      "name": "Toffs: Trade Journal",
+      "subtitle": "ETF Utdelningskalender Tracker",
+      "description": "Omvandla aktie ETF data till intuitiv kalender med Toffs Trade Journal & Invest Hantering. Spåra portfolio förändringar, utdelningar och avkastning med ett ögonkast för effektiv tillgångshantering. Lämna komplexa appar för enkla trade journal & invest hantering verktyg.\n\nVarför Toffs Trade Journal & Invest Hantering sticker ut:\n• Visuell Investeringskalender – Kronologiska portfolio shifts\n• Multi-Valuta Stöd – Utländska tillgångar enkelt\n• Aktie Mallar – Snabb transaktionsloggning\n• Enkel Spårning – Trades, utdelningar, vinster sekunder\n• Säker iCloud Sync – Skydda finansiella data\n\nFrån nybörjare till proffs, omvandla data till insikter med Toffs Trade Journal & Invest Hantering. Ladda ner nu!",
+      "keywords": "etf,utdelning,kalender,avkastning,tillgangshantering,portfolio,investeringsapp",
+      "release_notes": "Denna uppdatering förbättrar ETF utdelningskalender. Med exakta avkastningsprognoser i trade journal & invest hantering ta smarta investeringsbeslut. Baserat på användarfeedback!"
+    },
+    "da": {
+      "name": "Toffs: Trade Journal",
+      "subtitle": "ETF Udbytte Kalender Tracker",
+      "description": "Transformér aktie ETF data til intuitiv kalender med Toffs Trade Journal & Invest Styring. Spor portfolio ændringer, udbytter og afkast med et blik for effektiv aktivstyring. Forlad komplekse apps for enkle trade journal & invest styring værktøjer.\n\nHvorfor Toffs Trade Journal & Invest Styring skiller sig ud:\n• Visuel Investeringskalender – Kronologiske portfolio shifts\n• Multi-Valuta Support – Udenlandske aktiver nemt\n• Aktie Skabeloner – Hurtig transaktionslogning\n• Enkel Sporing – Trades, udbytter, overskud sekunder\n• Sikker iCloud Sync – Beskyt finansielle data\n\nFra begyndere til proffer, transformér data til indsigter med Toffs Trade Journal & Invest Styring. Download nu!",
+      "keywords": "etf,udbytte,kalender,afkast,aktivstyring,portfolio,investeringsapp",
+      "release_notes": "Denne opdatering forbedrer ETF udbytte kalender. Med præcise afkast forudsigelser i trade journal & invest styring tag smarte investeringsbeslutninger. Baseret på brugerfeedback!"
+    },
+    "no": {
+      "name": "Toffs: Trade Journal",
+      "subtitle": "ETF Utbytte Kalender Tracker",
+      "description": "Forvandle aksje ETF data til intuitiv kalender med Toffs Trade Journal & Invest Forvalt. Spor portefølje endringer, utbytter og avkastning med et blikk for effektiv aktivforvaltning. Forlat komplekse apper for enkle trade journal & invest forvalt verktøy.\n\nHvorfor Toffs Trade Journal & Invest Forvalt skiller seg ut:\n• Visuell Investeringskalender – Kronologiske portefølje shifts\n• Multi-Valuta Støtte – Utenlandske aktiver enkelt\n• Aksje Maler – Rask transaksjonslogging\n• Enkel Sporing – Trades, utbytter, profitter sekunder\n• Sikker iCloud Sync – Beskytt finansielle data\n\nFra nybegynnere til proffer, forvandle data til innsikter med Toffs Trade Journal & Invest Forvalt. Last ned nå!",
+      "keywords": "etf,utbytte,kalender,avkastning,aktivforvaltning,portefolje,investeringsapp",
+      "release_notes": "Denne oppdateringen forbedrer ETF utbytte kalender. Med presise avkastningsprognoser i trade journal & invest forvalt ta smarte investeringsbeslutninger. Basert på brukerfeedback!"
+    },
+    "fi": {
+      "name": "Toffs: Kauppapäiväkirja",
+      "subtitle": "ETF Osinko Kalenteri Seuraaja",
+      "description": "Muunna osake ETF data intuitiiviseksi kalenteriksi Toffs Kauppapäiväkirja & Sijoitushall. Seuraa salkun muutokset, osingot ja tuotot yhdellä silmäyksellä tehokkaaseen varainhallintaan. Hylkää monimutkaiset sovellukset yksinkertaisiin kauppapäiväkirja & sijoitushall työkaluihin.\n\nMiksi Toffs Kauppapäiväkirja & Sijoitushall erottuu:\n• Visuaalinen Sijoituskalenteri – Kronologiset salkun muutokset\n• Monivaluutta Tuki – Ulkomaiset varat helppo\n• Osake Mallit – Nopea transaktioloki\n• Yksinkertainen Seuranta – Kaupat, osingot, voitot sekunneissa\n• Turvallinen iCloud Synkronointi – Suojaa taloudelliset tiedot\n\nAloittelijoista ammattilaisiin, muuta data oivalluksiksi Toffs Kauppapäiväkirja & Sijoitushall. Lataa nyt!",
+      "keywords": "etf,osinko,kalenteri,tuotto,varainhallinta,salkku,sijoitussovellus",
+      "release_notes": "Tämä päivitys parantaa ETF osinko kalenteri. Tarkemmilla tuottoennusteilla kauppapäiväkirja & sijoitushall ota älykkäitä sijoituspäätöksiä. Perustuu käyttäjäpalautteeseen!"
+    },
+    "pl": {
+      "name": "Toffs: Dziennik Trans",
+      "subtitle": "ETF Kalendarz Dywidend Tracker",
+      "description": "Przekształć dane akcji ETF w intuicyjny kalendarz z Toffs Dziennik Trans & Zarządz Inw. Śledź zmiany portfela, dywidendy i zwroty jednym spojrzeniem dla efektywnego zarządzania aktywami. Porzuć skomplikowane aplikacje na proste dziennik trans & zarządz inw narzędzia.\n\nDlaczego Toffs Dziennik Trans & Zarządz Inw wyróżnia się:\n• Wizualny Kalendarz Inwestycji – Chronologiczne zmiany portfela\n• Wsparcie Wielowalutowe – Aktywa zagraniczne łatwe\n• Szablony Akcji – Szybkie logowanie transakcji\n• Proste Śledzenie – Transakcje, dywidendy, zyski sekundy\n• Bezpieczna Synchronizacja iCloud – Chroń dane finansowe\n\nOd początkujących do pro, przekształć dane w insights z Toffs Dziennik Trans & Zarządz Inw. Pobierz teraz!",
+      "keywords": "etf,dywidenda,kalendarz,zwrot,zarzadzanieaktywami,portfel,appinwestycyjna",
+      "release_notes": "Ta aktualizacja poprawia kalendarz ETF dywidend. Z dokładniejszymi prognozami zwrotów w dziennik trans & zarządz inw podejmuj mądre decyzje inwestycyjne. Na podstawie feedbacku użytkowników!"
+    }
+  }
+}

@@ -1,0 +1,150 @@
+{
+  "app_name": "capts",
+  "base_language": "ko",
+  "marketing_url": "https://fewcapts.blogspot.com/",
+  "privacy_url": "https://sbmo.notion.site/f4192a28b206410c9e51b3ff627ee0d8?pvs=4",
+  "support_url": "https://sbmo.notion.site/URL-05fb920ff4ef42b4abead458c44c407d?pvs=4",
+  "localization": {
+    "ko": {
+      "name": "Capts: 사진 텍스트 변환기",
+      "subtitle": "AI 스마트 OCR",
+      "description": "AI OCR로 사진 텍스트 추출, 이미지 글자 인식, 사진에서 문자 추출을 한 번에! Capts가 고정밀 AI 기술로 책, 문서, 간판, 손글씨까지 99% 정확도로 변환합니다.\n복사할 수 없는 텍스트도 이제 문제없어요. 타이핑 없이 촬영만으로 깔끔하게 정리하세요.\n\nCapts의 특별함:\n• 정밀 텍스트 인식 – 한글·영어 고정밀 추출\n• AI 스마트 정리 – 자동 구조화로 읽기 쉬움\n• 원터치 복사 – 즉시 다른 앱에 붙여넣기\n• 다중 언어 지원 – 한국어·영어·일본어·중국어 동시\n• 일괄 변환 – 여러 사진 한꺼번에 처리\n• 직관적 인터페이스 – 간단한 사용법\n\n학생 노트부터 업무 문서까지, Capts로 텍스트 입력을 혁신하세요.\n지금 다운로드하고 AI 사진 텍스트 변환을 경험해보세요!",
+      "keywords": "텍스트추출,이미지인식,글자인식,문서스캔,손글씨변환,자동정리,다국어OCR,배치처리",
+      "release_notes": "이번 업데이트로 AI OCR 정확도가 업그레이드됐어요. 손글씨 인식과 텍스트 추출 속도가 빨라져 더 편안한 사용감을 선사합니다."
+    },
+    "en-US": {
+      "name": "Capts: Photo Text Converter",
+      "subtitle": "AI Smart OCR Scanner",
+      "description": "Extract text from photos with AI OCR – image recognition, text extraction, photo to editable text in one tap!\nCapts uses advanced AI for 99% accurate conversion of books, documents, signs, handwriting.\nNo more typing – just snap and organize effortlessly.\n\nWhy Capts excels:\n• Precise text detection – High accuracy for English and more\n• AI intelligent sorting – Auto formats messy text clearly\n• One-touch copy – Paste instantly to other apps\n• Multilingual support – English, Korean, Japanese, Chinese\n• Batch processing – Handle multiple images at once\n• User-friendly interface – Simple and intuitive\n\nFrom student notes to professional records, Capts revolutionizes text input.\nDownload now and experience AI-powered photo text conversion!",
+      "keywords": "textextraction,imagerecognition,textdetection,documentscan,handwriting,ocr,batchprocess",
+      "release_notes": "This update boosts AI OCR accuracy for better handwriting detection. Photo text extraction is faster, offering a smoother experience."
+    },
+    "ja": {
+      "name": "Capts: 写真テキスト変換器",
+      "subtitle": "AIスマートOCR",
+      "description": "AI OCRで写真からテキスト抽出、画像文字認識、写真文字を一気に変換！ Captsが高精度AIで本、文書、看板、手書きを99%正確に。\nタイピング不要、撮影だけで簡単に整理。\n\nCaptsの魅力:\n• 高精度認識 – 日本語・英語の高精度抽出\n• AIスマート整理 – 乱れたテキストを自動構造化\n• ワンタッチコピー – 即時他のアプリに貼り付け\n• 多言語サポート – 日本語・英語・韓国語・中国語同時\n• 一括処理 – 複数写真を一度に\n• 直感インターフェース – 簡単操作\n\n学生ノートから業務記録まで, Captsでテキスト入力を革新。\n今すぐダウンロードしてAI写真テキスト変換を体感！",
+      "keywords": "テキスト抽出,画像認識,文字検出,文書スキャン,手書き変換,自動整理,多言語OCR,バッチ処理",
+      "release_notes": "このアップデートでAI OCR精度向上。手書き認識とテキスト抽出が速くなり、より快適に。"
+    },
+    "zh-Hans": {
+      "name": "Capts: 照片文本转换器",
+      "subtitle": "AI 智能 OCR",
+      "description": "使用 AI OCR 从照片提取文本 – 图像识别、文本提取、照片转可编辑文本一键完成！\nCapts 使用先进 AI，99% 准确转换书籍、文档、标志、手写。\n不再输入，只需拍照轻松整理。\n\nCapts 的特别之处:\n• 精确文本检测 – 高精度提取中文等\n• AI 智能排序 – 自动格式化杂乱文本\n• 一触即复制 – 即时粘贴到其他应用\n• 多语言支持 – 中文、英文-日文-韩文同时\n• 批处理 – 一次处理多张图像\n• 用户友好界面 – 简单直观\n\n从学生笔记到专业记录, Capts 革新型文本。\n立即下载体验 AI 照片文本转换！",
+      "keywords": "文本提取,图像识别,文字检测,文档扫描,手写转换,自动排序,多语言ocr,批量处理",
+      "release_notes": "本次更新提升 AI OCR 准确率。手写识别和文本提取速度更快，提供更好体验。"
+    },
+    "zh-Hant": {
+      "name": "Capts: 照片文字轉換器",
+      "subtitle": "AI 智能 OCR",
+      "description": "使用 AI OCR 從照片提取文字 – 圖像識別、文字提取、照片轉可編輯文字一鍵完成！\nCapts 使用先進 AI，99% 準確轉換書籍、文件、標誌、手寫。\n不再輸入，只需拍照輕鬆整理。\n\nCapts 的特別之處:\n• 精確文字檢測 – 高精度提取中文等\n• AI 智能排序 – 自動格式化雜亂文字\n• 一觸即複製 – 即時貼上到其他應用\n• 多語言支持 – 中文、英文-日文-韓文同時\n• 批處理 – 一次處理多張圖像\n• 用戶友好介面 – 簡單直觀\n\n從學生筆記到專業記錄, Capts 創新型文字。\n立即下載體驗 AI 照片文字轉換！",
+      "keywords": "文字提取,圖像識別,文字檢測,文件掃描,手寫轉換,自動排序,多語言ocr,批量處理",
+      "release_notes": "本次更新提升 AI OCR 準確率。手寫識別和文字提取速度更快。"
+    },
+    "es-ES": {
+      "name": "Capts: Convertidor Texto Foto",
+      "subtitle": "OCR Inteligente AI",
+      "description": "Extrae texto de fotos con AI OCR – reconocimiento de imágenes, extracción de texto, foto a texto editable en un toque!\nCapts usa AI avanzada para 99% precisión en libros, documentos, carteles, manuscrito.\nNo más teclear – solo captura y organiza fácilmente.\n\nPor qué Capts es especial:\n• Detección precisa de texto – Alta precisión para español\n• Organización inteligente AI – Formatea texto desordenado automáticamente\n• Copia con un toque – Pegar instantáneamente en otras apps\n• Soporte multilingüe – Español, inglés, japonés, chino\n• Procesamiento en lote – Maneja múltiples imágenes a la vez\n• Interfaz limpia – Uso intuitivo\n\nDe notas de estudiantes a actas de reuniones, Capts revoluciona entrada de texto.\n¡Descarga ahora y experimenta conversión de texto de foto con AI!",
+      "keywords": "extracciontexto,reconocimientoimagen,detecciontexto,escaneardocumento,manuscrito,ocr",
+      "release_notes": "Esta actualización mejora precisión AI OCR. Reconocimiento de manuscrita y extracción de texto son más rápidas."
+    },
+    "fr-FR": {
+      "name": "Capts: Convertisseur Photo",
+      "subtitle": "OCR Intelligent AI",
+      "description": "Extrayez le texte des photos avec AI OCR – reconnaissance d'images, extraction de texte, photo en texte éditable en un clic !\nCapts utilise AI avancée pour 99% d' exactitude sur livres, documents, panneaux, écriture manuscrite.\nPlus de saisie – juste photographier et organiser.\n\nPourquoi Capts est unique :\n• Détection texte précise – Haute précision pour français\n• Organisation intelligente AI – Structure auto texte désordonné\n• Copie un toucher – Coller instantanément dans d'autres apps\n• Support multilangue – Français, anglais, japonais, chinois\n• Traitement par lots – Gérer plusieurs images à la fois\n• Interface propre – Utilisation intuitive\n\nDes notes d'étudiant aux minutes de réunion, Capts révolutionne l' entrée texte.\nTéléchargez maintenant et essayez conversion texte photo AI !",
+      "keywords": "extractiontexte,reconnaissanceimage,detectiontexte,scandocument,manuscrit,ocr",
+      "release_notes": "Cette mise à jour améliore précision AI OCR. Reconnaissance écriture et extraction texte plus rapides."
+    },
+    "de-DE": {
+      "name": "Capts: Foto Text Konverter",
+      "subtitle": "AI Smart OCR Scanner",
+      "description": "Extrahieren Sie Text aus Fotos mit AI OCR – Bilderkennung, Textextraktion, Foto zu bearbeitem Text in einem Tippen!\nCapts nutzt fortschrittliche AI für 99% Genauigkeit bei Büchern, Dokumenten, Schildern, Handschrift.\nKein Tippen mehr – nur knipsen und organisieren.\n\nWarum Capts besonders ist:\n• Präzise Textdetektion – Hohe Genauigkeit für Deutsch\n• AI intelligente Sortierung – Automatisch formatieren unordentlichen Text\n• Ein-Tipp Kopieren – Sofort in andere Apps einfügen\n• Mehrsprachensupport – Deutsch, Englisch, Japanisch, Chinesisch\n• Stapelverarbeitung – Mehrere Bilder auf einmal handhaben\n• Saubere Schnittstelle – Intuitive Bedienung\n\nVon Studentennotizen zu Besprechungsprotokollen, Capts revolutioniert Texteingabe.\nLaden Sie jetzt herunter und erleben Sie AI Foto Text Konversion!",
+      "keywords": "textextraktion,bilderkennung,textdetektion,dokumentscan,handschrift,ocr",
+      "release_notes": "Dieses Update verbessert AI OCR Genauigkeit. Handschrifterkennung und Textextraktion sind schneller."
+    },
+    "it": {
+      "name": "Capts: Convertitore Testo Foto",
+      "subtitle": "OCR Intelligente AI",
+      "description": "Estrai testo da foto con AI OCR – riconoscimento immagini, estrazione testo, foto in testo editabile in un tocco!\nCapts usa AI avanzata per 99% precisione su libri, documenti, cartelli, scrittura a mano.\nNiente più digitazione – solo scatta e organizza.\n\nPerché Capts è speciale:\n• Rilevamento testo preciso – Alta precisione per italiano\n• Organizzazione intelligente AI – Formatta testo confuso automaticamente\n• Copia un tocco – Incolla istantaneamente in altre app\n• Supporto multilingua – Italiano, inglese, giapponese, cinese\n• Elaborazione batch – Gestisci più immagini insieme\n• Interfaccia pulita – Uso intuitivo\n\nDa appunti studenti a verbali riunioni, Capts rivoluziona inserimento testo.\nScarica ora e prova conversione testo foto AI!",
+      "keywords": "estrazionetesto,riconoscimentoimmagine,rilevamentotesto,scandocumento,scrittura,ocr",
+      "release_notes": "Questo aggiornamento migliora accuratezza AI OCR. Riconoscimento scrittura e estrazione testo più veloci."
+    },
+    "pt-BR": {
+      "name": "Capts: Conversor Texto Foto",
+      "subtitle": "OCR Inteligente AI",
+      "description": "Extraia texto de fotos com AI OCR – reconhecimento de imagens, extração de texto, foto para texto editável em um toque!\nCapts usa AI avançada para 99% precisão em livros, documentos, placas, manuscrito.\nNão mais digitar – apenas tire foto e organize.\n\nPor que Capts é especial:\n• Detecção texto precisa – Alta precisão para português\n• Organização inteligente AI – Formata texto bagunçado automaticamente\n• Cópia um toque – Colar instantaneamente em outros apps\n• Suporte multilíngue – Português, inglês, japonês, chinês\n• Processamento batch – Manusear múltiplas imagens de uma vez\n• Interface limpa – Uso intuitivo\n\nDe notas de estudante a atas de reunião, Capts revoluciona entrada de texto.\nBaixe agora e experimente conversão de texto foto AI!",
+      "keywords": "extracaotexto,reconhecimentoimagem,deteccaotexto,scandocumento,manuscrito,ocr",
+      "release_notes": "Esta atualização melhora precisão AI OCR. Reconhecimento de manuscrito e extração de texto mais rápidos."
+    },
+    "ru": {
+      "name": "Capts: Конвертер Текста Фото",
+      "subtitle": "AI Умный OCR",
+      "description": "Извлеките текст из фото с AI OCR – распознавание изображений, извлечение текста, фото в редактируемый текст одним касанием!\nCapts использует продвинутый AI для 99% точности книг, документов, вывесок, рукописного.\nБольше не печатать – просто снимите и организуйте.\n\nПочему Capts особенный:\n• Точное распознавание текста – Высокая точность для русского\n• AI умная организация – Автоформатирование хаотичного текста\n• Копирование одним касанием – Вставка мгновенно в другие приложения\n• Многоязычная поддержка – Русский, английский, японский, китайский\n• Пакетная обработка – Обработка нескольких изображений сразу\n• Чистый интерфейс – Интуитивное использование\n\nОт студенческих заметок до протоколов совещаний, Capts революционизирует ввод текста.\nСкачайте сейчас и попробуйте AI конверсию текста фото!",
+      "keywords": "извлечениетекста,распознаваниеизображения,детекциятекста,скандокумента,ocr",
+      "release_notes": "Это обновление улучшает точность AI OCR. Распознавание рукописного и извлечение текста быстрее."
+    },
+    "ar-SA": {
+      "name": "Capts: محول نص الصور",
+      "subtitle": "OCR ذكي بالذكاء الاصطناعي",
+      "description": "استخرج النص من الصور باستخدام AI OCR - التعرف على الصور، استخراج النص، صورة إلى نص قابل للتحرير بلمسة واحدة!\nيستخدم Capts ذكاء اصطناعي متقدم لدقة 99% للكتب، الوثائق، اللافتات، الكتابة اليدوية.\nلا مزيد من الكتابة - فقط التقط ونظم.\n\nلماذا Capts خاص:\n• كشف نص دقيق - دقة عالية للعربية\n• تنظيم ذكي AI - تنسيق تلقائي للنص الفوضوي\n• نسخ بلمسة واحدة - لصق فوري في تطبيقات أخرى\n• دعم متعدد اللغات - العربية، الإنجليزية، اليابانية، الصينية\n• معالجة دفعة - التعامل مع صور متعددة مرة واحدة\n• واجهة نظيفة - استخدام بديهي\n\nمن ملاحظات الطلاب إلى سجلات الاجتماعات, Capts يحدث ثورة في إدخال النص.\nحمل الآن وجرب تحويل نص الصورة بالذكاء الاصطناعي!",
+      "keywords": "استخراجنص,التعرف علىالصورة,كشفنص,مسحوثيقة,تحويلكتابةيدوية,تنظيمتلقائي,ocrmultilingual,معالجةدفعة",
+      "release_notes": "هذا التحديث يحسن دقة AI OCR. التعرف على الكتابة اليدوية واستخراج النص أسرع."
+    },
+    "hi": {
+      "name": "Capts: फोटो टेक्स्ट कन्वर्टर",
+      "subtitle": "AI स्मार्ट OCR",
+      "description": "AI OCR के साथ फोटो से टेक्स्ट निकालें - इमेज रिकग्निशन, टेक्स्ट एक्स्ट्रैक्शन, फोटो को एडिटेबल टेक्स्ट में एक टैप में!\nCapts एडवांस्ड AI का इस्तेमाल करता है 99% एक्यूरेसी के लिए किताबें, दस्तावेज, साइन, हैंडराइटिंग.\nअब टाइपिंग नहीं – बस स्नैप और ऑर्गनाइज.\n\nCapts क्यों खास है:\n• प्रेसाइज टेक्स्ट डिटेक्शन – हिंदी के लिए हाई एक्यूरेसी\n• AI इंटेलिजेंट सॉर्टिंग – ऑटो फॉर्मेट मेस्सी टेक्स्ट\n• वन-टच कॉपी – इंस्टेंट पेस्ट अन्य ऐप्स में\n• मल्टिलिंगुअल सपोर्ट – हिंदी, इंग्लिश, जापानी, चाइनीज\n• बैच प्रोसेसिंग – कई इमेज एक बार में हैंडल\n• क्लीन इंटरफेस – इंट्यूटिव यूज\n\nस्टूडेंट नोट्स से प्रोफेशनल रिकॉर्ड्स तक, Capts टेक्स्ट इनपुट में क्रांति लाता है.\nअब डाउनलोड करें और AI फोटो टेक्स्ट कन्वर्शन आजमाएं!",
+      "keywords": "टेक्स्टएक्स्ट्रैक्शन,ओसीआरऐप,इमेजटूटेक्स्ट,फोटोटूटेक्स्ट,डॉक्यूमेंटस्कैन,ओसीआर",
+      "release_notes": "यह अपडेट AI OCR एक्यूरेसी सुधारता है. हैंडराइटिंग रिकग्निशन और टेक्स्ट एक्स्ट्रैक्शन तेज हैं."
+    },
+    "tr": {
+      "name": "Capts: Foto Metin Çevirici",
+      "subtitle": "AI Akıllı OCR",
+      "description": "AI OCR ile fotoğraflardan metin çıkarın – görüntü tanıma, metin çıkarma, fotoğrafı düzenlenebilir metne bir dokunuşla!\nCapts gelişmiş AI kullanır 99% doğruluk için kitaplar, belgeler, tabelalar, el yazısı.\nArtık yazma yok – sadece çek ve organize et.\n\nCapts neden özel:\n• Hassas metin algılama – Türkçe için yüksek doğruluk\n• AI akıllı sıralama – Karışık metni otomatik formatla\n• Tek dokunuş kopyala – Diğer uygulamalara anında yapıştır\n• Çok dilli destek – Türkçe, İngilizce, Japonca, Çince\n• Toplu işlem – Birden fazla görüntüyü bir arada işleme\n• Temiz arayüz – Sezgisel kullanım\n\nÖğrenci notlarından profesyonel kayıtlara, Capts metin girişini devrimleştirir.\nŞimdi indir ve AI fotoğraf metin dönüşümünü dene!",
+      "keywords": "metincikarma,goruntutanima,metinalgilama,belgetarama,elyazisi,ocr",
+      "release_notes": "Bu güncelleme AI OCR doğruluğunu artırır. El yazısı tanıma ve metin çıkarma daha hızlı."
+    },
+    "nl-NL": {
+      "name": "Capts: Foto Tekst Converter",
+      "subtitle": "AI Slimme OCR",
+      "subtitle": "AI Slimme OCR Scanner",
+      "description": "Extract text from photos with AI OCR – beeldherkenning, tekst extractie, foto naar editable text in één tik!\nCapts gebruikt geavanceerde AI voor 99% nauwkeurigheid bij boeken, documenten, borden, handschrift.\nGeen typen meer – gewoon knippen en organiseren.\n\nWaarom Capts speciaal is:\n• Precieze tekst detectie – Hoge nauwkeurigheid voor Nederlands\n• AI slimme organisatie – Auto formateert rommelige tekst\n• Een-tik kopie – Direct plakken in andere apps\n• Meertalige support – Nederlands, Engels, Japans, Chinees\n• Batch verwerking – Meerdere beelden tegelijk handelen\n• Schone interface – Intuïtief gebruik\n\nVan student aantekeningen tot professionele records, Capts revolutioneert tekst input.\nDownload nu en ervaar AI foto tekst conversie!",
+      "keywords": "tekstrextractie,beeldherkenning,tekstdetectie,documentscan,handschrift,ocr",
+      "release_notes": "Deze update verbetert AI OCR nauwkeurigheid. Handschrift herkenning en tekst extractie zijn sneller."
+    },
+    "sv": {
+      "name": "Capts: Foto Text Konverterare",
+      "subtitle": "AI Smart OCR Skanner",
+      "description": "Extrahera text från foton med AI OCR – bildigenkänning, textextraktion, foto till redigerbar text i en tryck!\nCapts använder avancerad AI för 99% noggrannhet för böcker, dokument, skyltar, handskrift.\nInget mer skrivande – bara snappa och organisera.\n\nVarför Capts är speciell:\n• Precist textdetektion – Hög noggrannhet för svenska\n• AI smart organisation – Autoformaterar rörig text\n• En-tryck kopia – Omedelbart klistra in i andra apps\n• Flerspråkig support – Svenska, engelska, japanska, kinesiska\n• Batchbearbetning – Hantera flera bilder samtidigt\n• Ren gränssnitt – Intuitiv användning\n\nFrån studentanteckningar till professionella protokoll, Capts revolutionerar textinmatning.\nLadda ner nu och upplev AI foto text konvertering!",
+      "keywords": "textextraktion,bildigenkanning,textdetektion,dokumentskanner,handskrift,ocr",
+      "release_notes": "Denna uppdatering förbättrar AI OCR noggrannhet. Handskriftsigenkänning och textextraktion är snabbare."
+    },
+    "da": {
+      "name": "Capts: Foto Tekst Konverter",
+      "subtitle": "AI Smart OCR Scanner",
+      "description": "Uddrag tekst fra billeder med AI OCR – billedgenkendelse, tekstudtræk, billede til redigerbar tekst i et tryk!\nCapts bruger avanceret AI for 99% nøjagtighed for bøger, dokumenter, skilte, håndskrift.\nIngen typing mere – bare snap og organisér.\n\nHvorfor Capts er speciel:\n• Præcis tekst detektion – Høj nøjagtighed for dansk\n• AI smart organisation – Autoformater rodet tekst\n• En-tryk kopi – Øjeblikkeligt indsæt i andre apps\n• Fler sprog support – Dansk, engelsk, japansk, kinesisk\n• Batch behandling – Håndter flere billeder på en gang\n• Ren interface – Intuitiv brug\n\nFra studerendes noter til professionelle mødereferater, Capts revolutionerer tekstinput.\nDownload nu og oplev AI foto tekst konvertering!",
+      "keywords": "tekstudtrak,billedegenkendelse,tekstdetektion,dokumentscanner,handskrift,ocr",
+      "release_notes": "Denne opdatering forbedrer AI OCR nøjagtighed. Håndskrift genkendelse og tekstudtræk er hurtigere."
+    },
+    "no": {
+      "name": "Capts: Foto Tekst Konverterer",
+      "subtitle": "AI Smart OCR Skanner",
+      "description": "Uttrek tekst fra bilder med AI OCR – bilde gjenkjennelse, tekst uttrekk, bilde til redigerbar tekst i ett trykk!\nCapts bruker avansert AI for 99% nøyaktighet for bøker, dokumenter, skilt, håndskrift.\nIngen skriving mer – bare knips og organiser.\n\nHvorfor Capts er spesiell:\n• Presis tekst deteksjon – Høy nøyaktighet for norsk\n• AI smart organisering – Autoformater rotete tekst\n• Ett-trykk kopi – Øyeblikkelig lim inn i andre apps\n• Flerspråklig støtte – Norsk, engelsk, japansk, kinesisk\n• Batch prosessering – Håndter flere bilder på en gang\n• Ren grensesnitt – Intuitiv bruk\n\nFra student notater til profesjonelle møtereferater, Capts revolusjonerer tekstinngang.\nLast ned nå og opplev AI foto tekst konvertering!",
+      "keywords": "tekstuttrekk,bildegjenkjennelse,tekstdeteksjon,dokumentskanner,handskrift,ocr",
+      "release_notes": "Denne oppdateringen forbedrer AI OCR nøyaktighet. Håndskrift gjenkjennelse og tekst uttrekk er raskere."
+    },
+    "fi": {
+      "name": "Capts: Valokuva Teksti Muunnin",
+      "subtitle": "AI Älykäs OCR",
+      "description": "Poimi teksti kuvista AI OCR:llä – kuvan tunnistus, tekstin poiminta, kuva muokattavaksi tekstiksi yhdessä kosketuksessa!\nCapts käyttää kehittynyttä AI:ta 99% tarkkuudella kirjoille, asiakirjoille, kylteille, käsikirjoitukselle.\nEi enää kirjoittamista – vain nappaa ja järjestä.\n\nMiksi Capts on erityinen:\n• Tarkka tekstin havaitseminen – Korkea tarkkuus suomelle\n• AI älykäs järjestely – Automaattimuotoilu sekaiselle tekstille\n• Yhden kosketuksen kopio – Liimaa heti muihin sovelluksiin\n• Monikielinen tuki – Suomi, englanti, japani, kiina\n• Eräkäsittely – Käsittele useita kuvia kerralla\n• Puhdas käyttöliittymä – Intuitiivinen käyttö\n\nOpiskelijan muistiinpanoista ammatillisiin tallenteisiin, Capts mullistaa tekstinsyötön.\nLataa nyt ja koe AI valokuva tekstin muunnos!",
+      "keywords": "tekstipoiminta,kuvantunnistus,tekstihavaitseminen,asiakirjaskanneri,käsikirjoitus,ocr",
+      "release_notes": "Tämä päivitys parantaa AI OCR tarkkuutta. Käsikirjoituksen tunnistus ja tekstin poiminta ovat nopeampia."
+    },
+    "pl": {
+      "name": "Capts: Konwerter Tekstu Zdjęć",
+      "subtitle": "AI Inteligentny OCR",
+      "description": "Wyodrębnij tekst ze zdjęć za pomocą AI OCR – rozpoznawanie obrazów, wyodrębnianie tekstu, zdjęcie do edytowalnego tekstu jednym dotknięciem!\nCapts używa zaawansowanego AI dla 99% dokładności dla książek, dokumentów, znaków, pisma ręcznego.\nNie więcej pisania – tylko zrób zdjęcie i zorganizuj.\n\nDlaczego Capts jest specjalny:\n• Precyzyjne wykrywanie tekstu – Wysoka dokładność dla polskiego\n• AI inteligentna organizacja – Automatyczne formatowanie chaotycznego tekstu\n• Kopiowanie jednym dotknięciem – Natychmiastowe wklejanie do innych aplikacji\n• Wsparcie wielojęzyczne – Polski, angielski, japoński, chiński\n• Przetwarzanie wsadowe – Obsługa wielu obrazów naraz\n• Czysty interfejs – Intuicyjne użytkowanie\n\nOd notatek studenta do profesjonalnych zapisów, Capts rewolucjonizuje wprowadzanie tekstu.\nPobierz teraz i wypróbuj konwersję tekstu ze zdjęcia AI!",
+      "keywords": "wyodrebnianietekstu,rozpoznawanieobrazu,wykrywaniatekstu,skandokumentu,pismoręczne,ocr",
+      "release_notes": "Ta aktualizacja poprawia dokładność AI OCR. Rozpoznawanie pisma ręcznego i wyodrębnianie tekstu są szybsze."
+    }
+  }
+}

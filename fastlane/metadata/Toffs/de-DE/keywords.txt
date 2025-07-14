@@ -1,1 +1,1 @@
-Portfolio,Investition,Aktien,ETF,Dividende,Kalender,Tracker,Rendite,Vermögen,Handel 
+etf,dividende,kalender,rendite,assetmanagement,portfolio,investmentapp

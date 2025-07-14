@@ -1,1 +1,1 @@
-læsedagbog,bog tracker,læsenoter,læste bøger,5-stjernet bedømmelse,boganmeldelse,simpel 
+læselog,bogjournal,filmtracker,tvtracker,bognoter,5stjernebedømmelse

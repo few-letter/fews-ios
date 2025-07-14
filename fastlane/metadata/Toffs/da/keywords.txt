@@ -1,1 +1,1 @@
-portefølje,investering,aktier,ETF,udbytte,kalender,tracker,afkast,aktiver,handel 
+etf,udbytte,kalender,afkast,aktivstyring,portfolio,investeringsapp

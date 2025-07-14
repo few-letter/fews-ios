@@ -1,1 +1,1 @@
-timer,oppgaver,produktivitet,pomodoro,multitasking,tidsstyring,fokus,bakgrunn,kalender,iCloud 
+multi timer,pomodoro,tidsstyring,fokus,intervall timer,stoppeklokke,bakgrunn

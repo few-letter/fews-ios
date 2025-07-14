@@ -1,1 +1,1 @@
-Multis - Timer Zadań 
+Multis: Wielokrotny Timer ToDo

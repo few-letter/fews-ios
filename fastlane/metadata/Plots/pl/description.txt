@@ -1,18 +1,12 @@
-Zapisuj to, co "przeczytałeś i obejrzałeś" w najprostszy sposób z Plots.
-Śledź książki, seriale i filmy tak łatwo jak aplikację notatek, szybko oceniaj systemem 5 gwiazdek! Organizuj porządnie w folderach i kategoriach, wszystko bezpiecznie synchronizowane z iCloud.
+Śledź swoje książki z Plots, ultimate śledzeniem książek i logiem czytania app. Łatwo rejestruj książki, filmy i seriale jak notatki, oceń 5 gwiazdkami i organizuj w folderach. Synchronizuj bezpiecznie via iCloud.
+Zarządzaj dziennikiem czytania i logiem filmów bez wysiłku.
 
-Co czyni Plots wyjątkowym
-Zapisy skoncentrowane na czytaniu – Zapisuj strony, cytaty i uczucia jak notatki
+Dlaczego Plots wyróżnia się:
+• Głębokie notatki stron, cytatów i myśli
+• Intuicyjna ocena 5 gwiazdek
+• Kategoryzuj według gatunku lub serii
+• Tagi konstelacji dla unikalnych wibracji
+• Minimalistyczny UI łatwy w użyciu
+• Automatyczna kopia zapasowa iCloud
 
-System oceny 5 gwiazdek – Intuicyjna ocena jednym dotknięciem
-
-Foldery i Kategorie – Swobodnie organizuj według gatunku lub serii
-
-Tagi konstelacji – Wyrażaj atmosferę dzieł przez 12 znaków zodiaku dla unikalnych odkryć
-
-Prosty interfejs – Minimalistyczny design jak aplikacja notatek, gotowy do użycia dla każdego
-
-Kopia zapasowa iCloud – Automatyczna ochrona i synchronizacja wszystkich twoich zapisów
-
-Od początkujących, którzy chcą rozwijać nawyki czytania, po entuzjastów zapisów
-Plots wizualnie pokazuje przepływ tego, co "widziałeś i czytałeś", pomagając wybrać następne dzieło. 
+Buduj nawyki czytania i inspiruj się na następne. Pobierz Plots teraz i zacznij logować swoją podróż!

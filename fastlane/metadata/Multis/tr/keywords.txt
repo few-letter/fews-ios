@@ -1,1 +1,1 @@
-zamanlayıcı,görev,verimlilik,pomodoro,çoklu görev,zaman yönetimi,odak,arka plan,takvim,iCloud 
+çoklu zamanlayıcı,pomodoro,zaman yönetimi,odak,aralık,kronometre,arka plan

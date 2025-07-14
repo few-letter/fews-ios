@@ -1,1 +1,1 @@
-journal de lecture,tracker de livres,notes de lecture,livres lus,évaluation 5 étoiles,critique 
+journallecture,carnetlivres,suivifilms,suiviseries,noteslivres,notation5etoiles

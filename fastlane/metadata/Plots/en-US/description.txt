@@ -1,18 +1,12 @@
-Record what you've 'read and watched' in the simplest way with Plots.
-Track books, dramas, and movies as easily as a memo app, rate with quick 5-star ratings! Organize neatly with folders and categories, all safely synced with iCloud.
+Track your books with Plots, the ultimate book tracker and reading log app. Easily record books, movies, and dramas like notes, rate with 5-star system, and organize in folders. Sync securely via iCloud.
+Manage your reading journal and movie log effortlessly.
 
-What Makes Plots Special
-Reading-Focused Records – Save pages, quotes, and feelings like taking notes
+Why Plots stands out:
+• Note pages, quotes, and thoughts deeply
+• Intuitive 5-star rating
+• Categorize by genre or series
+• Constellation tags for unique vibes
+• Minimalist UI for easy use
+• Automatic iCloud backup
 
-5-Star Rating System – Intuitive evaluation with just one tap
-
-Folders & Categories – Freely organize by genre or series
-
-Constellation Tags – Express work atmosphere through 12 zodiac signs for unique discoveries
-
-Simple UI – Minimal design like a memo app, ready to use for anyone
-
-iCloud Backup – Automatic protection and sync for all your records
-
-From beginners building reading habits to record enthusiasts
-Plots visually shows the flow of what you've 'seen and read', helping you choose your next work. 
+Build reading habits and get inspired for next reads. Download Plots now and start logging your journey!

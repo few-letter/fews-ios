@@ -1,1 +1,1 @@
-Toffs - Ticaret Günlüğü 
+Toffs: İşlem Günlüğü

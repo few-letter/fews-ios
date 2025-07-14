@@ -1,1 +1,1 @@
-Plots - Registro de Lectura 
+Plots: Rastreador de Libros

@@ -1,0 +1,149 @@
+{
+  "app_name": "retros",
+  "base_language": "ko",
+  "marketing_url": "https://fewretros.blogspot.com",
+  "privacy_url": "https://sbmo.notion.site/KPT-6cb32b3868d64e7a94d7064df187f862?pvs=4",
+  "support_url": "https://sbmo.notion.site/KPT-79d29e51b3134a57b09a73d4c4f6313a?pvs=4",
+  "localization": {
+    "ko": {
+      "name": "Retros: 회고 일기 앱",
+      "subtitle": "KPT 성장 관리 도구",
+      "description": "Retros로 매일 회고하며 체계적 성장을 경험하세요. 스트레스 많은 일상에서 KPT 방법으로 감정 정리와 생산성 향상.\n자기계발 전문 앱으로 습관 추적, 목표 설정, 개인 발전 지원.\n\nRetros의 특별한 기능:\n• KPT 기반 체계적 회고\n• 캘린더 뷰로 성장 흐름 확인\n• 프라이빗 공간으로 안전한 성찰\n• 간편 기록과 관리\n• 모든 회고 한 곳에서 모아보기\n• iCloud 동기화로 언제든 접근\n\n바쁜 일상 속 5분 투자로 감정 정리, 업무 개선, 목표 달성하세요.\nRetros와 함께 매일의 경험을 성장의 발판으로 바꿔보세요.\n\n지금 Retros 다운로드하고, 체계적 자기성찰 시작하세요!",
+      "keywords": "자기반성,개인성장,습관추적,감정일지,목표관리,생산성앱,스트레스관리,일기쓰기,자기계발앱,반성노트",
+      "release_notes": "새로운 KPT 템플릿 추가로 더 효과적인 회고 지원. 성장 여정 가속화하세요!"
+    },
+    "en-US": {
+      "name": "Retros: Reflection Journal",
+      "subtitle": "KPT Growth Tracker",
+      "description": "Experience daily reflection with Retros for structured personal growth. Manage stress with KPT method for emotion organization and productivity boost.\nSelf-improvement app for habit tracking, goal setting, and self-development.\n\nWhy Retros stands out:\n• KPT-based systematic reflection\n• Calendar view to track growth patterns\n• Private space for safe introspection\n• Easy recording and management\n• All reflections in one place\n• iCloud sync for anytime access\n\nInvest just 5 minutes daily for emotion sorting, work improvement, and goal achievement.\nTurn everyday experiences into stepping stones for growth with Retros.\n\nDownload Retros now and start your journey of self-reflection!",
+      "keywords": "dailyreflection,selfjournal,personaldevelopment,habittracker,moodlog,goalsetting,stressrelief",
+      "release_notes": "Added new KPT templates for enhanced reflection. Accelerate your personal growth!"
+    },
+    "ja": {
+      "name": "Retros: 反省日記",
+      "subtitle": "KPT成長トラッカー",
+      "description": "Retrosで日常の反省を通じて構造化された個人成長を体験。KPT法でストレス管理と感情整理、生産性向上。\n自己改善アプリで習慣追跡、目標設定、自己開発。\n\nRetrosの特別な点:\n• KPTベースの体系的反省\n• カレンダービューで成長パターン追跡\n• プライベート空間で安全な内省\n• 簡単記録と管理\n• すべての反省を一箇所に\n• iCloud同期でいつでもアクセス\n\n毎日5分投資で感情整理、業務改善、目標達成。\n日常の経験を成長の踏み台に変えましょう。\n\n今すぐRetrosをダウンロードして自己反省の旅を始めよう！",
+      "keywords": "日常反省,自己日記,個人開発,習慣トラッカー,気分ログ,目標設定,生産性アプリ,ストレス緩和,日記執筆,自己改善",
+      "release_notes": "新しいKPTテンプレート追加で反省強化。個人成長を加速！"
+    },
+    "zh-Hans": {
+      "name": "Retros: 反思日记",
+      "subtitle": "KPT成长追踪器",
+      "description": "使用Retros通过日常反思体验结构化个人成长。KPT方法管理压力、整理情绪、提升生产力。\n自我提升应用用于习惯追踪、目标设定和自我开发。\n\nRetros的独特之处:\n• 基于KPT的系统反思\n• 日历视图追踪成长模式\n• 私人空间安全内省\n• 简单记录和管理\n• 所有反思集中一处\n• iCloud同步随时访问\n\n每天投资5分钟整理情绪、改善工作、实现目标。\n将日常经验转化为成长阶梯。\n\n立即下载Retros，开始自我反思之旅！",
+      "keywords": "日常反思,自我日记,个人发展,习惯追踪器,心情日志,目标设定,生产力应用,压力缓解,日记写作,自我提升",
+      "release_notes": "新增KPT模板增强反思。加速个人成长！"
+    },
+    "zh-Hant": {
+      "name": "Retros: 反思日記",
+      "subtitle": "KPT成長追蹤器",
+      "description": "使用Retros透過日常反思體驗結構化個人成長。KPT方法管理壓力、整理情緒、提升生產力。\n自我提升應用用於習慣追蹤、目標設定和自我開發。\n\nRetros的獨特之處:\n• 基於KPT的系統反思\n• 日曆視圖追蹤成長模式\n• 私人空間安全內省\n• 簡單記錄和管理\n• 所有反思集中一處\n• iCloud同步隨時訪問\n\n每天投資5分鐘整理情緒、改善工作、實現目標。\n將日常經驗轉化為成長階梯。\n\n立即下載Retros，開始自我反思之旅！",
+      "keywords": "日常反思,自我日記,個人發展,習慣追蹤器,心情日志,目標設定,生產力應用,壓力緩解,日記寫作,自我提升",
+      "release_notes": "新增KPT模板增強反思。加速個人成長！"
+    },
+    "es-ES": {
+      "name": "Retros: Diario Reflexivo",
+      "subtitle": "KPT Herramienta Crecimiento",
+      "description": "Experimenta reflexión diaria con Retros para crecimiento personal estructurado. Maneja estrés con método KPT para organización emocional y aumento productividad.\nApp mejora personal para seguimiento hábitos, establecimiento metas y autodesarrollo.\n\nPor qué Retros destaca:\n• Reflexión sistemática basada KPT\n• Vista calendario patrones crecimiento\n• Espacio privado introspección segura\n• Registro y gestión fáciles\n• Todas reflexiones en un lugar\n• Sincronización iCloud acceso anytime\n\nInvierte 5 minutos diarios en ordenar emociones, mejorar trabajo y lograr metas.\nConvierte experiencias cotidianas en peldaños crecimiento con Retros.\n\n¡Descarga Retros ahora y comienza tu viaje reflexión!",
+      "keywords": "reflexiondiaria,diariopersonal,desarrollopersonal,seguimientohabitos,establecermetas,alivioestres",
+      "release_notes": "Añadidas nuevas plantillas KPT para mejor reflexión. ¡Acelera tu desarrollo personal!"
+    },
+    "fr-FR": {
+      "name": "Retros: Journal Réflexion",
+      "subtitle": "KPT Outil Croissance",
+      "description": "Découvrez réflexion quotidienne avec Retros pour croissance personnelle structurée. Gérez stress avec méthode KPT pour organisation émotionnelle et boost productivité.\nApp amélioration personnelle pour suivi habitudes, définition objectifs et autodéveloppement.\n\nPourquoi Retros se distingue :\n• Réflexion systématique basée KPT\n• Vue calendrier patterns croissance\n• Espace privé introspection sûre\n• Enregistrement et gestion faciles\n• Toutes réflexions en un endroit\n• Synchronisation iCloud accès anytime\n\nInvestissez 5 minutes quotidiennes pour trier émotions, améliorer travail et atteindre objectifs.\nTransformez expériences quotidiennes en marches croissance avec Retros.\n\nTéléchargez Retros maintenant et commencez votre voyage réflexion !",
+      "keywords": "reflexionquotidienne,journalpersonnel,developpementpersonnel,suivihabitudes,fixerobjectifs",
+      "release_notes": "Ajoutés nouveaux modèles KPT pour meilleure réflexion. Accélérez votre développement personnel !"
+    },
+    "de-DE": {
+      "name": "Retros: Reflexions-Tagebuch",
+      "subtitle": "KPT Wachstums-Tool",
+      "description": "Erleben Sie tägliche Reflexion mit Retros für strukturierte persönliche Wachstum. Managen Stress mit KPT-Methode für emotionale Organisation und Produktivitätsboost.\nSelf-Improvement-App für Habit-Tracking, Zielsetzung und Selbstenwicklung.\n\nWarum Retros heraussticht:\n• KPT-basierte systematische Reflexion\n• Kalenderansicht für Wachstumsmuster\n• Privater Raum für sichere Introspektion\n• Einfache Aufzeichnung und Verwaltung\n• Alle Reflexionen an einem Ort\n• iCloud-Sync für jederzeitigen Zugriff\n\nInvestieren Sie täglich 5 Minuten in Emotionssortierung, Arbeitsverbesserung und Zielerreichung.\nVerwandeln Sie Alltagserfahrungen in Wachstumsstufen mit Retros.\n\nLaden Sie Retros jetzt herunter und starten Sie Ihre Reflexionsreise!",
+      "keywords": "taglichereflektion,selbsttagebuch,personlicheentwicklung,gewohnheitstracker,zielsetzung,stressabbau",
+      "release_notes": "Neue KPT-Vorlagen hinzugefügt für bessere Reflexion. Beschleunigen Sie Ihr persönliches Wachstum!"
+    },
+    "it": {
+      "name": "Retros: Diario Riflessivo",
+      "subtitle": "KPT Strumento Crescita",
+      "description": "Sperimenta riflessione quotidiana con Retros per crescita personale strutturata. Gestisci stress con metodo KPT per organizzazione emotiva e boost produttività.\nApp miglioramento personale per tracciamento abitudini, impostazione obiettivi e autosviluppo.\n\nPerché Retros spicca:\n• Riflessione sistematica basata KPT\n• Vista calendario pattern crescita\n• Spazio privato introspezione sicura\n• Registrazione e gestione facili\n• Tutte riflessioni in un posto\n• Sync iCloud accesso anytime\n\nInvesti 5 minuti quotidiani in ordinare emozioni, migliorare lavoro e raggiungere obiettivi.\nTrasforma esperienze quotidiane in gradini crescita con Retros.\n\nScarica Retros ora e inizia il tuo viaggio riflessione!",
+      "keywords": "riflessionegiornaliera,diariopersonale,sviluppopersonale,tracciamentohabits,sollievostress",
+      "release_notes": "Aggiunti nuovi modelli KPT per migliore riflessione. Accelera la tua crescita personale!"
+    },
+    "pt-BR": {
+      "name": "Retros: Diário Reflexivo",
+      "subtitle": "KPT Ferramenta Crescimento",
+      "description": "Experimente reflexão diária com Retros para crescimento pessoal estruturado. Gerencie estresse com método KPT para organização emocional e aumento produtividade.\nApp melhoria pessoal para rastreamento hábitos, definição metas e autodesenvolvimento.\n\nPor que Retros se destaca:\n• Reflexão sistemática baseada KPT\n• Visualização calendário padrões crescimento\n• Espaço privado introspecção segura\n• Gravação e gestão fáceis\n• Todas reflexões em um lugar\n• Sincronização iCloud acesso anytime\n\nInvista 5 minutos diários em organizar emoções, melhorar trabalho e alcançar metas.\nTransforme experiências cotidianas em degraus crescimento com Retros.\n\nBaixe Retros agora e comece sua jornada reflexão!",
+      "keywords": "reflexaodiaria,diariopessoal,desenvolvimentopessoal,rastreamentohabitos,definicaometas,estresse",
+      "release_notes": "Adicionados novos templates KPT para melhor reflexão. Acelere seu desenvolvimento pessoal!"
+    },
+    "ru": {
+      "name": "Retros: Дневник Размышлений",
+      "subtitle": "KPT Инструмент Роста",
+      "description": "Испытайте ежедневные размышления с Retros для структурированного личного роста. Управляйте стрессом с методом KPT для организации эмоций и повышения продуктивности.\nПриложение самоулучшения для трекинга привычек, постановки целей и саморазвития.\n\nПочему Retros выделяется:\n• Систематические размышления на основе KPT\n• Вид календаря для паттернов роста\n• Приватное пространство для безопасной интроспекции\n• Легкая запись и управление\n• Все размышления в одном месте\n• Синхронизация iCloud для доступа anytime\n\nИнвестируйте 5 минут ежедневно в сортировку эмоций, улучшение работы и достижение целей.\nПревращайте повседневные опыты в ступени роста с Retros.\n\nЗагрузите Retros сейчас и начните путь размышлений!",
+      "keywords": "ежедневныерефлексия,самодневник,личноеразвитие,трекингпривычек,постановкацелей,снятиестресса",
+      "release_notes": "Добавлены новые шаблоны KPT для лучшей рефлексии. Ускорьте личный рост!"
+    },
+    "ar-SA": {
+      "name": "Retros: يومية التأمل",
+      "subtitle": "KPT أداة النمو",
+      "description": "جرب التأمل اليومي مع Retros للنمو الشخصي المنظم. إدارة التوتر بطريقة KPT لتنظيم العواطف وزيادة الإنتاجية.\nتطبيق تحسين الذات لتتبع العادات، وضع الأهداف، والتطور الذاتي.\n\nلماذا يبرز Retros:\n• تأمل منهجي قائم على KPT\n• عرض التقويم لأنماط النمو\n• مساحة خاصة للتأمل الآمن\n• تسجيل وإدارة سهلة\n• جميع التأملات في مكان واحد\n• مزامنة iCloud للوصول في أي وقت\n\nاستثمر 5 دقائق يوميًا في ترتيب العواطف، تحسين العمل، وتحقيق الأهداف.\nحول التجارب اليومية إلى درجات نمو مع Retros.\n\nقم بتنزيل Retros الآن وبدء رحلة التأمل!",
+      "keywords": "تأملیومی,یومیةشخصیة,تنمیةشخصیة,تعقیبعادات,وضعأهداف,تخفیفتوتر",
+      "release_notes": "تم إضافة قوالب KPT جديدة لتأمل أفضل. سرع نموك الشخصي!"
+    },
+    "hi": {
+      "name": "Retros: चिंतन डायरी",
+      "subtitle": "KPT विकास उपकरण",
+      "description": "Retros के साथ दैनिक चिंतन अनुभव करें संरचित व्यक्तिगत विकास के लिए। KPT विधि से तनाव प्रबंधन, भावना संगठन और उत्पादकता बढ़ावा।\nस्व-सुधार ऐप आदत ट्रैकिंग, लक्ष्य निर्धारण और स्व-विकास के लिए।\n\nRetros क्यों अलग है:\n• KPT आधारित व्यवस्थित चिंतन\n• कैलेंडर दृश्य विकास पैटर्न के लिए\n• निजी स्थान सुरक्षित आत्मनिरीक्षण के लिए\n• आसान रिकॉर्डिंग और प्रबंधन\n• सभी चिंतन एक जगह\n• iCloud सिंक कहीं भी पहुंच के लिए\n\nदैनिक 5 मिनट निवेश करें भावनाओं को व्यवस्थित करने, कार्य सुधारने और लक्ष्य प्राप्त करने में।\nदैनिक अनुभवों को विकास की सीढ़ी में बदलें Retros के साथ।\n\nRetros अब डाउनलोड करें और चिंतन यात्रा शुरू करें!",
+      "keywords": "दैनिकचिंतन,स्वडायरी,व्यक्तिगतविकास,आदतट्रैकर,लक्ष्यसेटिंग,तनावमुक्ति",
+      "release_notes": "नए KPT टेम्प्लेट जोड़े बेहतर चिंतन के लिए। व्यक्तिगत विकास तेज करें!"
+    },
+    "tr": {
+      "name": "Retros: Yansıma Günlüğü",
+      "subtitle": "KPT Büyüme Aracı",
+      "description": "Retros ile günlük yansıma yapılandırılmış kişisel büyüme için deneyimleyin. KPT yöntemi ile stres yönetimi, duygu organizasyonu ve üretkenlik artışı.\nKendini geliştirme uygulaması alışkanlık takibi, hedef belirleme ve öz gelişim için.\n\nRetros neden öne çıkıyor:\n• KPT tabanlı sistematik yansıma\n• Takvim görünümü büyüme desenleri için\n• Özel alan güvenli iç gözlem için\n• Kolay kayıt ve yönetim\n• Tüm yansımalar bir yerde\n• iCloud senkronizasyonu her zaman erişim için\n\nGünlük 5 dakika yatırım duyguları düzenleme, iş iyileştirme ve hedef達成 için.\nGünlük deneyimleri büyüme basamaklarına dönüştürün Retros ile.\n\nRetros'u şimdi indirin ve yansıma yolculuğuna başlayın!",
+      "keywords": "gunlukyansima,ozgunluk,kisiselgelisim,alisanliktakipcis,hedefbelirleme,stresazaltma",
+      "release_notes": "Yeni KPT şablonları eklendi daha iyi yansıma için. Kişisel büyümeyi hızlandırın!"
+    },
+    "nl-NL": {
+      "name": "Retros: Reflectiedagboek",
+      "subtitle": "KPT Groei Tool",
+      "description": "Ervaar dagelijkse reflectie met Retros voor gestructureerde persoonlijke groei. Beheer stress met KPT-methode voor emotionele organisatie en productiviteitsboost.\nZelfverbetering app voor gewoonte tracking, doelen stellen en zelfontwikkeling.\n\nWaarom Retros uitblinkt:\n• KPT-gebaseerde systematische reflectie\n• Kalenderweergave voor groeipatronen\n• Privéruimte voor veilige introspectie\n• Gemakkelijke opname en beheer\n• Alle reflecties op één plaats\n• iCloud-sync voor anytime toegang\n\nInvesteer dagelijks 5 minuten in emoties sorteren, werk verbeteren en doelen bereiken.\nVerander dagelijkse ervaringen in groeistappen met Retros.\n\nDownload Retros nu en begin je reflectiereis!",
+      "keywords": "dagelijksereflectie,zelfdagboek,persoonlijkeontwikkeling,gewoontetracker,doelenstellen,stress",
+      "release_notes": "Nieuwe KPT-sjablonen toegevoegd voor betere reflectie. Versnel je persoonlijke groei!"
+    },
+    "sv": {
+      "name": "Retros: Reflektionsdagbok",
+      "subtitle": "KPT Tillväxtverktyg",
+      "description": "Upplev daglig reflektion med Retros för strukturerad personlig tillväxt. Hantera stress med KPT-metod för känslomässig organisation och produktivitetsboost.\nSjälvförbättringsapp för vanespårning, målsättning och självvutveckling.\n\nVarför Retros sticker ut:\n• KPT-baserad systematisk reflektion\n• Kalendervy för tillväxtmönster\n• Privat utrymme för säker introspektion\n• Enkel inspelning och hantering\n• Alla reflektioner på en plats\n• iCloud-synk för tillgång när som helst\n\nInvestera 5 minuter dagligen i känslor sortering, arbete förbättring och mål uppnå.\nFörvandla vardagliga erfarenheter till tillväxtsteg med Retros.\n\nLadda ner Retros nu och börja din reflektionsresa!",
+      "keywords": "dagligreflektion,sjalvdagbok,personligutveckling,vanetracker,malstallning,stresslindring",
+      "release_notes": "Nya KPT-mallar tillagda för bättre reflektion. Accelerera din personliga tillväxt!"
+    },
+    "da": {
+      "name": "Retros: Reflektionsdagbog",
+      "subtitle": "KPT Vækstværktøj",
+      "description": "Oplev daglig refleksion med Retros for struktureret personlig vækst. Håndter stress med KPT-metode for følelsesmæssig organisation og produktivitetsboost.\nSelvforbedringsapp for vane-tracking, målindstilling og selvudvikling.\n\nHvorfor Retros skiller sig ud:\n• KPT-baseret systematisk refleksion\n• Kalendervisning for vækstmønstre\n• Privat rum for sikker introspektion\n• Nem optagelse og styring\n• Alle refleksioner på ét sted\n• iCloud-synk for adgang anytime\n\nInvester 5 minutter dagligt i følelser sortering, arbejde forbedring og mål opnå.\nForvandl daglige oplevelser til væksttrin med Retros.\n\nDownload Retros nu og start din refleksionsrejse!",
+      "keywords": "dagligrefleksion,selvdagbog,personligudvikling,vanetracker,malindstilling,stresslindring",
+      "release_notes": "Nye KPT-skabeloner tilføjet for bedre refleksion. Accelerer din personlige vækst!"
+    },
+    "no": {
+      "name": "Retros: Refleksjonsdagbok",
+      "subtitle": "KPT Vekstverktøy",
+      "description": "Opplev daglig refleksjon med Retros for strukturert personlig vekst. Håndter stress med KPT-metode for emosjonell organisering og produktivitetsboost.\nSelvforbedringsapp for vanesporing, målsetting og selvutvikling.\n\nHvorfor Retros skiller seg ut:\n• KPT-basert systematisk refleksjon\n• Kalendervisning for vekstmønstre\n• Privat rom for sikker introspeksjon\n• Enkel opptak og administrasjon\n• Alle refleksjoner på ett sted\n• iCloud-synk for tilgang når som helst\n\nInvester 5 minutter daglig i følelser sortering, arbeid forbedring og mål oppnå.\nForvandle daglige opplevelser til veksttrinn med Retros.\n\nLast ned Retros nå og start din refleksjonsreise!",
+      "keywords": "dagligrefleksjon,selvdagbok,personligutvikling,vanetracker,malsetting,stresslindring",
+      "release_notes": "Nye KPT-maler lagt til for bedre refleksjon. Akselerer din personlige vekst!"
+    },
+    "fi": {
+      "name": "Retros: Pohdiskelupäiväkirja",
+      "subtitle": "KPT Kasvutyökalu",
+      "description": "Koe päivittäinen pohdiskelu Retrosilla strukturoidulle henkilökohtaiselle kasvulle. Hallitse stressiä KPT-menetelmällä tunteiden järjestämiseksi ja tuottavuuden boostiksi.\nItseparannussovellus tapojen seurantaan, tavoitteiden asettamiseen ja itsekehitykseen.\n\nMiksi Retros erottuu:\n• KPT-pohjainen systemaattinen pohdiskelu\n• Kalenterinäkymä kasvumalleille\n• Yksityinen tila turvalliselle introspektiolle\n• Helppo tallennus ja hallinta\n• Kaikki pohdiskelut yhdessä paikassa\n• iCloud-synkki milloin tahansa pääsyyn\n\nSijoita 5 minuuttia päivittäin tunteiden lajitteluun, työn parantamiseen ja tavoitteiden saavuttamiseen.\nMuuta päivittäiset kokemukset kasvun askelmiksi Retrosilla.\n\nLataa Retros nyt ja aloita pohdiskelumatkasi!",
+      "keywords": "paivittainenpohdiskelu,itsepaivakirja,henkilokohtainenkehitys,tapaseuranta,tavoitteet,stressi",
+      "release_notes": "Lisätty uusia KPT-malleja parempaan pohdiskeluun. Nopeuta henkilökohtaista kasvuasi!"
+    },
+    "pl": {
+      "name": "Retros: Dziennik Refleksji",
+      "subtitle": "KPT Narzędzie Wzrostu",
+      "description": "Doświadcz codziennej refleksji z Retros dla strukturalnego wzrostu osobistego. Zarządzaj stresem metodą KPT do organizacji emocjonalnej i boostu produktywności.\nAplikacja samodoskonalenia do śledzenia nawyków, ustawiania celów i samorozwoju.\n\nDlaczego Retros wyróżnia się:\n• Systematyczna refleksja oparta na KPT\n• Widok kalendarza wzorców wzrostu\n• Prywatna przestrzeń bezpiecznej introspekcji\n• Łatwe nagrywanie i zarządzanie\n• Wszystkie refleksje w jednym miejscu\n• Synchronizacja iCloud dostęp anytime\n\nInwestuj 5 minut dziennie w sortowanie emocji, poprawę pracy i osiąganie celów.\nPrzekształć codzienne doświadczenia w kroki wzrostu z Retros.\n\nPobierz Retros teraz i zacznij podróż refleksji!",
+      "keywords": "codziennarefleksja,dziennikosobisty,rozwoj-osobisty,sledzenienawykow,ustawianiecelow,ulgaodstresu",
+      "release_notes": "Dodano nowe szablony KPT dla lepszej refleksji. Przyspiesz swój rozwój osobisty!"
+    }
+  }
+}

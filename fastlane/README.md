@@ -21,7 +21,7 @@ For _fastlane_ installation instructions, see [Installing _fastlane_](https://do
 [bundle exec] fastlane ios upload
 ```
 
-App Store에 앱을 빌드하고 업로드합니다. (스크린샷 생성 및 메타데이터 업로드 포함)
+App Store에 앱을 빌드하고 업로드합니다. (메타데이터 및 스크린샷 생성 포함)
 
 ### ios testflight
 

@@ -1,0 +1,149 @@
+{
+  "app_name": "plots",
+  "base_language": "ko",
+  "marketing_url": "https://fewplots.blogspot.com/",
+  "privacy_url": "https://sbmo.notion.site/ffdea8a17d8a4e92953c42695047a72f",
+  "support_url": "https://sbmo.notion.site/b9ec423629e24a7981fb9c6e75215ac0",
+  "localization": {
+    "ko": {
+      "name": "Plots: 독서 기록",
+      "subtitle": "책 영화 문화 일지",
+      "description": "Plots로 독서 기록과 책 트래커를 간단히 관리하세요. 읽은 책, 본 영화, 드라마를 메모처럼 기록하고 5점 별점으로 평가하세요. 폴더와 카테고리로 정리하며 iCloud 동기화로 안전하게 보관합니다.\n독서 로그와 영화 일지를 위한 최고의 앱입니다.\n\nPlots의 특별 기능:\n• 페이지와 구절 메모로 깊이 있는 독서 노트\n• 직관적 5점 별점 평가\n• 장르·시리즈별 폴더 & 카테고리 분류\n• 별자리 태그로 작품 분위기 표시\n• 미니멀 디자인으로 쉬운 사용\n• iCloud 자동 백업\n\n독서 습관 형성과 다음 작품 추천에 도움됩니다. 지금 Plots 다운로드하고 독서 여정을 시작하세요!",
+      "keywords": "독서로그,독서노트,읽은책,서평,북다이어리,영화로그,드라마기록,문화일지,별점평가,메모앱",
+      "release_notes": "이번 업데이트로 독서 기록 기능이 향상됐어요. 더 부드러운 iCloud 동기화로 책 트래커를 안전하게 사용하세요. 새로운 별자리 태그로 재미를 더했습니다."
+    },
+    "en-US": {
+      "name": "Plots: Book Tracker",
+      "subtitle": "Reading & Movie Journal",
+      "description": "Track your books with Plots, the ultimate book tracker and reading log app. Easily record books, movies, and dramas like notes, rate with 5-star system, and organize in folders. Sync securely via iCloud.\nManage your reading journal and movie log effortlessly.\n\nWhy Plots stands out:\n• Note pages, quotes, and thoughts deeply\n• Intuitive 5-star rating\n• Categorize by genre or series\n• Constellation tags for unique vibes\n• Minimalist UI for easy use\n• Automatic iCloud backup\n\nBuild reading habits and get inspired for next reads. Download Plots now and start logging your journey!",
+      "keywords": "readinglog,bookjournal,filmlog,tvtracker,bookdiary,booknotes,5starrating,culturelog",
+      "release_notes": "Updated with smoother iCloud sync for your book tracker. Enjoy enhanced reading log features and new constellation tags for fun discovery."
+    },
+    "ja": {
+      "name": "Plots: 本トラッカー",
+      "subtitle": "読書・映画ジャーナル",
+      "description": "Plotsで本トラッカーと読書ログを簡単に管理しましょう。読んだ本、見た映画、ドラマをメモのように記録し、5つ星評価で評価。フォルダで整理し、iCloudで安全に同期。\n読書日記と映画ログに最適です。\n\nPlotsの特別な機能:\n• ページや引用の深いメモ\n• 直感的な5つ星評価\n• ジャンル・シリーズ別分類\n• 星座タグで作品の雰囲気を表現\n• ミニマリストUIで使いやすい\n• 自動iCloudバックアップ\n\n読書習慣を築き、次の作品選びをサポート。今すぐPlotsをダウンロードして読書旅を始めましょう！",
+      "keywords": "読書ログ,本日記,映画トラッカー,フィルムログ,ドラマ記録,メディアジャーナル,本ノート,5つ星評価,読書習慣,文化記録",
+      "release_notes": "今回のアップデートでiCloud同期がスムーズに。本トラッカーの読書ログ機能が向上し、新しい星座タグで楽しみが増えました。"
+    },
+    "zh-Hans": {
+      "name": "Plots: 图书追踪器",
+      "subtitle": "阅读与电影日志",
+      "description": "使用Plots轻松管理图书追踪器和阅读日志。像记笔记一样记录书籍、电影和剧集，使用5星评分系统评估，按文件夹整理，并通过iCloud安全同步。\n完美用于阅读日记和电影日志。\n\nPlots的独特功能:\n• 深度笔记页面、引述和想法\n• 直观5星评分\n• 按类型或系列分类\n• 星座标签表达独特氛围\n• 简约UI易于使用\n• 自动iCloud备份\n\n建立阅读习惯并获得下一本的灵感。现在下载Plots，开始您的阅读之旅！",
+      "keywords": "阅读日志,图书日记,电影追踪,影片日志,剧集记录,媒体期刊,图书笔记,5星评分,阅读习惯,文化日志",
+      "release_notes": "更新了更顺畅的iCloud同步，用于您的图书追踪器。享受增强的阅读日志功能和新星座标签的乐趣。"
+    },
+    "zh-Hant": {
+      "name": "Plots: 圖書追蹤器",
+      "subtitle": "閱讀與電影日誌",
+      "description": "使用Plots輕鬆管理圖書追蹤器和閱讀日誌。像記筆記一樣記錄書籍、電影和劇集，使用5星評分系統評估，按文件夾整理，並通過iCloud安全同步。\n完美用於閱讀日記和電影日誌。\n\nPlots的獨特功能:\n• 深度筆記頁面、引述和想法\n• 直觀5星評分\n• 按類型或系列分類\n• 星座標籤表達獨特氛圍\n• 簡約UI易於使用\n• 自動iCloud備份\n\n建立閱讀習慣並獲得下一本的靈感。現在下載Plots，開始您的閱讀之旅！",
+      "keywords": "閱讀日誌,圖書日記,電影追蹤,影片日誌,劇集記錄,媒體期刊,圖書筆記,5星評分,閱讀習慣,文化日誌",
+      "release_notes": "更新了更順暢的iCloud同步，用於您的圖書追蹤器。享受增強的閱讀日誌功能和新星座標籤的樂趣。"
+    },
+    "es-ES": {
+      "name": "Plots: Rastreador de Libros",
+      "subtitle": "Diario de Lectura y Películas",
+      "description": "Rastrea tus libros con Plots, la app definitiva de rastreador de libros y registro de lectura. Registra fácilmente libros, películas y series como notas, califica con 5 estrellas y organiza en carpetas. Sincroniza de forma segura vía iCloud.\nGestiona tu diario de lectura y registro de películas sin esfuerzo.\n\nPor qué Plots destaca:\n• Notas profundas de páginas, citas e ideas\n• Calificación intuitiva de 5 estrellas\n• Clasifica por género o serie\n• Etiquetas de constelaciones para vibras únicas\n• UI minimalista fácil de usar\n• Copia de seguridad automática iCloud\n\nConstruye hábitos de lectura e inspírate para el siguiente. ¡Descarga Plots ahora y comienza a registrar tu viaje!",
+      "keywords": "registrolectura,diariolibros,rastreadorpeliculas,rastreoseries,notaslibros,calificacion5estrellas",
+      "release_notes": "Actualizado con sincronización iCloud más fluida para tu rastreador de libros. Disfruta funciones mejoradas de registro de lectura y nuevas etiquetas de constelaciones."
+    },
+    "fr-FR": {
+      "name": "Plots: Suivi de Livres",
+      "subtitle": "Journal de Lecture et Films",
+      "description": "Suivez vos livres avec Plots, l'app ultime de suivi de livres et journal de lecture. Enregistrez facilement livres, films et séries comme des notes, notez avec 5 étoiles et organisez en dossiers. Synchronisez en toute sécurité via iCloud.\nGérez votre journal de lecture et journal de films sans effort.\n\nPourquoi Plots se distingue :\n• Notes profondes de pages, citations et idées\n• Notation intuitive 5 étoiles\n• Classez par genre ou série\n• Étiquettes de constellations pour des vibes uniques\n• UI minimaliste facile à utiliser\n• Sauvegarde automatique iCloud\n\nConstruisez des habitudes de lecture et inspirez-vous pour le suivant. Téléchargez Plots maintenant et commencez à journaliser votre voyage !",
+      "keywords": "journallecture,carnetlivres,suivifilms,suiviseries,noteslivres,notation5etoiles",
+      "release_notes": "Mis à jour avec une synchronisation iCloud plus fluide pour votre suivi de livres. Profitez des fonctionnalités améliorées de journal de lecture et nouvelles étiquettes de constellations."
+    },
+    "de-DE": {
+      "name": "Plots: Buch-Tracker",
+      "subtitle": "Lese- und Film-Tagebuch",
+      "description": "Verfolgen Sie Ihre Bücher mit Plots, der ultimativen Buch-Tracker- und Leseprotokoll-App. Erfassen Sie Bücher, Filme und Serien wie Notizen, bewerten Sie mit 5 Sternen und organisieren Sie in Ordnern. Synchronisieren Sie sicher über iCloud.\nVerwalten Sie Ihr Lesetagebuch und Filmprotokoll mühelos.\n\nWarum Plots heraussticht:\n• Tiefe Notizen zu Seiten, Zitaten und Gedanken\n• Intuitive 5-Sterne-Bewertung\n• Kategorisieren nach Genre oder Serie\n• Sternbild-Tags für einzigartige Vibes\n• Minimalistische UI einfach zu bedienen\n• Automatische iCloud-Sicherung\n\nBauen Sie Lesegewohnheiten auf und lassen Sie sich für das Nächste inspirieren. Laden Sie Plots jetzt herunter und beginnen Sie, Ihr Abenteuer zu protokollieren!",
+      "keywords": "leseprotokoll,buchtagebuch,filmtracker,serientracker,buchnotizen,5sternebewertung",
+      "release_notes": "Aktualisiert mit reibungsloserer iCloud-Sync für Ihren Buch-Tracker. Genießen Sie verbesserte Leseprotokoll-Funktionen und neue Sternbild-Tags."
+    },
+    "it": {
+      "name": "Plots: Tracker Libri",
+      "subtitle": "Diario Lettura e Film",
+      "description": "Traccia i tuoi libri con Plots, l'app definitiva per tracker libri e registro lettura. Registra facilmente libri, film e serie come note, valuta con 5 stelle e organizza in cartelle. Sincronizza in sicurezza via iCloud.\nGestisci il tuo diario lettura e registro film senza sforzo.\n\nPerché Plots spicca:\n• Note profonde su pagine, citazioni e pensieri\n• Valutazione intuitiva 5 stelle\n• Categorizza per genere o serie\n• Tag costellazioni per vibe uniche\n• UI minimalista facile da usare\n• Backup automatico iCloud\n\nCostruisci abitudini di lettura e ispirati per il prossimo. Scarica Plots ora e inizia a registrare il tuo viaggio!",
+      "keywords": "registrolettura,diariolibri,trackerfilm,trackerserie,notelibri,valutazione5stelle",
+      "release_notes": "Aggiornato con sync iCloud più fluido per il tuo tracker libri. Goditi funzioni migliorate di registro lettura e nuovi tag costellazioni."
+    },
+    "pt-BR": {
+      "name": "Plots: Rastreador de Livros",
+      "subtitle": "Diário de Leitura e Filmes",
+      "description": "Rastreie seus livros com Plots, o app definitivo de rastreador de livros e registro de leitura. Registre facilmente livros, filmes e séries como notas, avalie com 5 estrelas e organize em pastas. Sincronize com segurança via iCloud.\nGerencie seu diário de leitura e registro de filmes sem esforço.\n\nPor que Plots se destaca:\n• Notas profundas de páginas, citações e ideias\n• Avaliação intuitiva de 5 estrelas\n• Categorize por gênero ou série\n• Tags de constelações para vibes únicas\n• UI minimalista fácil de usar\n• Backup automático iCloud\n\nConstrua hábitos de leitura e inspire-se para o próximo. Baixe Plots agora e comece a registrar sua jornada!",
+      "keywords": "registroleitura,diariolivros,rastreadorfilmes,rastreioseries,notaslivros,avaliacao5estrelas",
+      "release_notes": "Atualizado com sincronização iCloud mais suave para seu rastreador de livros. Aproveite recursos aprimorados de registro de leitura e novos tags de constelações."
+    },
+    "ru": {
+      "name": "Plots: Трекер Книг",
+      "subtitle": "Журнал Чтения и Фильмов",
+      "description": "Отслеживайте книги с Plots, ultimate трекером книг и журналом чтения. Легко записывайте книги, фильмы и сериалы как заметки, оценивайте 5 звездами и организуйте в папки. Синхронизируйте безопасно через iCloud.\nУправляйте журналом чтения и журналом фильмов без усилий.\n\nПочему Plots выделяется:\n• Глубокие заметки страниц, цитат и идей\n• Интуитивная оценка 5 звезд\n• Категоризируйте по жанру или серии\n• Теги созвездий для уникальных вайбов\n• Минималистичный UI легко использовать\n• Автоматический бэкап iCloud\n\nСтроите привычки чтения и вдохновляйтесь на следующее. Скачайте Plots сейчас и начните вести журнал вашего пути!",
+      "keywords": "журналчтения,дневниккниг,трекерфильмов,трекерсериалов,заметкикниг,оценка5звезд",
+      "release_notes": "Обновлено с более плавной синхронизацией iCloud для вашего трекера книг. Наслаждайтесь улучшенными функциями журнала чтения и новыми тегами созвездий."
+    },
+    "ar-SA": {
+      "name": "Plots: متتبع الكتب",
+      "subtitle": "يومية القراءة والأفلام",
+      "description": "تابع كتبك مع Plots، التطبيق النهائي لمتتبع الكتب وسجل القراءة. سجل الكتب والأفلام والمسلسلات بسهولة كالملاحظات، قيم بـ5 نجوم ونظم في مجلدات. مزامنة آمنة عبر iCloud.\nإدارة يومية القراءة وسجل الأفلام بلا جهد.\n\nلماذا يبرز Plots:\n• ملاحظات عميقة للصفحات والاقتباسات والأفكار\n• تقييم بديهي 5 نجوم\n• تصنيف حسب النوع أو السلسلة\n• علامات كوكبية لأجواء فريدة\n• واجهة بسيطة سهلة الاستخدام\n• نسخ احتياطي تلقائي iCloud\n\nبناء عادات القراءة واستلهم للتالي. حمل Plots الآن وبدء تسجيل رحلتك!",
+      "keywords": "سجلقراءة,يوميةكتب,متتبعافلام,متتبعمسلسلات,ملاحظاتكتب,تقييم5نجوم",
+      "release_notes": "تم التحديث بمزامنة iCloud أكثر سلاسة لمتتبع كتبك. استمتع بميزات محسنة لسجل القراءة وعلامات كوكبية جديدة."
+    },
+    "hi": {
+      "name": "Plots: किताब ट्रैकर",
+      "subtitle": "पढ़ाई और फिल्म जर्नल",
+      "description": "Plots के साथ अपनी किताबों को ट्रैक करें, अल्टीमेट किताब ट्रैकर और पढ़ाई लॉग ऐप। किताबें, फिल्में और ड्रामा को नोट्स की तरह आसानी से रिकॉर्ड करें, 5 स्टार से रेट करें और फोल्डर्स में व्यवस्थित करें। iCloud के माध्यम से सुरक्षित सिंक करें।\nअपने पढ़ाई जर्नल और फिल्म लॉग को आसानी से प्रबंधित करें।\n\nPlots क्यों खास है:\n• पेज, कोट्स और विचारों की गहरी नोट्स\n• सहज 5 स्टार रेटिंग\n• जेनर या सीरीज के अनुसार वर्गीकृत करें\n• नक्षत्र टैग्स अनोखे वाइब्स के लिए\n• मिनिमलिस्ट UI आसान उपयोग के लिए\n• ऑटोमैटिक iCloud बैकअप\n\nपढ़ाई की आदतें बनाएं और अगले के लिए प्रेरित हों। अब Plots डाउनलोड करें और अपनी यात्रा लॉग करना शुरू करें!",
+      "keywords": "पढ़ाईलॉग,किताबजर्नल,फिल्मट्रैकर,टीवीट्रैकर,किताबनोट्स,5स्टाररेटिंग",
+      "release_notes": "आपके किताब ट्रैकर के लिए सुगम iCloud सिंक के साथ अपडेटेड। बेहतर पढ़ाई लॉग फीचर्स और नए नक्षत्र टैग्स का आनंद लें।"
+    },
+    "tr": {
+      "name": "Plots: Kitap Takipçisi",
+      "subtitle": "Okuma ve Film Günlüğü",
+      "description": "Plots ile kitaplarınızı takip edin, ultimate kitap takipçisi ve okuma kaydı app'i. Kitapları, filmleri ve dizileri not gibi kolayca kaydedin, 5 yıldızla puanlayın ve klasörlerde düzenleyin. iCloud ile güvenli senkronize edin.\nOkuma günlüğünüzü ve film kaydınızı zahmetsiz yönetin.\n\nPlots neden öne çıkıyor:\n• Sayfalar, alıntılar ve düşünceler için derin notlar\n• Sezgisel 5 yıldız puanlama\n• Tür veya seriye göre kategorize edin\n• Takımyıldızı etiketleri benzersiz vibe'lar için\n• Minimalist UI kolay kullanım için\n• Otomatik iCloud yedekleme\n\nOkuma alışkanlıkları oluşturun ve sonraki için ilham alın. Plots'u şimdi indirin ve yolculuğunuzu kaydetmeye başlayın!",
+      "keywords": "okumakaydi,kitapgunlugu,filmtakipcisi,dizitakipcisi,kitapnotlari,5yildizpuanlama",
+      "release_notes": "Kitap takipçiniz için daha yumuşak iCloud senk ile güncellendi. Geliştirilmiş okuma kaydı özellikleri ve yeni takımyıldızı etiketlerini keyfini çıkarın."
+    },
+    "nl-NL": {
+      "name": "Plots: Boek Tracker",
+      "subtitle": "Lees- en Film Journaal",
+      "description": "Volg je boeken met Plots, de ultieme boek tracker en leeslog app. Registreer gemakkelijk boeken, films en series als notities, beoordeel met 5 sterren en organiseer in mappen. Synchroniseer veilig via iCloud.\nBeheer je leesjournaal en filmlog moeiteloos.\n\nWaarom Plots uitblinkt:\n• Diepe notities voor pagina's, citaten en ideeën\n• Intuïtieve 5-sterren beoordeling\n• Categoriseer per genre of serie\n• Sterrenbeelden tags voor unieke vibes\n• Minimalistische UI gemakkelijk te gebruiken\n• Automatische iCloud back-up\n\nBouw leesgewoonten op en inspireer voor de volgende. Download Plots nu en begin je reis te loggen!",
+      "keywords": "leeslog,boekjournaal,filmtracker,tvtracker,boeknotities,5sterrenbeoordeling",
+      "release_notes": "Bijgewerkt met soepelere iCloud sync voor je boek tracker. Geniet van verbeterde leeslog functies en nieuwe sterrenbeelden tags."
+    },
+    "sv": {
+      "name": "Plots: Bokspårare",
+      "subtitle": "Läs- och Filmjournal",
+      "description": "Spåra dina böcker med Plots, den ultimata bokspåraren och läselog appen. Registrera enkelt böcker, filmer och serier som anteckningar, betygsätt med 5 stjärnor och organisera i mappar. Synkronisera säkert via iCloud.\nHantera din läsejournal och filmlog utan ansträngning.\n\nVarför Plots sticker ut:\n• Djupa anteckningar för sidor, citat och tankar\n• Intuitivt 5-stjärnigt betyg\n• Kategorisera efter genre eller serie\n• Stjärnbildstaggar för unika vibbar\n• Minimalistisk UI lätt att använda\n• Automatisk iCloud-säkerhetskopiering\n\nBygg läsvanor och inspireras för nästa. Ladda ner Plots nu och börja logga din resa!",
+      "keywords": "läselog,bokjournal,filmspårare,tvspårare,bokanteckningar,5stjärnigtbetyg",
+      "release_notes": "Uppdaterad med smidigare iCloud-synk för din bokspårare. Njut av förbättrade läselog-funktioner och nya stjärnbildstaggar."
+    },
+    "da": {
+      "name": "Plots: Bog Tracker",
+      "subtitle": "Læse- og Film Journal",
+      "description": "Spor dine bøger med Plots, den ultimative bog tracker og læselog app. Registrer let bøger, film og serier som noter, bedøm med 5 stjerner og organiser i mapper. Synkroniser sikkert via iCloud.\nAdministrer din læsejournal og filmlog uden besvær.\n\nHvorfor Plots skiller sig ud:\n• Dybe noter til sider, citater og tanker\n• Intuitiv 5-stjernet bedømmelse\n• Kategoriser efter genre eller serie\n• Stjernebilled tags til unikke vibes\n• Minimalistisk UI let at bruge\n• Automatisk iCloud backup\n\nByg læsevaner og inspirer til næste. Download Plots nu og start med at logge din rejse!",
+      "keywords": "læselog,bogjournal,filmtracker,tvtracker,bognoter,5stjernebedømmelse",
+      "release_notes": "Opdateret med glattere iCloud-synk til din bog tracker. Nyd forbedrede læselog-funktioner og nye stjernebilled tags."
+    },
+    "no": {
+      "name": "Plots: Bok Tracker",
+      "subtitle": "Lesing og Film Journal",
+      "description": "Spor bøkene dine med Plots, den ultimate bok tracker og leselog app. Registrer enkelt bøker, filmer og serier som notater, vurder med 5 stjerner og organiser i mapper. Synkroniser sikkert via iCloud.\nAdministrer lesejournalen og filmloggen uten anstrengelse.\n\nHvorfor Plots skiller seg ut:\n• Dype notater for sider, sitater og tanker\n• Intuitiv 5-stjernet vurdering\n• Kategoriser etter sjanger eller serie\n• Stjernebildetagger for unike vibber\n• Minimalistisk UI enkel å bruke\n• Automatisk iCloud backup\n\nBygg lesevaner og inspirer til neste. Last ned Plots nå og begynn å logge reisen din!",
+      "keywords": "leselog,bokjournal,filmtracker,tvtracker,boknotater,5stjernevurdering",
+      "release_notes": "Oppdatert med jevnere iCloud-synk for din bok tracker. Nyt forbedrede leselog-funksjoner og nye stjernebildetagger."
+    },
+    "fi": {
+      "name": "Plots: Kirja Seuraaja",
+      "subtitle": "Luku- ja Elokuva Päiväkirja",
+      "description": "Seuraa kirjojasi Plotsilla, ultimate kirja seuraaja ja lukuloki app. Kirjaa helposti kirjat, elokuvat ja sarjat muistiinpanoina, arvioi 5 tähdellä ja järjestä kansioihin. Synkronoi turvallisesti iCloudin kautta.\nHallitse luku päiväkirjaasi ja elokuva lokia vaivattomasti.\n\nMiksi Plots erottuu:\n• Syvät muistiinpanot sivuille, lainauksille ja ajatuksille\n• Intuitiivinen 5 tähden arviointi\n• Kategorisoi genren tai sarjan mukaan\n• Tähtikuvio taggeja uniikkeja vibejä varten\n• Minimalistinen UI helppo käyttää\n• Automaattinen iCloud varmuuskopio\n\nRakenna lukutottumuksia ja inspiroidu seuraavaan. Lataa Plots nyt ja aloita matkasi kirjaaminen!",
+      "keywords": "lukuloki,kirjapaivakirja,elokuvaseuraaja,tvseuraaja,kirjamuistiinpanot,5tahtiarviointi",
+      "release_notes": "Päivitetty sujuvammalla iCloud-synkronoinnilla kirja seuraajallesi. Nauti parannetuista lukuloki-ominaisuuksista ja uusista tähtikuvio taggeista."
+    },
+    "pl": {
+      "name": "Plots: Śledzenie Książek",
+      "subtitle": "Dziennik Czytania i Filmów",
+      "description": "Śledź swoje książki z Plots, ultimate śledzeniem książek i logiem czytania app. Łatwo rejestruj książki, filmy i seriale jak notatki, oceń 5 gwiazdkami i organizuj w folderach. Synchronizuj bezpiecznie via iCloud.\nZarządzaj dziennikiem czytania i logiem filmów bez wysiłku.\n\nDlaczego Plots wyróżnia się:\n• Głębokie notatki stron, cytatów i myśli\n• Intuicyjna ocena 5 gwiazdek\n• Kategoryzuj według gatunku lub serii\n• Tagi konstelacji dla unikalnych wibracji\n• Minimalistyczny UI łatwy w użyciu\n• Automatyczna kopia zapasowa iCloud\n\nBuduj nawyki czytania i inspiruj się na następne. Pobierz Plots teraz i zacznij logować swoją podróż!",
+      "keywords": "logczytania,dziennikksiazek,sledzeniefilmow,sledzenieseriali,notatkiksiazek,ocena5gwiazdek",
+      "release_notes": "Zaktualizowano z płynniejszą synchronizacją iCloud dla twojego śledzenia książek. Ciesz się ulepszonymi funkcjami logu czytania i nowymi tagami konstelacji."
+    }
+  }
+}

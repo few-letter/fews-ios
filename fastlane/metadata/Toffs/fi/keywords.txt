@@ -1,1 +1,1 @@
-salkku,sijoitus,osakkeet,ETF,osinko,kalenteri,tracker,tuotto,omaisuus,kauppa 
+etf,osinko,kalenteri,tuotto,varainhallinta,salkku,sijoitussovellus

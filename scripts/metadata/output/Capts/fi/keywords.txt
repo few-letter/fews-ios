@@ -1,1 +1,0 @@
-tekstipoiminta,kuvantunnistus,tekstihavaitseminen,asiakirjaskanneri,käsikirjoitus,ocr

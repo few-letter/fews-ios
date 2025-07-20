@@ -1,1 +1,0 @@
-estrazionetesto,riconoscimentoimmagine,rilevamentotesto,scandocumento,scrittura,ocr

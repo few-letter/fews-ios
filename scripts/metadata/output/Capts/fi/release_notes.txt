@@ -1,1 +1,0 @@
-Tämä päivitys parantaa AI OCR tarkkuutta. Käsikirjoituksen tunnistus ja tekstin poiminta ovat nopeampia.

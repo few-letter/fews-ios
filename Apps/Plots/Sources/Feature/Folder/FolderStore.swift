@@ -51,7 +51,6 @@ public struct FolderStore {
             case requestPlot(FolderType)
             case requestAddPlot(PlotModel)
             case requestSettings
-            case requestDelete(FolderID)
         }
     }
     
@@ -129,8 +128,15 @@ public struct FolderStore {
                     return .none
                 }
                 
-            case .alert(.presented(.requestDelete(let folderID))):
-                return .send(.delegate(.requestDelete(folderID)))
+            case .alert(.presented(let action)):
+                switch action {
+                case .requestDelete(let folderID):
+                    if case let .folder(folder) = state.folderTypes.first(where: { $0.id == folderID }) {
+                        folderClient.delete(folder: folder)
+                        return .send(.fetch)
+                    }
+                    return .none
+                }
                 
             case .delegate, .alert, .addFolder:
                 return .none

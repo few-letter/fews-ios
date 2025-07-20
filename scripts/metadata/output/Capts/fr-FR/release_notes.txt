@@ -1,1 +1,0 @@
-Cette mise à jour améliore précision AI OCR. Reconnaissance écriture et extraction texte plus rapides.

@@ -1,0 +1,12 @@
+Rastrea tus libros con Plots, la app definitiva de rastreador de libros y registro de lectura. Registra fácilmente libros, películas y series como notas, califica con 5 estrellas y organiza en carpetas. Sincroniza de forma segura vía iCloud.
+Gestiona tu diario de lectura y registro de películas sin esfuerzo.
+
+Por qué Plots destaca:
+• Notas profundas de páginas, citas e ideas
+• Calificación intuitiva de 5 estrellas
+• Clasifica por género o serie
+• Etiquetas de constelaciones para vibras únicas
+• UI minimalista fácil de usar
+• Copia de seguridad automática iCloud
+
+Construye hábitos de lectura e inspírate para el siguiente. ¡Descarga Plots ahora y comienza a registrar tu viaje!

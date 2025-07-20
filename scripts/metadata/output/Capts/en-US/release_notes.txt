@@ -1,1 +1,0 @@
-This update boosts AI OCR accuracy for better handwriting detection. Photo text extraction is faster, offering a smoother experience.

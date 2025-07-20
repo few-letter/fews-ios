@@ -1,1 +1,0 @@
-Questo aggiornamento migliora accuratezza AI OCR. Riconoscimento scrittura e estrazione testo più veloci.

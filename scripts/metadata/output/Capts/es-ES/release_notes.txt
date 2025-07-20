@@ -1,1 +1,0 @@
-Esta actualización mejora precisión AI OCR. Reconocimiento de manuscrita y extracción de texto son más rápidas.

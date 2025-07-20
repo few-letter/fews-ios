@@ -1,1 +1,0 @@
-wyodrebnianietekstu,rozpoznawanieobrazu,wykrywaniatekstu,skandokumentu,pismoręczne,ocr

@@ -1,0 +1,1 @@
+registroleitura,diariolivros,rastreadorfilmes,rastreioseries,notaslivros,avaliacao5estrelas

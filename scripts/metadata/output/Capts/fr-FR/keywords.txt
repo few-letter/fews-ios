@@ -1,1 +1,0 @@
-extractiontexte,reconnaissanceimage,detectiontexte,scandocument,manuscrit,ocr

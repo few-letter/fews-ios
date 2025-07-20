@@ -1,1 +1,0 @@
-Denne opdatering forbedrer AI OCR nøjagtighed. Håndskrift genkendelse og tekstudtræk er hurtigere.

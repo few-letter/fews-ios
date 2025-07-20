@@ -1,1 +1,0 @@
-textextraktion,bilderkennung,textdetektion,dokumentscan,handschrift,ocr

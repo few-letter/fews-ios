@@ -1,1 +1,0 @@
-Dieses Update verbessert AI OCR Genauigkeit. Handschrifterkennung und Textextraktion sind schneller.

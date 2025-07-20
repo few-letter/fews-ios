@@ -81,8 +81,6 @@ public struct HomeStore {
                 case .requestSettings:
                     state.path.append(.settings(.init()))
                     return .none
-                case .requestDelete(let folderID):
-                    return .none
                 }
                 
             case .path, .folder:

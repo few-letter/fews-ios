@@ -1,1 +1,0 @@
-Ta aktualizacja poprawia dokładność AI OCR. Rozpoznawanie pisma ręcznego i wyodrębnianie tekstu są szybsze.

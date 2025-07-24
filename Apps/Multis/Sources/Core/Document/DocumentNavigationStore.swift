@@ -36,9 +36,9 @@ public struct DocumentNavigationStore {
     
     @ObservableState
     public struct State {
-        public var tasks: [TaskModel]
+        public var tasks: [TaskData]
         public var selectedPeriod: DocumentPeriod
-        public var groupedTasks: [String: [TaskModel]]
+        public var groupedTasks: [String: [TaskData]]
         
         // 실행 중인 타이머 ID들
         public var runningTimerIds: IdentifiedArrayOf<TaskTimerID> = []
@@ -63,13 +63,13 @@ public struct DocumentNavigationStore {
         case onAppear
         
         case fetch
-        case fetched([TaskModel])
+        case fetched([TaskData])
         case periodChanged(DocumentPeriod)
         
-        case tap(TaskModel)
+        case tap(TaskData)
         
         // 타이머 관련 액션들
-        case startTimer(TaskModel)
+        case startTimer(TaskData)
         case stopTimer(UUID)
         case timerTick(UUID, Int)
         
@@ -209,11 +209,11 @@ public struct DocumentNavigationStore {
         .forEach(\.path, action: \.path)
     }
     
-    private func groupTasksByCategory(tasks: [TaskModel]) -> [String: [TaskModel]] {
-        return TaskModel.groupedByCategory(tasks)
+    private func groupTasksByCategory(tasks: [TaskData]) -> [String: [TaskData]] {
+        return TaskData.groupedByCategory(tasks)
     }
     
-    private func filterTasksByPeriod(tasks: [TaskModel], period: DocumentPeriod) -> [TaskModel] {
+    private func filterTasksByPeriod(tasks: [TaskData], period: DocumentPeriod) -> [TaskData] {
         let calendar = Calendar.current
         let now = Date()
         

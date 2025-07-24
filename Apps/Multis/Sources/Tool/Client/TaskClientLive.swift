@@ -39,7 +39,7 @@ public class TaskClientLive: TaskClient {
         }
     }
     
-    private func generateMockTasks() -> [TaskModel] {
+    private func generateMockTasks() -> [TaskData] {
         let calendar = Calendar.current
         let now = Date()
         let currentMonth = calendar.component(.month, from: now)
@@ -86,7 +86,7 @@ public class TaskClientLive: TaskClient {
         
         let taskTimes = [15, 30, 45, 60, 90, 120, 180, 240] // in minutes
         
-        var mockTasks: [TaskModel] = []
+        var mockTasks: [TaskData] = []
         
         let targetDates = [
             now, // today's date
@@ -124,7 +124,7 @@ public class TaskClientLive: TaskClient {
                 
                 let category = categoryMap[categoryName]
                 
-                let task = TaskModel(
+                let task = TaskData(
                     id: UUID(),
                     title: title,
                     time: time * 60 * 1000, // convert minutes to ms
@@ -155,7 +155,7 @@ public class TaskClientLive: TaskClient {
         }
     }
     
-    public func createOrUpdate(taskModel: TaskModel) -> TaskModel {
+    public func createOrUpdate(taskModel: TaskData) -> TaskData {
         do {
             let swiftDataTask: Task
             
@@ -178,25 +178,25 @@ public class TaskClientLive: TaskClient {
             
             try context.save()
             
-            return TaskModel(from: swiftDataTask)
+            return TaskData(from: swiftDataTask)
         } catch {
             print("Failed to createOrUpdate task: \(error)")
             return taskModel
         }
     }
     
-    public func fetches() -> [TaskModel] {
+    public func fetches() -> [TaskData] {
         do {
             let descriptor: FetchDescriptor<Task> = .init()
             let result = try context.fetch(descriptor)
-            return result.map { TaskModel(from: $0) }
+            return result.map { TaskData(from: $0) }
         } catch {
             print("Failed to fetch tasks: \(error)")
             return []
         }
     }
     
-    public func delete(taskModel: TaskModel) {
+    public func delete(taskModel: TaskData) {
         do {
             if let existingTask = taskModel.task {
                 context.delete(existingTask)
@@ -210,15 +210,15 @@ public class TaskClientLive: TaskClient {
 }
 
 public class TaskClientTest: TaskClient {
-    public func createOrUpdate(taskModel: TaskModel) -> TaskModel {
+    public func createOrUpdate(taskModel: TaskData) -> TaskData {
         fatalError()
     }
     
-    public func fetches() -> [TaskModel] {
+    public func fetches() -> [TaskData] {
         fatalError()
     }
     
-    public func delete(taskModel: TaskModel) {
+    public func delete(taskModel: TaskData) {
         fatalError()
     }
 }

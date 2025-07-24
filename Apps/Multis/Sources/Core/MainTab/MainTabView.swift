@@ -22,7 +22,8 @@ public struct MainTabView: View {
     public var body: some View {
         TabView(selection: $store.selectedTab.sending(\.tabSelected)) {
             CalendarNavigationView(
-                store: store.scope(state: \.calendars, action: \.calendars)
+                store: store.scope(state: \.calendars, action: \.calendars),
+                timerModel: timerModel
             )
             .tabItem {
                 Image(systemName: MainTab.calendars.systemImage)
@@ -51,11 +52,9 @@ public struct MainTabView: View {
         .onChange(of: scenePhase) { _, newPhase in
             switch newPhase {
             case .background:
-                store.send(.calendars(.appWillEnterBackground))
-                store.send(.documents(.appWillEnterBackground))
+                timerModel.handleAppWillEnterBackground()
             case .active:
-                store.send(.calendars(.appWillEnterForeground))
-                store.send(.documents(.appWillEnterForeground))
+                timerModel.handleAppWillEnterForeground()
             default:
                 break
             }

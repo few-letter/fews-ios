@@ -10,9 +10,9 @@ import ComposableArchitecture
 import SwiftData
 
 public protocol TaskClient {
-    func createOrUpdate(taskModel: TaskModel) -> TaskModel
-    func fetches() -> [TaskModel]
-    func delete(taskModel: TaskModel)
+    func createOrUpdate(taskModel: TaskData) -> TaskData
+    func fetches() -> [TaskData]
+    func delete(taskModel: TaskData)
 }
 
 private struct TaskClientKey: TestDependencyKey {

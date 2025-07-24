@@ -18,12 +18,12 @@ public struct AddTaskNavigationStore {
     @ObservableState
     public struct State {
         public var path: StackState<Path.State>
-        public var task: TaskModel
+        public var task: TaskData
         public var categories: [CategoryModel] = []
         
         public init(
             path: StackState<Path.State> = .init(),
-            task: TaskModel
+            task: TaskData
         ) {
             self.path = path
             self.task = task

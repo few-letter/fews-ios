@@ -11,9 +11,30 @@ import Dependencies
 
 @Observable
 public class MultiTimerModel: TimerModel {
-    public private(set) var tasks: IdentifiedArrayOf<TaskModel>
-    public private(set) var goals: IdentifiedArrayOf<GoalData>
-    public private(set) var runningTimers: IdentifiedArrayOf<TimerID> = []
+    public private(set) var documents: IdentifiedArrayOf<TimeDocument> = []
+    private var runningDocuments: IdentifiedArrayOf<TimeDocument> = []
+    
+    public var documentsByDate: [Date: [TimeDocument]] {
+        let groupedByDate = Dictionary(grouping: documents) { document in
+            Calendar.current.startOfDay(for: document.date)
+        }
+        
+        return groupedByDate.mapValues { documentsForDate in
+            documentsForDate.sorted { lhs, rhs in
+                // Task를 먼저, 그 다음 Goal, 그리고 시간 역순으로 정렬
+                switch (lhs, rhs) {
+                case (.task(let lhsTask), .task(let rhsTask)):
+                    return lhsTask.time > rhsTask.time
+                case (.goal(let lhsGoal), .goal(let rhsGoal)):
+                    return lhsGoal.totalTime > rhsGoal.totalTime
+                case (.task, .goal):
+                    return true
+                case (.goal, .task):
+                    return false
+                }
+            }
+        }
+    }
     
     @ObservationIgnored
     @Dependency(\.goalClient) private var goalClient
@@ -25,13 +46,7 @@ public class MultiTimerModel: TimerModel {
     private var backgroundTimestamps: [String: Date] = [:]
     private var timerTasks: [String: _Concurrency.Task<Void, Never>] = [:]
     
-    public init(
-        tasks: IdentifiedArrayOf<TaskModel> = [],
-        goals: IdentifiedArrayOf<GoalData> = []
-    ) {
-        self.tasks = tasks
-        self.goals = goals
-    }
+    public init() {}
     
     deinit {
         for task in timerTasks.values {
@@ -39,100 +54,99 @@ public class MultiTimerModel: TimerModel {
         }
     }
     
-    public func fetchGoals() {
-        self.goals = .init(uniqueElements: goalClient.fetches())
+    public func fetch() {
+        let tasks = taskClient.fetches().map { TimeDocument.task($0) }
+        let goals = goalClient.fetches().map { TimeDocument.goal($0) }
+        self.documents = IdentifiedArrayOf(uniqueElements: tasks + goals)
     }
     
-    public func fetchTasks() {
-        self.tasks = .init(uniqueElements: taskClient.fetches())
-    }
-    
-    public func toggleTimer(for timerID: TimerID) {
-        if runningTimers.contains(timerID) {
-            stopTimer(for: timerID)
+    public func toggleTimer(document: TimeDocument) {
+        if runningDocuments.contains(document) {
+            stopTimer(for: document)
         } else {
-            startTimer(for: timerID)
+            startTimer(for: document)
         }
     }
     
-    public func toggleTaskTimer(for task: TaskModel) {
-        toggleTimer(for: .task(taskId: task.id, date: task.date))
-    }
-    
-    public func toggleGoalTimer(for goal: GoalData) {
-        toggleTimer(for: .goal(goalId: goal.id))
+    public func isTimerRunning(document: TimeDocument) -> Bool {
+        return runningDocuments.contains(document)
     }
     
     public func handleAppWillEnterBackground() {
         let currentTime = Date()
         
-        for timerID in runningTimers {
-            backgroundTimestamps[timerID.id] = currentTime
-            UserDefaults.standard.set(currentTime.timeIntervalSince1970, forKey: "timer_background_\(timerID.id)")
+        for document in runningDocuments {
+            backgroundTimestamps[document.id.uuidString] = currentTime
+            UserDefaults.standard.set(currentTime.timeIntervalSince1970, forKey: "timer_background_\(document.id)")
         }
     }
     
     public func handleAppWillEnterForeground() {
         updateBackgroundTimers()
     }
-    
-    public func stopAllTimers() {
-        let currentTimers = Array(runningTimers)
-        for timerID in currentTimers {
-            stopTimer(for: timerID)
-        }
-    }
-    
-    public var runningTimersCount: Int {
-        return runningTimers.count
-    }
 }
 
 extension MultiTimerModel {
-    private func startTimer(for timerID: TimerID) {
-        guard !self.runningTimers.contains(timerID) else { return }
-        self.runningTimers.append(timerID)
+    private func startTimer(for document: TimeDocument) {
+        guard !runningDocuments.contains(document) else { return }
+        runningDocuments.append(document)
+        
         let timerTask = _Concurrency.Task { @MainActor [weak self] in
             while !_Concurrency.Task.isCancelled {
                 try? await self?.clock.sleep(for: .milliseconds(100))
-                guard self?.runningTimers.contains(timerID) == true else { break }
-                self?.updateTime(for: timerID, increment: 100)
+                guard self?.runningDocuments.contains(document) == true else { break }
+                self?.updateTime(for: document, increment: 100)
             }
         }
-        self.timerTasks[timerID.id] = timerTask
+        
+        timerTasks[document.id.uuidString] = timerTask
     }
     
-    private func stopTimer(for timerID: TimerID) {
-        self.runningTimers.removeAll { $0 == timerID }
+    private func stopTimer(for document: TimeDocument) {
+        runningDocuments.removeAll { $0.id == document.id }
         
-        if let timerTask = timerTasks[timerID.id] {
+        if let timerTask = timerTasks[document.id.uuidString] {
             timerTask.cancel()
-            self.timerTasks.removeValue(forKey: timerID.id)
+            timerTasks.removeValue(forKey: document.id.uuidString)
         }
         
-        self.saveEntity(for: timerID)
+        saveEntity(for: document)
     }
     
-    private func updateTime(for timerID: TimerID, increment: Int) {
-        switch timerID {
-        case .task(let id, _):
-            self.tasks[id: id]?.time += increment
-        case .goal(let id):
-            self.goals[id: id]?.addTime(increment, forDate: .now)
+    private func updateTime(for document: TimeDocument, increment: Int) {
+        switch document {
+        case .task(let task):
+            if let updatedTask = documents[id: task.id] {
+                if case .task(var taskData) = updatedTask {
+                    taskData.time += increment
+                    documents[id: task.id] = .task(taskData)
+                }
+            }
+        case .goal(let goal):
+            if let updatedGoal = documents[id: goal.id] {
+                if case .goal(var goalData) = updatedGoal {
+                    goalData.addTime(increment, forDate: .now)
+                    documents[id: goal.id] = .goal(goalData)
+                }
+            }
         }
     }
     
-    private func saveEntity(for timerID: TimerID) {
-        switch timerID {
-        case .task(let id, _):
-            if let task = self.tasks[id: id] {
-                let updatedTask = taskClient.createOrUpdate(taskModel: task)
-                tasks[id: id] = updatedTask
+    private func saveEntity(for document: TimeDocument) {
+        switch document {
+        case .task(let task):
+            if let currentDoc = documents[id: task.id] {
+                if case .task(let taskData) = currentDoc {
+                    let updatedTask = taskClient.createOrUpdate(taskModel: taskData)
+                    documents[id: task.id] = .task(updatedTask)
+                }
             }
-        case .goal(let id):
-            if let goal = self.goals[id: id] {
-                let updatedGoal = goalClient.createOrUpdate(goal: goal)
-                self.goals[id: id] = updatedGoal
+        case .goal(let goal):
+            if let currentDoc = documents[id: goal.id] {
+                if case .goal(let goalData) = currentDoc {
+                    let updatedGoal = goalClient.createOrUpdate(goal: goalData)
+                    documents[id: goal.id] = .goal(updatedGoal)
+                }
             }
         }
     }
@@ -140,18 +154,18 @@ extension MultiTimerModel {
     private func updateBackgroundTimers() {
         let currentTime = Date()
         
-        for timerID in runningTimers {
-            let key = "timer_background_\(timerID.id)"
+        for document in runningDocuments {
+            let key = "timer_background_\(document.id)"
             let backgroundStartTime = UserDefaults.standard.double(forKey: key)
             
             if backgroundStartTime > 0 {
                 let elapsedSeconds = currentTime.timeIntervalSince1970 - backgroundStartTime
                 let elapsedMilliseconds = Int(elapsedSeconds * 1000)
                 
-                self.updateTime(for: timerID, increment: elapsedMilliseconds)
+                updateTime(for: document, increment: elapsedMilliseconds)
                 
                 UserDefaults.standard.removeObject(forKey: key)
-                self.backgroundTimestamps.removeValue(forKey: timerID.id)
+                backgroundTimestamps.removeValue(forKey: document.id.uuidString)
             }
         }
     }

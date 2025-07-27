@@ -18,12 +18,12 @@ public struct AddTaskNavigationStore {
     @ObservableState
     public struct State {
         public var path: StackState<Path.State>
-        public var task: TaskData
+        public var task: TaskItem
         public var categories: [CategoryModel] = []
         
         public init(
             path: StackState<Path.State> = .init(),
-            task: TaskData
+            task: TaskItem
         ) {
             self.path = path
             self.task = task
@@ -69,7 +69,7 @@ public struct AddTaskNavigationStore {
                 return .send(.delegate(.dismiss))
                 
             case .saveButtonTapped:
-                let _ = taskClient.createOrUpdate(taskModel: state.task)
+                let _ = taskClient.createOrUpdate(task: state.task)
                 return .send(.delegate(.requestSaved))
                 
             case .addCategoryButtonTapped:

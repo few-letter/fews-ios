@@ -36,9 +36,9 @@ public struct DocumentNavigationStore {
     
     @ObservableState
     public struct State {
-        public var tasks: [TaskData]
+        public var tasks: [TaskItem]
         public var selectedPeriod: DocumentPeriod
-        public var groupedTasks: [String: [TaskData]]
+        public var groupedTasks: [String: [TaskItem]]
         
         // 실행 중인 타이머 ID들
         public var runningTimerIds: IdentifiedArrayOf<TaskTimerID> = []
@@ -63,13 +63,13 @@ public struct DocumentNavigationStore {
         case onAppear
         
         case fetch
-        case fetched([TaskData])
+        case fetched([TaskItem])
         case periodChanged(DocumentPeriod)
         
-        case tap(TaskData)
+        case tap(TaskItem)
         
         // 타이머 관련 액션들
-        case startTimer(TaskData)
+        case startTimer(TaskItem)
         case stopTimer(UUID)
         case timerTick(UUID, Int)
         
@@ -132,7 +132,7 @@ public struct DocumentNavigationStore {
                 
                 if let taskIndex = state.tasks.firstIndex(where: { $0.id == taskId }) {
                     let task = state.tasks[taskIndex]
-                    let savedTask = taskClient.createOrUpdate(taskModel: task)
+                    let savedTask = taskClient.createOrUpdate(task: task)
                     state.tasks[taskIndex] = savedTask
                 }
                 
@@ -148,7 +148,7 @@ public struct DocumentNavigationStore {
                 if let taskIndex = state.tasks.firstIndex(where: { $0.id == taskId }) {
                     state.tasks[taskIndex].time += ms
                     let task = state.tasks[taskIndex]
-                    let _ = taskClient.createOrUpdate(taskModel: task)
+                    let _ = taskClient.createOrUpdate(task: task)
                 }
                 return .none
                 
@@ -186,7 +186,7 @@ public struct DocumentNavigationStore {
                     if let taskIndex = state.tasks.firstIndex(where: { $0.id == taskId }) {
                         state.tasks[taskIndex].time += elapsedTime
                         let task = state.tasks[taskIndex]
-                        let _ = taskClient.createOrUpdate(taskModel: task)
+                        let _ = taskClient.createOrUpdate(task: task)
                     }
                 }
                 
@@ -209,11 +209,11 @@ public struct DocumentNavigationStore {
         .forEach(\.path, action: \.path)
     }
     
-    private func groupTasksByCategory(tasks: [TaskData]) -> [String: [TaskData]] {
-        return TaskData.groupedByCategory(tasks)
+    private func groupTasksByCategory(tasks: [TaskItem]) -> [String: [TaskItem]] {
+        return TaskItem.groupedByCategory(tasks)
     }
     
-    private func filterTasksByPeriod(tasks: [TaskData], period: DocumentPeriod) -> [TaskData] {
+    private func filterTasksByPeriod(tasks: [TaskItem], period: DocumentPeriod) -> [TaskItem] {
         let calendar = Calendar.current
         let now = Date()
         

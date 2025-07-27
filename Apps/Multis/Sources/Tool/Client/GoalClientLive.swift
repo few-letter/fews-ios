@@ -39,7 +39,7 @@ public class GoalClientLive: GoalClient {
         }
     }
     
-    private func generateMockGoals() -> [GoalData] {
+    private func generateMockGoals() -> [GoalItem] {
         let calendar = Calendar.current
         let now = Date()
         
@@ -58,7 +58,7 @@ public class GoalClientLive: GoalClient {
             uniquingKeysWith: { first, _ in first }
         )
         
-        var mockGoals: [GoalData] = []
+        var mockGoals: [GoalItem] = []
         let categoryNames = ["Work", "Learning", "Personal", "Health"]
         
         for (index, title) in goals.enumerated() {
@@ -82,7 +82,7 @@ public class GoalClientLive: GoalClient {
                 }
             }
             
-            let goal = GoalData(
+            let goal = GoalItem(
                 title: title,
                 startDate: startDate,
                 endDate: endDate,
@@ -109,7 +109,7 @@ public class GoalClientLive: GoalClient {
         }
     }
     
-    public func createOrUpdate(goal: GoalData) -> GoalData {
+    public func createOrUpdate(goal: GoalItem) -> GoalItem {
         do {
             let swiftDataGoal: Goal
             
@@ -125,25 +125,25 @@ public class GoalClientLive: GoalClient {
             
             try context.save()
             
-            return GoalData(from: swiftDataGoal)
+            return GoalItem(from: swiftDataGoal)
         } catch {
             print("Failed to createOrUpdate goal: \(error)")
             return goal
         }
     }
     
-    public func fetches() -> [GoalData] {
+    public func fetches() -> [GoalItem] {
         do {
             let descriptor: FetchDescriptor<Goal> = .init()
             let result = try context.fetch(descriptor)
-            return result.map { GoalData(from: $0) }.sorted()
+            return result.map { GoalItem(from: $0) }.sorted()
         } catch {
             print("Failed to fetch goals: \(error)")
             return []
         }
     }
     
-    public func delete(goal: GoalData) {
+    public func delete(goal: GoalItem) {
         do {
             if let existingGoal = goal.swiftdata {
                 context.delete(existingGoal)

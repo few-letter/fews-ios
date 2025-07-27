@@ -11,8 +11,12 @@ import Dependencies
 import Feature_Common
 
 public struct CalendarNavigationView: View {
-    @Bindable public var store: StoreOf<CalendarNavigationStore>
-    @State private var timerModel: any TimerModel
+    @Bindable var store: StoreOf<CalendarNavigationStore>
+    @State var timerModel: any TimerModel
+    
+    @State private var showEditGoal: Presentation<GoalItem>?
+    @State private var showEditTask: Presentation<TaskItem>?
+    @State private var showSelectGoal: Presentation<[GoalItem]>?
     
     public init(store: StoreOf<CalendarNavigationStore>, timerModel: any TimerModel) {
         self.store = store
@@ -25,33 +29,69 @@ public struct CalendarNavigationView: View {
         ) {
             CalendarView(
                 documentsByDate: timerModel.documentsByDate,
-                timerModel: timerModel,
                 onDateChanged: { date in
                     store.send(.dateChanged(date))
                 },
-                onDocumentTapped: { document in
+                onDocumentTapped: { id in
+                    guard let document =  self.timerModel.documents[id: id] else { return }
+                    
                     switch document {
-                    case .task(let taskData):
-                        store.send(.tap(taskData))
-                    case .goal(let goalData):
-                        // Goal 탭 처리는 추후 구현
-                        break
+                    case .goal(let item):
+                        self.showEditGoal = .init(value: item)
+                    case .task(let item):
+                        self.showEditTask = .init(value: item)
                     }
                 },
-                onPlusButtonTapped: {
-                    store.send(.plusButtonTapped)
-                },
-                onDeleteDocument: { document in
-                    switch document {
-                    case .task(let taskData):
-                        store.send(.delete(taskData))
-                        timerModel.fetch()
-                    case .goal(let goalData):
-                        // Goal 삭제 처리는 추후 구현
-                        break
+                onGoalTapped: {
+                    let goals: [GoalItem] = self.timerModel.documents.compactMap {
+                        if case .goal(let item) = $0 {
+                            return item
+                        }
+                        return nil
                     }
+                    self.showSelectGoal = .init(value: goals)
+                },
+                onTaskTapped: {
+                    self.showEditTask = .init(value: nil)
+                },
+                onDeleteDocument: { documentID in
+                    timerModel.delete(documentID: documentID)
+                },
+                isTimerRunning: { documentID in
+                    timerModel.isTimerRunning(documentID: documentID)
+                },
+                onTimerToggle: { documentID in
+                    timerModel.toggle(documentID: documentID)
                 }
             )
+            .sheet(isPresented: .init(get: { self.showEditGoal != nil }, set: { _ in self.showEditGoal = nil })) {
+                EditGoalView(
+                    goal: self.showEditGoal?.value,
+                    saved: { goal in
+                        timerModel.update(document: .goal(goal))
+                    },
+                    dismiss: {
+                        self.showEditGoal = nil
+                    }
+                )
+            }
+            .sheet(isPresented: .init(get: { self.showEditTask != nil }, set: { _ in self.showEditTask = nil })) {
+                EditTaskView(
+                    task: self.showEditTask?.value,
+                    saved: { task in
+                        timerModel.update(document: .task(task))
+                    },
+                    dismiss: {
+                        self.showEditTask = nil
+                    }
+                )
+            }
+            .sheet(isPresented: .init(get: { self.showSelectGoal != nil }, set: { _ in self.showSelectGoal = nil })) {
+                GoalsView(
+                    goals: self.showSelectGoal?.value ?? [],
+                    select: { _ in }
+                )
+            }
             .overlay {
                 AddTaskPresentationView(store: store.scope(state: \.addTaskPresentation, action: \.addTaskPresentation))
             }
@@ -70,4 +110,8 @@ public struct CalendarNavigationView: View {
             
         }
     }
+}
+
+private struct Presentation<T> {
+    let value: T?
 }

@@ -8,12 +8,12 @@
 import Foundation
 import SwiftData
 
-public struct GoalData: Identifiable, Comparable {
+public struct GoalItem: Identifiable, Comparable {
     public var id: UUID
     public var title: String
     public var startDate: Date
     public var endDate: Date?
-    public var times: [Date: Int] // 날짜별 시간 (ms 단위)
+    public var times: [Date: Int] //  날짜별 시간 (ms 단위)
     public var category: CategoryModel?
     public var createdAt: Date
     public var updatedAt: Date
@@ -44,12 +44,12 @@ public struct GoalData: Identifiable, Comparable {
     }
     
     // MARK: Equatable (Comparable의 요구사항)
-    public static func == (lhs: GoalData, rhs: GoalData) -> Bool {
+    public static func == (lhs: GoalItem, rhs: GoalItem) -> Bool {
         return lhs.id == rhs.id
     }
     
     // MARK: Comparable
-    public static func < (lhs: GoalData, rhs: GoalData) -> Bool {
+    public static func < (lhs: GoalItem, rhs: GoalItem) -> Bool {
         return lhs.createdAt > rhs.createdAt
     }
     
@@ -102,7 +102,7 @@ public struct GoalData: Identifiable, Comparable {
 }
 
 // MARK: - SwiftData <-> Model Conversion Extensions
-extension GoalData {
+extension GoalItem {
     /// SwiftData Goal 객체로부터 GoalModel 생성
     public init(from goal: Goal) {
         let categoryModel = goal.category != nil ? CategoryModel(from: goal.category!) : nil

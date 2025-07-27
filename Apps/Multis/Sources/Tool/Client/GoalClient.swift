@@ -10,9 +10,9 @@ import ComposableArchitecture
 import SwiftData
 
 public protocol GoalClient {
-    func createOrUpdate(goal: GoalData) -> GoalData
-    func fetches() -> [GoalData]
-    func delete(goal: GoalData)
+    func createOrUpdate(goal: GoalItem) -> GoalItem
+    func fetches() -> [GoalItem]
+    func delete(goal: GoalItem)
 }
 
 // MARK: - DependencyKey
@@ -29,15 +29,15 @@ extension DependencyValues {
 
 // MARK: - Test Implementation
 public struct GoalClientTest: GoalClient {
-    public func createOrUpdate(goal: GoalData) -> GoalData {
+    public func createOrUpdate(goal: GoalItem) -> GoalItem {
         return goal
     }
     
-    public func fetches() -> [GoalData] {
+    public func fetches() -> [GoalItem] {
         return []
     }
     
-    public func delete(goal: GoalData) {
+    public func delete(goal: GoalItem) {
         // Test implementation
     }
 } 

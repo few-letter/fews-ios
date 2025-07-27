@@ -39,7 +39,7 @@ public class TaskClientLive: TaskClient {
         }
     }
     
-    private func generateMockTasks() -> [TaskData] {
+    private func generateMockTasks() -> [TaskItem] {
         let calendar = Calendar.current
         let now = Date()
         let currentMonth = calendar.component(.month, from: now)
@@ -86,7 +86,7 @@ public class TaskClientLive: TaskClient {
         
         let taskTimes = [15, 30, 45, 60, 90, 120, 180, 240] // in minutes
         
-        var mockTasks: [TaskData] = []
+        var mockTasks: [TaskItem] = []
         
         let targetDates = [
             now, // today's date
@@ -124,7 +124,7 @@ public class TaskClientLive: TaskClient {
                 
                 let category = categoryMap[categoryName]
                 
-                let task = TaskData(
+                let task = TaskItem(
                     id: UUID(),
                     title: title,
                     time: time * 60 * 1000, // convert minutes to ms
@@ -155,50 +155,50 @@ public class TaskClientLive: TaskClient {
         }
     }
     
-    public func createOrUpdate(taskModel: TaskData) -> TaskData {
+    public func createOrUpdate(task: TaskItem) -> TaskItem {
         do {
             let swiftDataTask: Task
             
-            if let existingTask = taskModel.task {
-                existingTask.title = taskModel.title
-                existingTask.time = taskModel.time
-                existingTask.date = taskModel.date
-                existingTask.category = taskModel.category?.category
+            if let existingTask = task.task {
+                existingTask.title = task.title
+                existingTask.time = task.time
+                existingTask.date = task.date
+                existingTask.category = task.category?.category
                 swiftDataTask = existingTask
             } else {
                 swiftDataTask = Task(
-                    id: taskModel.id,
-                    title: taskModel.title,
-                    date: taskModel.date,
-                    time: taskModel.time,
-                    category: taskModel.category?.category
+                    id: task.id,
+                    title: task.title,
+                    date: task.date,
+                    time: task.time,
+                    category: task.category?.category
                 )
                 context.insert(swiftDataTask)
             }
             
             try context.save()
             
-            return TaskData(from: swiftDataTask)
+            return TaskItem(from: swiftDataTask)
         } catch {
             print("Failed to createOrUpdate task: \(error)")
-            return taskModel
+            return task
         }
     }
     
-    public func fetches() -> [TaskData] {
+    public func fetches() -> [TaskItem] {
         do {
             let descriptor: FetchDescriptor<Task> = .init()
             let result = try context.fetch(descriptor)
-            return result.map { TaskData(from: $0) }
+            return result.map { TaskItem(from: $0) }
         } catch {
             print("Failed to fetch tasks: \(error)")
             return []
         }
     }
     
-    public func delete(taskModel: TaskData) {
+    public func delete(task: TaskItem) {
         do {
-            if let existingTask = taskModel.task {
+            if let existingTask = task.task {
                 context.delete(existingTask)
                 print("Task deleted")
                 try context.save()
@@ -210,15 +210,15 @@ public class TaskClientLive: TaskClient {
 }
 
 public class TaskClientTest: TaskClient {
-    public func createOrUpdate(taskModel: TaskData) -> TaskData {
+    public func createOrUpdate(task: TaskItem) -> TaskItem {
         fatalError()
     }
     
-    public func fetches() -> [TaskData] {
+    public func fetches() -> [TaskItem] {
         fatalError()
     }
     
-    public func delete(taskModel: TaskData) {
+    public func delete(task: TaskItem) {
         fatalError()
     }
 }

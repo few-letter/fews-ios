@@ -35,8 +35,8 @@ public struct CalendarNavigationStore {
         
         case dateChanged(Date)
         case plusButtonTapped
-        case tap(TaskData)
-        case delete(TaskData)
+        case tap(TaskItem)
+        case delete(TaskItem)
         
         case addTaskPresentation(AddTaskPresentationStore.Action)
         case path(StackActionOf<Path>)
@@ -65,7 +65,7 @@ public struct CalendarNavigationStore {
                 return .none
                 
             case .delete(let task):
-                taskClient.delete(taskModel: task)
+                taskClient.delete(task: task)
                 return .none
                 
             case .addTaskPresentation(.delegate(let action)):

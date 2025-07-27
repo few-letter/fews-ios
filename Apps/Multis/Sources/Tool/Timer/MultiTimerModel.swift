@@ -14,26 +14,12 @@ public class MultiTimerModel: TimerModel {
     public private(set) var documents: IdentifiedArrayOf<TimeDocument> = []
     private var runningDocuments: IdentifiedArrayOf<TimeDocument> = []
     
-    public var documentsByDate: [Date: [TimeDocument]] {
-        let groupedByDate = Dictionary(grouping: documents) { document in
-            Calendar.current.startOfDay(for: document.date)
+    public var documentsByDate: [Date: IdentifiedArrayOf<TimeDocument>] {
+        var groupedByDate: [Date: IdentifiedArrayOf<TimeDocument>] = [:]
+        for document in documents {
+            groupedByDate[document.id.date, default: []].append(document)
         }
-        
-        return groupedByDate.mapValues { documentsForDate in
-            documentsForDate.sorted { lhs, rhs in
-                // Task를 먼저, 그 다음 Goal, 그리고 시간 역순으로 정렬
-                switch (lhs, rhs) {
-                case (.task(let lhsTask), .task(let rhsTask)):
-                    return lhsTask.time > rhsTask.time
-                case (.goal(let lhsGoal), .goal(let rhsGoal)):
-                    return lhsGoal.totalTime > rhsGoal.totalTime
-                case (.task, .goal):
-                    return true
-                case (.goal, .task):
-                    return false
-                }
-            }
-        }
+        return groupedByDate
     }
     
     @ObservationIgnored
@@ -55,12 +41,18 @@ public class MultiTimerModel: TimerModel {
     }
     
     public func fetch() {
-        let tasks = taskClient.fetches().map { TimeDocument.task($0) }
-        let goals = goalClient.fetches().map { TimeDocument.goal($0) }
+        let tasks: [TimeDocument] = taskClient.fetches().map { .init(item: .task($0)) }
+        let goals: [TimeDocument] = goalClient.fetches().flatMap { item in
+            return item.times.map { key, value in
+                return .init(item: .goal(item), date: key)
+            }
+        }
         self.documents = IdentifiedArrayOf(uniqueElements: tasks + goals)
     }
     
-    public func toggleTimer(document: TimeDocument) {
+    public func toggle(documentID: TimeDocument.ID) {
+        guard let document = documents[id: documentID] else { return }
+        
         if runningDocuments.contains(document) {
             stopTimer(for: document)
         } else {
@@ -68,7 +60,50 @@ public class MultiTimerModel: TimerModel {
         }
     }
     
-    public func isTimerRunning(document: TimeDocument) -> Bool {
+    public func add(document: TimeDocument, date: Date?) {
+        switch document.item {
+        case .task(let item):
+            let new = taskClient.createOrUpdate(task: item)
+            self.documents.append(.init(item: .task(new)))
+        case .goal(let item):
+            return
+        }
+    }
+    
+    public func update(document: TimeDocument) {
+        switch document.item {
+        case .task(let item):
+            let new = taskClient.createOrUpdate(task: item)
+            self.documents[id: document.id] = .init(item: .task(new))
+        case .goal(let item):
+            let new = goalClient.createOrUpdate(goal: item)
+            self.documents[id: document.id] = .init(item: <#T##TimeDocumentIem#>, date: <#T##Date?#>) .goal(new)
+        }
+    }
+    
+    public func delete(documentID: TimeDocument.ID) {
+        guard let document = documents[id: documentID] else { return }
+        
+        if runningDocuments.contains(document) {
+            stopTimer(for: document)
+        }
+        documents.remove(id: documentID)
+        
+        switch document {
+        case .task(let item):
+            taskClient.delete(task: item)
+        case .goal(let goalData):
+            
+            goalClient.delete(goal: goalData)
+        }
+    }
+    
+    public func deleteAll(documentID: TimeDocument.ID) {
+        
+    }
+    
+    public func isTimerRunning(documentID: TimeDocument.ID) -> Bool {
+        guard let document = documents[id: documentID] else { return false }
         return runningDocuments.contains(document)
     }
     
@@ -137,7 +172,7 @@ extension MultiTimerModel {
         case .task(let task):
             if let currentDoc = documents[id: task.id] {
                 if case .task(let taskData) = currentDoc {
-                    let updatedTask = taskClient.createOrUpdate(taskModel: taskData)
+                    let updatedTask = taskClient.createOrUpdate(task: taskData)
                     documents[id: task.id] = .task(updatedTask)
                 }
             }

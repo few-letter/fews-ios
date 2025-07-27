@@ -8,7 +8,7 @@
 import SwiftUI
 
 public struct TaskCellView: View {
-    let task: TaskData
+    let task: TaskItem
     let isTimerRunning: Bool
     let onTimerToggle: () -> Void
     

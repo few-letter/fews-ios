@@ -10,26 +10,32 @@ import Feature_Common
 
 public struct CalendarView: View {
     let documentsByDate: [Date: [TimeDocument]]
-    let timerModel: any TimerModel
     let onDateChanged: (Date) -> Void
-    let onDocumentTapped: (TimeDocument) -> Void
-    let onPlusButtonTapped: () -> Void
-    let onDeleteDocument: (TimeDocument) -> Void
+    let onDocumentTapped: (TimeDocument.ID) -> Void
+    let onGoalTapped: () -> Void
+    let onTaskTapped: () -> Void
+    let onDeleteDocument: (TimeDocument.ID) -> Void
+    let isTimerRunning: (TimeDocument.ID) -> Bool
+    let onTimerToggle: (TimeDocument.ID) -> Void
     
     public init(
         documentsByDate: [Date: [TimeDocument]],
-        timerModel: any TimerModel,
-        onDateChanged: @escaping (Date) -> Void = { _ in },
-        onDocumentTapped: @escaping (TimeDocument) -> Void = { _ in },
-        onPlusButtonTapped: @escaping () -> Void = {},
-        onDeleteDocument: @escaping (TimeDocument) -> Void = { _ in }
+        onDateChanged: @escaping (Date) -> Void,
+        onDocumentTapped: @escaping (TimeDocument.ID) -> Void,
+        onGoalTapped: @escaping () -> Void,
+        onTaskTapped: @escaping () -> Void,
+        onDeleteDocument: @escaping (TimeDocument.ID) -> Void,
+        isTimerRunning: @escaping (TimeDocument.ID) -> Bool,
+        onTimerToggle: @escaping (TimeDocument.ID) -> Void
     ) {
         self.documentsByDate = documentsByDate
-        self.timerModel = timerModel
         self.onDateChanged = onDateChanged
         self.onDocumentTapped = onDocumentTapped
-        self.onPlusButtonTapped = onPlusButtonTapped
+        self.onGoalTapped = onGoalTapped
+        self.onTaskTapped = onTaskTapped
         self.onDeleteDocument = onDeleteDocument
+        self.isTimerRunning = isTimerRunning
+        self.onTimerToggle = onTimerToggle
     }
     
     public var body: some View {
@@ -65,13 +71,16 @@ public struct CalendarView: View {
             
             HStack {
                 Spacer()
-                Button(action: onPlusButtonTapped) {
-                    Image(systemName: "plus.circle.fill")
-                        .foregroundColor(.white)
-                        .font(.system(size: 16, weight: .medium))
+                Button(action: onGoalTapped) {
+                    Image(systemName: "target")
+                        .foregroundStyle(.white)
+                }
+                Button(action: onTaskTapped) {
+                    Image(systemName: "checkmark.square.fill")
+                        .foregroundStyle(.white)
                 }
             }
-            .padding(.horizontal, 24)
+            .padding(.horizontal, 20)
         }
     }
     
@@ -79,13 +88,13 @@ public struct CalendarView: View {
         List {
             ForEach(documents) { document in
                 Button(action: {
-                    onDocumentTapped(document)
+                    onDocumentTapped(document.id)
                 }) {
                     DocumentCellView(
                         document: document,
-                        isTimerRunning: timerModel.isTimerRunning(document: document),
+                        isTimerRunning: isTimerRunning(document.id),
                         onTimerToggle: {
-                            timerModel.toggleTimer(document: document)
+                            onTimerToggle(document.id)
                         }
                     )
                 }
@@ -95,7 +104,7 @@ public struct CalendarView: View {
                 for index in indexSet {
                     if index < documents.count {
                         let documentToDelete = documents[index]
-                        onDeleteDocument(documentToDelete)
+                        onDeleteDocument(documentToDelete.id)
                     }
                 }
             }

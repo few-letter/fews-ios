@@ -8,7 +8,7 @@
 import Foundation
 import SwiftData
 
-public struct TaskData: Identifiable, Comparable {
+public struct TaskItem: Identifiable, Comparable {
     public var id: UUID
     public var title: String
     public var time: Int // milliseconds (ms) 단위로 관리
@@ -35,12 +35,12 @@ public struct TaskData: Identifiable, Comparable {
     }
     
     // MARK: Equatable (Comparable의 요구사항)
-    public static func == (lhs: TaskData, rhs: TaskData) -> Bool {
+    public static func == (lhs: TaskItem, rhs: TaskItem) -> Bool {
         return lhs.id == rhs.id
     }
     
     // MARK: Comparable
-    public static func < (lhs: TaskData, rhs: TaskData) -> Bool {
+    public static func < (lhs: TaskItem, rhs: TaskItem) -> Bool {
         return lhs.date < rhs.date
     }
     
@@ -55,7 +55,7 @@ public struct TaskData: Identifiable, Comparable {
     
     /// 카테고리 title로 정렬 (같은 카테고리끼리 묶어서 보여줌)
     /// 카테고리가 없는 항목들은 맨 아래로
-    public static func sortedByCategory(_ tasks: [TaskData]) -> [TaskData] {
+    public static func sortedByCategory(_ tasks: [TaskItem]) -> [TaskItem] {
         return tasks.sorted { lhs, rhs in
             let lhsCategory = lhs.category?.title ?? "zzz_no_category"
             let rhsCategory = rhs.category?.title ?? "zzz_no_category"
@@ -70,7 +70,7 @@ public struct TaskData: Identifiable, Comparable {
     }
     
     /// 카테고리 title로 정렬하되, 시간순으로 2차 정렬
-    public static func sortedByCategoryAndTime(_ tasks: [TaskData]) -> [TaskData] {
+    public static func sortedByCategoryAndTime(_ tasks: [TaskItem]) -> [TaskItem] {
         return tasks.sorted { lhs, rhs in
             let lhsCategory = lhs.category?.title ?? "zzz_no_category"
             let rhsCategory = rhs.category?.title ?? "zzz_no_category"
@@ -90,7 +90,7 @@ public struct TaskData: Identifiable, Comparable {
     }
     
     /// 카테고리별로 그룹화한 Dictionary 반환
-    public static func groupedByCategory(_ tasks: [TaskData]) -> [String: [TaskData]] {
+    public static func groupedByCategory(_ tasks: [TaskItem]) -> [String: [TaskItem]] {
         let grouped = Dictionary(grouping: tasks) { task in
             task.category?.title ?? "No Category"
         }
@@ -113,7 +113,7 @@ public struct TaskData: Identifiable, Comparable {
 }
 
 // MARK: - SwiftData <-> Model Conversion Extensions
-extension TaskData {
+extension TaskItem {
     /// SwiftData Task 객체로부터 TaskModel 생성 (ms 단위 통일)
     public init(from swiftDataTask: Task) {
         let categoryModel = swiftDataTask.category != nil ? CategoryModel(from: swiftDataTask.category!) : nil

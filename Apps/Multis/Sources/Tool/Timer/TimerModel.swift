@@ -4,43 +4,59 @@ import IdentifiedCollections
 
 public protocol TimerModel: Observable {
     var documents: IdentifiedArrayOf<TimeDocument> { get }
-    var documentsByDate: [Date: [TimeDocument]] { get }
+    var documentsByDate: [Date: IdentifiedArrayOf<TimeDocument>] { get }
+    
     func fetch()
-    func toggleTimer(document: TimeDocument)
-    func isTimerRunning(document: TimeDocument) -> Bool
+    func toggle(documentID: TimeDocument.ID)
+    func add(document: TimeDocument)
+    func update(document: TimeDocument)
+    func delete(documentID: TimeDocument.ID)
+    func deleteAll(documentID: TimeDocument.ID)
+    func isTimerRunning(documentID: TimeDocument.ID) -> Bool
+    
     func handleAppWillEnterBackground()
     func handleAppWillEnterForeground()
 }
 
-public enum TimeDocument: Identifiable {
-    case task(TaskData)
-    case goal(GoalData)
+public struct TimeDocumentID: Hashable {
+    public var uuid: UUID
+    public var date: Date
     
-    public var id: UUID {
+    public init(uuid: UUID, date: Date) {
+        self.uuid = id
+        self.date = Calendar.current.startOfDay(for: date)
+    }
+}
+
+public enum TimeDocumentIem {
+    case task(TaskItem)
+    case goal(GoalItem)
+    
+    var id: UUID {
         switch self {
-        case .task(let taskModel):
-            return taskModel.id
-        case .goal(let goalData):
-            return goalData.id
+        case .task(let item):
+            return item.id
+        case .goal(let item):
+            return item.id
         }
     }
     
-    public var date: Date {
+    var date: Date {
         switch self {
-        case .task(let taskData):
-            return taskData.date
-        case .goal(let goalData):
-            // Goal은 항일 오늘 날짜로 처리 (또는 다른 로직 필요시 수정)
-            return .now
+        case .task(let item):
+            return item.date
+        case .goal(let item):
+            return item.startDate
         }
     }
+}
+
+public struct TimeDocument: Identifiable {
+    public let id: TimeDocumentID
+    public let item: TimeDocumentIem
     
-    public var title: String {
-        switch self {
-        case .task(let taskData):
-            return taskData.title
-        case .goal(let goalData):
-            return goalData.title
-        }
+    public init(item: TimeDocumentIem, date: Date? = nil) {
+        self.id = .init(uuid: item.id, date: date ?? item.date)
+        self.item = item
     }
 }

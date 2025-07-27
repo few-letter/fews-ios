@@ -14,9 +14,9 @@ public struct MainTabView: View {
     @State public var timerModel: any TimerModel
     @Environment(\.scenePhase) private var scenePhase
     
-    public init(store: StoreOf<MainTabStore>) {
+    public init(store: StoreOf<MainTabStore>, timerModel: any TimerModel) {
         self.store = store
-        self.timerModel = MultiTimerModel()
+        self._timerModel = .init(wrappedValue: timerModel)
     }
     
     public var body: some View {

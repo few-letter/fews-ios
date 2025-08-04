@@ -9,7 +9,7 @@ let workspace = Workspace(
         "Apps/Plots/Legacy",
         "Apps/Multis",
         "Apps/Capts",
-        "Apps/Times",
+        "Apps/Snapped",
         "Apps/FewCuts",
         "Modules/CommonFeature",
         "Modules/DS"

@@ -8,11 +8,11 @@
 import ProjectDescription
 
 let project = Project(
-    name: "Times",
+    name: "Snapped",
     packages: [],
     targets: [
         .target(
-            name: "Times",
+            name: "Snapped",
             destinations: .iOS,
             product: .app,
             bundleId: "annapo.HTG",
@@ -20,11 +20,12 @@ let project = Project(
             infoPlist: .file(path: "Resources/Info.plist"),
             sources: ["Sources/**"],
             resources: [
-                .glob(pattern: "Resources/Assets.xcassets/**"),
+                .glob(pattern: "Resources/Assets.xcassets**"),
+                .glob(pattern: "Resources/toeic_flashcards.json"),
             ],
-            entitlements: "Resources/Times.entitlements",
+            entitlements: "Resources/Snapped.entitlements",
             dependencies: [
-                
+                .project(target: "Shared_ThirdPartyLibs", path: "../../Modules/Shared/Shared_ThirdPartyLibs"),
                 .project(target: "Feature_Common", path: "../../Modules/Features/Feature_Common"),
                 .sdk(name: "JavaScriptCore", type: .framework)
             ],

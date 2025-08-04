@@ -23,7 +23,7 @@ public struct TimeDocumentID: Hashable {
     public var date: Date
     
     public init(uuid: UUID, date: Date) {
-        self.uuid = id
+        self.uuid = uuid
         self.date = Calendar.current.startOfDay(for: date)
     }
 }

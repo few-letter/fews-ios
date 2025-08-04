@@ -9,57 +9,58 @@ import Foundation
 import SwiftData
 
 public struct RecordModel: Identifiable {
-    public var id: UUID
-    public var type: RecordType
-    public var context: String
-    public var showAt: Date
-    public var createAt: Date
-    public var updateAt: Date
-    
-    // SwiftData 객체 참조 (저장용)
-    public var record: Record?
-    
-    public init(
-        id: UUID = .init(),
-        type: RecordType = .keep,
-        context: String = "",
-        showAt: Date = .now,
-        createAt: Date = .now,
-        updateAt: Date = .now,
-        record: Record? = nil
-    ) {
-        self.id = id
-        self.type = type
-        self.context = context
-        self.showAt = showAt
-        self.createAt = createAt
-        self.updateAt = updateAt
-        self.record = record
-    }
+  public var id: UUID
+  public var type: RecordType
+  public var context: String
+  public var showAt: Date
+  public var createAt: Date
+  public var updateAt: Date
+
+  // SwiftData 객체 참조 (저장용)
+  public var record: Record?
+
+  public init(
+    id: UUID = .init(),
+    type: RecordType = .keep,
+    context: String = "",
+    showAt: Date = .now,
+    createAt: Date = .now,
+    updateAt: Date = .now,
+    record: Record? = nil
+  ) {
+    self.id = id
+    self.type = type
+    self.context = context
+    self.showAt = showAt
+    self.createAt = createAt
+    self.updateAt = updateAt
+    self.record = record
+  }
 }
 
 // MARK: - SwiftData <-> Model Conversion Extensions
-extension RecordModel {
-    /// SwiftData Record 객체로부터 RecordModel 생성
-    public init(from swiftDataRecord: Record) {
-        self.id = swiftDataRecord.id ?? .init()
-        self.type = .init(rawValue: swiftDataRecord.type ?? 0) ?? .keep
-        self.context = swiftDataRecord.context ?? ""
-        self.showAt = swiftDataRecord.showAt ?? .now
-        self.createAt = swiftDataRecord.createAt ?? .now
-        self.updateAt = swiftDataRecord.updateAt ?? .now
-        self.record = swiftDataRecord
-    }
-    
-    /// RecordModel을 SwiftData Record 객체로 변환
-    public func toSwiftDataRecord() -> Record {
-        return Record(
-            id: self.id,
-            type: self.type,
-            context: self.context,
-            showAt: self.showAt,
-            createAt: self.createAt,
-            updateAt: self.updateAt
-        )
-    }
+
+public extension RecordModel {
+  /// SwiftData Record 객체로부터 RecordModel 생성
+  init(from swiftDataRecord: Record) {
+    self.id = swiftDataRecord.id ?? .init()
+    self.type = .init(rawValue: swiftDataRecord.type ?? 0) ?? .keep
+    self.context = swiftDataRecord.context ?? ""
+    self.showAt = swiftDataRecord.showAt ?? .now
+    self.createAt = swiftDataRecord.createAt ?? .now
+    self.updateAt = swiftDataRecord.updateAt ?? .now
+    self.record = swiftDataRecord
+  }
+
+  /// RecordModel을 SwiftData Record 객체로 변환
+  func toSwiftDataRecord() -> Record {
+    return Record(
+      id: id,
+      type: type,
+      context: context,
+      showAt: showAt,
+      createAt: createAt,
+      updateAt: updateAt
+    )
+  }
 }

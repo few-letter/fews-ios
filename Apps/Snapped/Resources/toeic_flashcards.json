@@ -1,0 +1,72 @@
+[
+    {
+        "word": "abandon",
+        "partOfSpeech": "verb",
+        "pronunciation": "/əˈbændən/",
+        "meanings": ["포기하다", "To give up or stop doing something"],
+        "examples": ["They had to abandon the project due to lack of funds."]
+    },
+    {
+        "word": "accommodate",
+        "partOfSpeech": "verb",
+        "pronunciation": "/əˈkɒmədeɪt/",
+        "meanings": ["수용하다", "To provide space or adjust to needs"],
+        "examples": ["The hotel can accommodate up to 200 guests."]
+    },
+    {
+        "word": "assess",
+        "partOfSpeech": "verb",
+        "pronunciation": "/əˈsɛs/",
+        "meanings": ["평가하다", "To evaluate or estimate the value"],
+        "examples": ["The manager will assess the team's performance."]
+    },
+    {
+        "word": "budget",
+        "partOfSpeech": "noun",
+        "pronunciation": "/ˈbʌdʒɪt/",
+        "meanings": ["예산", "A financial plan for a period"],
+        "examples": ["The company set a strict budget for the new project."]
+    },
+    {
+        "word": "collaborate",
+        "partOfSpeech": "verb",
+        "pronunciation": "/kəˈlæbəreɪt/",
+        "meanings": ["협력하다", "To work together with others"],
+        "examples": ["The teams collaborated to complete the task on time."]
+    },
+    {
+        "word": "delegate",
+        "partOfSpeech": "verb",
+        "pronunciation": "/ˈdɛlɪɡeɪt/",
+        "meanings": ["위임하다", "To assign tasks to others"],
+        "examples": ["She delegated the report to her assistant."]
+    },
+    {
+        "word": "efficient",
+        "partOfSpeech": "adjective",
+        "pronunciation": "/ɪˈfɪʃənt/",
+        "meanings": ["효율적인", "Working productively with minimal waste"],
+        "examples": ["The new system is more efficient than the old one."]
+    },
+    {
+        "word": "implement",
+        "partOfSpeech": "verb",
+        "pronunciation": "/ˈɪmplɪmənt/",
+        "meanings": ["실행하다", "To put a plan or system into action"],
+        "examples": ["The company will implement new policies next month."]
+    },
+    {
+        "word": "priority",
+        "partOfSpeech": "noun",
+        "pronunciation": "/praɪˈɒrɪti/",
+        "meanings": ["우선순위", "Something given special attention"],
+        "examples": ["Customer satisfaction is our top priority."]
+    },
+    {
+        "word": "revenue",
+        "partOfSpeech": "noun",
+        "pronunciation": "/ˈrɛvənjuː/",
+        "meanings": ["수익", "Income generated from business activities"],
+        "examples": ["The company's revenue increased by 10% this year."]
+    }
+]
